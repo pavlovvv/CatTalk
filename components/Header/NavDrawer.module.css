@@ -1,0 +1,40 @@
+.container {
+  padding: 15px 40px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.header__title {
+  font-family: "Quicksand", serif;
+  align-self: center;
+  font-size: 25px;
+}
+
+.header__logo {
+  width: 72px;
+  height: 58px;
+}
+
+.hr {
+  height: 1px;
+  background-color: grey;
+  border: none;
+  width: 100%;
+}
+
+.navigation__item:not(:first-child) {
+  padding-top: 30px;
+}
+
+.close {
+  transition: all 0.5s ease;
+}
+
+.close:hover {
+  -webkit-transform: rotateZ(20deg);
+  -ms-transform: rotateZ(20deg);
+  transform: rotateZ(20deg);
+}
