@@ -87,7 +87,7 @@ export default function Chat() {
 
 
   function connect() {
-    socket.current = new WebSocket("ws://ringed-tan-tithonia.glitch.me/");
+    socket.current = new WebSocket("wss://ringed-tan-tithonia.glitch.me/");
 
     socket.current.onopen = () => {
       setConnected(true);
