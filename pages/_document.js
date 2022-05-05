@@ -1,11 +1,9 @@
-import { Html, Head, Main, NextScript } from "next/document";
+import Document, { Html, Head, Main, NextScript } from "next/document";
 
-
-export default function Document() {
-  
-
-  return (
-    <Html>
+export default class MyDocument extends Document {
+  render() {
+    return (
+      <Html>
       <Head>
         <link
           href="https://fonts.googleapis.com/css2?family=Inter&display=optional"
@@ -38,5 +36,6 @@ export default function Document() {
         <NextScript />
       </body>
     </Html>
-  );
+    );
+  }
 }

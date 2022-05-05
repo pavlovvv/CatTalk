@@ -51,34 +51,60 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
-export default function Chat() {
-  const dispatch = useDispatch();
-  const router = useRouter();
-  const authData = useSelector((state) => state.sign.userData);
-  const [messages, setMessages] = useState([]);
-  const [value, setValue] = useState("");
-  const socket = useRef();
-  const [connected, setConnected] = useState(false);
+ function Chat(props) {
+  const dispatch = useDispatch()
+  const router = useRouter()
+  const authData = useSelector((state) => state.sign.userData)
+  const [messages, setMessages] = useState([])
+  const [value, setValue] = useState("")
+  const socket = useRef()
+  const count = useRef()
+  const authRef = useRef()
+  const [connected, setConnected] = useState(false)
   const [isPending, setPending] = useState(false)
 
-
-  let count = 1
+  authRef.current = useSelector((state) => state.sign.userData)
 
 
   useEffect(() => {
-    dispatch(setChatPage());
 
+    dispatch(setChatPage());
+    console.log(window)
+
+    window.addEventListener("beforeunload", function(evt) {
+
+      // Cancel the event (if necessary)
+      evt.preventDefault();
+  
+      const message = {
+        event: "disconnection",
+        username: authRef.current.info[2].username,
+        userId: authRef.current.info[4].id,
+        id: Date.now()
+      };
+      socket.current.send(JSON.stringify(message));
+      socket.current.close()
+
+      // Google Chrome requires returnValue to be set
+      evt.returnValue = '';
+  
+      return null;
+  });
 
     return function disconnection() {
-      if (count > 1) {
+      console.log(window)
+      debugger
+      if (count.current > 1) {
         const message = {
           event: "disconnection",
-          id: Date.now(),
+          username: authRef.current.info[2].username,
+          userId: authRef.current.info[4].id,
+          id: Date.now()
         };
         socket.current.send(JSON.stringify(message));
-        socket.current?.close()
+        socket.current.close()
       }
-      count++
+      count.current = 2
     }
 
 
@@ -273,10 +299,18 @@ export default function Chat() {
                           )}
                           {msg.event === "disconnection" && (
                             <div className={s.messages__connection}>
-                              <div className={s.connectionContainer}>
-                                Someone has left
-                              </div>
+                            <div className={s.connectionContainer}>
+                              A user &quot;
+                              <Link href={`/profile/${msg.userId}`} passHref>
+                                <a target="_blank" rel="noopener noreferrer">
+                                  <span className={s.messages__connectionUsername}>
+                                    {msg.username}
+                                  </span>
+                                </a>
+                              </Link>
+                              &quot; has left
                             </div>
+                          </div>
                           )}
                           {msg.event === "message" && (
                             <div className={s.messages__message}>
@@ -426,10 +460,18 @@ export default function Chat() {
                       )}
                       {msg.event === "disconnection" && (
                         <div className={s.messages__connection}>
-                          <div className={s.connectionContainer}>
-                            Someone has left
-                          </div>
-                        </div>
+                              <div className={s.connectionContainer}>
+                                A user &quot;
+                                <Link href={`/profile/${msg.userId}`} passHref>
+                                  <a target="_blank" rel="noopener noreferrer">
+                                    <span className={s.messages__connectionUsername}>
+                                      {msg.username}
+                                    </span>
+                                  </a>
+                                </Link>
+                                &quot; has left
+                              </div>
+                            </div>
                       )}
                       {msg.event === "message" && (
                         <div className={s.messages__message}>
@@ -594,4 +636,10 @@ export default function Chat() {
       </div>
     </MainLayout>
   );
+}
+
+
+export default function InitialChat(props) {
+  const authData = useSelector((state) => state.sign.userData);
+  return <Chat {...props} authData={authData} />
 }
