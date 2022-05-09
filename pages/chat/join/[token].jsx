@@ -72,16 +72,20 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   const [connected, setConnected] = useState(false)
   const [isPending, setPending] = useState(false)
   const [error, setError] = useState(null)
+  const [focused, setFocused] = useState(false)
+
+  const onFocus = () => setFocused(true)
+  const onBlur = () => setFocused(false)
 
   authRef.current = useSelector((state) => state.sign.userData)
 
 
+  
   useEffect(() => {
     dispatch(setChatPage({onChatPage: true}));
     isLeft.current = false
     window.addEventListener('beforeunload', (evt) =>{
       evt.preventDefault()
-      console.log('before unload')
       // if(!isLeft.current) {
       //   fetch('https://cattalkapi.herokuapp.com/chat/leave/', {
       //     method:'post',
@@ -110,12 +114,9 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
       return null
     })
 
-    console.log('useEffect')
     return function disconnection() {
-      console.log('component will unomunt')
 
-      console.log('count.current = ' + count.current)
-      //if (count.current > 1) {
+      // if (count.current > 1) {
         console.log('unmount disconnection')
         const message = {
           event: "disconnection",
@@ -127,13 +128,20 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
         socket.current?.close()
 
         dispatch(setChatPage({onChatPage: false}));
-      //}
-      //count.current = 2
+      // }
+      // count.current = 2
     }
 
 
   }, []);
 
+
+
+  useEffect(() => { 
+    if (focused) {
+      router.push("#last");
+    }
+  }, [focused])
 
 
   function connect() {
@@ -707,6 +715,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
         <section className={s.bottom}>
           <form onSubmit={onSubmit} className={s.bottom}>
             <TextField
+              onFocus={onFocus}
+              onBlur={onBlur}
               id="outlined-basic"
               placeholder="Write"
               variant="outlined"

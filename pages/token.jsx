@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
-import { getToken, findToken } from "../redux/tokenSlice.js";
+import { getToken, findToken, setFoundToken } from "../redux/tokenSlice.js";
 
 
 
@@ -104,6 +104,7 @@ function TokenPage() {
 useEffect(() => {
   if (foundToken) {
     router.push(`/chat/join/${foundToken}`)
+    dispatch(setFoundToken({token: null}))
   }
 }, [foundToken])
 

@@ -70,7 +70,8 @@ export default function NavDrawer(props) {
         <div className={style.container}>
           <section className={style.header}>
             <h1 className={style.header__title}>CatTalk</h1>
-            <Avatar src={logo.src} alt="CatTalk" className={style.header__logo} 
+            <Avatar src={logo.src} alt="CatTalk" className={style.header__logo}
+            sx={{width: '72px', height: '58px'}} 
             //  width='72px' height='58px' 
             />
           </section>
