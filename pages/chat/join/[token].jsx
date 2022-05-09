@@ -79,43 +79,43 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   useEffect(() => {
     dispatch(setChatPage({onChatPage: true}));
     isLeft.current = false
-    
+    window.addEventListener('beforeunload', (evt) =>{
+      evt.preventDefault()
+      console.log('before unload')
+      // if(!isLeft.current) {
+      //   fetch('https://cattalkapi.herokuapp.com/chat/leave/', {
+      //     method:'post',
+      //     headers:{
+      //         'Content-Type': 'application/json',
+      //     },
+      //     body: JSON.stringify({
+      //        token: token
+      //     }),
+      //     keepalive: true // this is important!
+      // })
+      //   isLeft.current = true
+      // }
+
+      const message = {
+        event: "disconnection",
+        username: authRef.current.info[2]?.username,
+        userId: authRef.current.info[4]?.id,
+        id: Date.now()
+      };
+      socket.current?.send(JSON.stringify(message));
+      socket.current?.close();
+
+
+      evt.returnValue = '';
+      return null
+    })
 
     console.log('useEffect')
     return function disconnection() {
       console.log('component will unomunt')
-      window.addEventListener('beforeunload', (evt) =>{
-        evt.preventDefault()
-        console.log('before unload')
-        // if(!isLeft.current) {
-        //   fetch('https://cattalkapi.herokuapp.com/chat/leave/', {
-        //     method:'post',
-        //     headers:{
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({
-        //        token: token
-        //     }),
-        //     keepalive: true // this is important!
-        // })
-        //   isLeft.current = true
-        // }
 
-        const message = {
-          event: "disconnection",
-          username: authRef.current.info[2]?.username,
-          userId: authRef.current.info[4]?.id,
-          id: Date.now()
-        };
-        socket.current?.send(JSON.stringify(message));
-        socket.current?.close();
-
-
-        evt.returnValue = '';
-        return null
-      })
       console.log('count.current = ' + count.current)
-      if (count.current > 1) {
+      //if (count.current > 1) {
         console.log('unmount disconnection')
         const message = {
           event: "disconnection",
@@ -125,10 +125,10 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
         };
         socket.current?.send(JSON.stringify(message));
         socket.current?.close()
-        debugger
+
         dispatch(setChatPage({onChatPage: false}));
-      }
-      count.current = 2
+      //}
+      //count.current = 2
     }
 
 
