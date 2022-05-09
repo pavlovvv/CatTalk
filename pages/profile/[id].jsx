@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 export async function getServerSideProps({params}) {
 
-  const res = await fetch(`https://cattalkapi.herokuapp.com/users/${params.id}`)
+  const res = await fetch(`https://cattalkapi.herokuapp.com/users/search/${params.id}`)
   const user = await res.json();
 
   return { props: {userData: user} }

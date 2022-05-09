@@ -1,5 +1,5 @@
 import { useState } from "react";
-import s from "../../styles/signup.module.css";
+import s from "../../styles/sign.module.css";
 import { TextField, Button } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Input from "@mui/material/Input";

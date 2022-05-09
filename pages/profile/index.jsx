@@ -347,22 +347,4 @@ export default function InitialProfile(props) {
   return <Pro2file key={uniKey} {...props}/>
 }
 
-// export async function getServerSideProps({req}) {
- 
-  
-//   const parsedCookies = cookie.parse(req ? req.headers.cookie || "" : document.cookie);
 
-//   const res = await fetch(`https://cattalkapi.herokuapp.com/users/checkMyOwnInfo`, {
-//     method: 'GET',
-//     Cookie: parsedCookies,
-//     credentials: 'include',
-//     httpOnly: false
-//   })
-
-//   console.log(res.status)
-
- 
- 
-
-//   return { props: {data: 'tes'} }
-// }

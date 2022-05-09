@@ -1,4 +1,4 @@
-import MainLayout from "../components/MainLayout.jsx";
+import MainLayout from "../../../components/MainLayout.jsx";
 import {
   TextField,
   Button,
@@ -6,18 +6,24 @@ import {
   Badge,
   createTheme,
   ThemeProvider,
-  CircularProgress
+  CircularProgress,
+  Alert,
+  Typography,
+  useMediaQuery
 } from "@mui/material";
-import s from "../styles/chat.module.css";
+import Logout from "@mui/icons-material/Logout";
+import { Send } from "@mui/icons-material";
+import s from "../../../styles/chat.module.css";
 import { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { styled } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-import { setChatPage } from "../redux/chatSlice.js";
+import { setChatPage, join, sendChatMessage, enterCharacter } from "../../../redux/chatSlice.js";
 import { useRouter } from "next/router";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { motion } from "framer-motion";
+import { getConnectedUsers } from "../../../redux/tokenSlice.js";
+
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -52,57 +58,74 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
  function Chat(props) {
+
   const dispatch = useDispatch()
   const router = useRouter()
   const authData = useSelector((state) => state.sign.userData)
+  const connectedUsersCount = useSelector(state => state.token.connectedUsersCount)
   const [messages, setMessages] = useState([])
   const [value, setValue] = useState("")
   const socket = useRef()
   const count = useRef()
   const authRef = useRef()
+  const isLeft = useRef()
   const [connected, setConnected] = useState(false)
   const [isPending, setPending] = useState(false)
+  const [error, setError] = useState(null)
 
   authRef.current = useSelector((state) => state.sign.userData)
 
 
   useEffect(() => {
+    dispatch(setChatPage({onChatPage: true}));
+    isLeft.current = false
+    
 
-    dispatch(setChatPage());
-    console.log(window)
-
-    window.addEventListener("beforeunload", function(evt) {
-
-      // Cancel the event (if necessary)
-      evt.preventDefault();
-  
-      const message = {
-        event: "disconnection",
-        username: authRef.current.info[2].username,
-        userId: authRef.current.info[4].id,
-        id: Date.now()
-      };
-      socket.current.send(JSON.stringify(message));
-      socket.current.close()
-
-      // Google Chrome requires returnValue to be set
-      evt.returnValue = '';
-  
-      return null;
-  });
 
     return function disconnection() {
-      console.log(window)
-      debugger
-      if (count.current > 1) {
+
+      window.addEventListener('beforeunload', (evt) =>{
+        evt.preventDefault()
+
+        // if(!isLeft.current) {
+        //   fetch('https://cattalkapi.herokuapp.com/chat/leave/', {
+        //     method:'post',
+        //     headers:{
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({
+        //        token: token
+        //     }),
+        //     keepalive: true // this is important!
+        // })
+        //   isLeft.current = true
+        // }
+
         const message = {
           event: "disconnection",
-          username: authRef.current.info[2].username,
-          userId: authRef.current.info[4].id,
+          username: authRef.current.info[2]?.username,
+          userId: authRef.current.info[4]?.id,
           id: Date.now()
         };
-        socket.current.send(JSON.stringify(message));
-        socket.current.close()
+        socket.current?.send(JSON.stringify(message));
+        socket.current?.close();
+
+
+        evt.returnValue = '';
+        return null
+      })
+      debugger
+      if (count.current > 1) {
+        debugger
+        const message = {
+          event: "disconnection",
+          username: authRef.current.info[2]?.username,
+          userId: authRef.current.info[4]?.id,
+          id: Date.now()
+        };
+        socket.current?.send(JSON.stringify(message));
+        socket.current?.close()
+        dispatch(setChatPage({onChatPage: false}));
       }
       count.current = 2
     }
@@ -113,7 +136,11 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 
   function connect() {
-    socket.current = new WebSocket("wss://ringed-tan-tithonia.glitch.me/");
+    const token = router.query.token
+    isLeft.current = false
+
+
+    socket.current = new WebSocket(`wss://${token}.glitch.me/`);
 
     socket.current.onopen = () => {
       setConnected(true);
@@ -124,25 +151,44 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
         id: Date.now(),
       };
       socket.current.send(JSON.stringify(message));
-
+      dispatch(join({token}))
     };
     socket.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
+      if (message.event === 'connection' || message.event === 'disconnection') {
+        setTimeout(() => {
+          dispatch(getConnectedUsers({token}))
+        }, 1000)
+      }
       setMessages((prev) => [...prev, message]);
       router.push("#last");
     };
     socket.current.onclose = () => {
-      // const message = {
-      //   event: "disconnection",
-      //   username: authData.info[2].username,
-      //   userId: authData.info[4].id,
-      //   id: Date.now(),
-      // };
-      // socket.current.send(JSON.stringify(message));
-      console.log('disconnected')
+      if(!isLeft.current) {
+        // dispatch(leave({token}))
+        fetch('https://cattalkapi.herokuapp.com/chat/leave/', {
+          method:'post',
+          headers:{
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+             token: token
+          }),
+          keepalive: true // this is important!
+      })
+        isLeft.current = true
+      }
+
+      console.log('disconnected from socket')
+      const message = {
+        event: "own disconnection",
+        id: Date.now(),
+      };
+      setMessages((prev) => [...prev, message]);
     };
     socket.current.onerror = () => {
-      console.log("Socket произошла ошибка");
+      setError('Incorrect token')
+      setPending(false)
     };
   }
 
@@ -179,6 +225,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   });
 
   const mw499px = useMediaQuery("(max-width:499px)");
+  const mw369px = useMediaQuery("(max-width:369px)");
 
   const moveTop = {
     visible: {
@@ -245,7 +292,33 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
                     disabled={isPending}
                   >
                     {isPending ? <CircularProgress size={30} sx={{ color: "#000000" }} /> : 'JOIN'}
-                  </Button>
+                  </Button> 
+                  {error && (
+                    <Alert
+                      severity="error"
+                      color="primary"
+                      variant="filled"
+                      sx={{
+                        backgroundColor: "rgb(211, 47, 47)",
+                        color: "#fff",
+                      }}
+                    >
+                      {error}
+                    </Alert>
+                  )}
+                  {isPending && (
+                    <Alert
+                      severity="warning"
+                      color="primary"
+                      variant="filled"
+                      sx={{
+                        backgroundColor: "rgb(245, 124, 0)",
+                        color: "#fff",
+                      }}
+                    >
+                      Please, wait. This may take up to 1 minute
+                    </Alert>
+                  )}
                 </div>
               </div>
             </div>
@@ -262,10 +335,25 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     }
   };
 
-
   return (
     <MainLayout>
       <div className={s.chatPage}>
+        <section className={s.chatHeader}>
+            <Button
+                variant="contained"
+                color="error"
+                startIcon={<Logout />}
+                sx={mw369px ? {width: '80%', margin: '20px'} : {width: '150px', margin: '20px'}}
+                onClick={() => {
+                  router.push('/token')
+                }}
+              >
+                Leave
+              </Button>
+              <Typography variant='overline' sx={{color: '#fff', fontSize: '15px'}}>
+                Connected users: {connectedUsersCount}
+              </Typography>
+        </section>
         <section className={s.chat}>
           <div className={s.messages + " " + s.chat__messages}>
             {messages.map((msg, idx) => {
@@ -309,6 +397,13 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
                                 </a>
                               </Link>
                               &quot; has left
+                            </div>
+                          </div>
+                          )}
+                          {msg.event === "own disconnection" && (
+                            <div className={s.messages__connection}>
+                            <div className={s.connectionContainer}>
+                              You have been disconnected
                             </div>
                           </div>
                           )}
@@ -472,7 +567,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
                                 &quot; has left
                               </div>
                             </div>
-                      )}
+                      )}                      
                       {msg.event === "message" && (
                         <div className={s.messages__message}>
                           {authData.info[2].username === msg.username ? (
@@ -616,7 +711,10 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
               variant="outlined"
               sx={{ width: "100%", bgcolor: "#fff" }}
               value={value}
-              onChange={(e) => setValue(e.target.value)}
+              onChange={(e) => {
+                setValue(e.target.value)
+                dispatch(enterCharacter())
+              }}
             />
 
             <Link href="#last" passHref>
@@ -625,10 +723,11 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
                 onClick={(e) => {
                   if (value.replace(/\s+/g, "") !== "") {
                     sendMessage();
+                    dispatch(sendChatMessage())
                   }
                 }}
               >
-                Send
+                <Send />
               </Button>
             </Link>
           </form>
@@ -639,7 +738,26 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }
 
 
+function Chat2(props) {
+
+  const isAuthed = useSelector((state) => state.sign.isAuthed);
+  const isAuthFulfilled = useSelector(state => state.sign.isAuthFulfilled)
+  const router = useRouter()  
+
+  useEffect(()=> {
+    if (!isAuthed && isAuthFulfilled) {
+
+        router.push('/signup')
+
+    }
+  }, [isAuthFulfilled])
+
+  return <Chat {...props} />
+}
+
 export default function InitialChat(props) {
-  const authData = useSelector((state) => state.sign.userData);
-  return <Chat {...props} authData={authData} />
+
+  const key = useSelector(state => state.sign.uniKey)
+
+  return <Chat2 {...props} key={key} />
 }

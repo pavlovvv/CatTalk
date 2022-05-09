@@ -35,7 +35,7 @@ export default function NavDrawer(props) {
   const classes = useStyles();
 
   const navItems = ["Profile", "Messages", "Users", "News", "Settings"];
-  const linkItems = ["/profile", "/profile", "/profile", "/profile", "/profile"];
+  const linkItems = ["/profile", "/token", "/profile", "/profile", "/profile"];
 
   const Icons = [
     AccountCircleIcon,

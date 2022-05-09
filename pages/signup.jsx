@@ -1,5 +1,5 @@
 import MainLayout from "../components/MainLayout.jsx";
-import s from "../styles/signup.module.css";
+import s from "../styles/sign.module.css";
 import SignUp from '../components/Signup/Signup.jsx'
 import { useSelector } from "react-redux";
 
