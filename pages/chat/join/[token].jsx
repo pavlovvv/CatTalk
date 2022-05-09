@@ -81,12 +81,12 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     isLeft.current = false
     
 
-
+    console.log('useEffect')
     return function disconnection() {
-
+      console.log('component will unomunt')
       window.addEventListener('beforeunload', (evt) =>{
         evt.preventDefault()
-
+        console.log('before unload')
         // if(!isLeft.current) {
         //   fetch('https://cattalkapi.herokuapp.com/chat/leave/', {
         //     method:'post',
@@ -114,9 +114,9 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
         evt.returnValue = '';
         return null
       })
-      debugger
+      console.log('count.current = ' + count.current)
       if (count.current > 1) {
-        debugger
+        console.log('unmount disconnection')
         const message = {
           event: "disconnection",
           username: authRef.current.info[2]?.username,
@@ -125,6 +125,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
         };
         socket.current?.send(JSON.stringify(message));
         socket.current?.close()
+        debugger
         dispatch(setChatPage({onChatPage: false}));
       }
       count.current = 2
