@@ -68,12 +68,11 @@
 }
 
 .panel {
-	border: 1px solid #8479E1;
+	background-color:  rgb(5, 30, 52);
 	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 	border-radius: 3px;
 	overflow: hidden;
-	background-color: #8479E1;
-	color: #000000
+	color: #fff
 }
 
 .info__info {
@@ -99,7 +98,7 @@
 	line-height: 60px;
 	font-size: 20px;
 	font-family: 'kanit', sans-serif;
-	background-color: #8479E1;
+	background-color:  rgb(5, 30, 52);
 }
 
 
@@ -150,22 +149,25 @@
 .info__infoItemName {
 	display: block;
 	padding: 0 250px 0 20px;
-	font-size: 18px;
-	font-weight: 900;
+	font-size: 17px;
+	font-weight: 400;
 	text-transform: uppercase;
 	width: 150px;
 	font-family: 'Kanit', serif;
 	margin-top: auto;
 	margin-bottom: auto;
+	letter-spacing: 3px;
 }
 
 .info__infoItemValue {
-	font-size: 18px;
+	font-size: 16px;
 	font-family: 'Quicksand', serif;
 	font-weight: 600;
 	margin-top: auto;
 	margin-bottom: auto;
-	word-break: break-word;
+	/* word-break: break-word;
+	overflow-wrap: break-word;
+	hyphens: auto; */
 }
 
 
@@ -177,7 +179,6 @@
 	}
 
 	.info__infoItemName {
-		font-size: 20px;
 		padding-right: 150px
 	}
 
@@ -218,6 +219,7 @@
 
 	.info__infoItemValue {
 		padding-left: 30px;
+		font-size: 15px;
 	}
 
 }

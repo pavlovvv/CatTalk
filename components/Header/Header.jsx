@@ -15,17 +15,17 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import { createTheme, ThemeProvider } from "@mui/material";
-import { useState } from "react";
+import { createTheme, ThemeProvider, Popover } from "@mui/material";
+import { useState, useRef } from "react";
 import Drawer from "@mui/material/Drawer";
 import NavDrawer from "./NavDrawer";
 import logo from "../../images/catlogo1.png";
 import Avatar from "@mui/material/Avatar";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Link from "next/link";
-import {logOut} from '../../redux/signSlice.js'
-import {useSelector, useDispatch} from 'react-redux'
-
+import { logOut } from '../../redux/signSlice.js'
+import { useSelector, useDispatch } from 'react-redux'
+import Image from "next/image";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -68,8 +68,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function PrimarySearchAppBar() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+ 
+
+ 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
+
+  const [searchText, setSearchText] = useState("");
+
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -113,9 +119,9 @@ export default function PrimarySearchAppBar() {
       <Link href='/profile' passHref><MenuItem onClick={handleMenuClose}>Profile</MenuItem></Link>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
       <MenuItem onClick={() => {
-          setAnchorEl(null);
-          handleMobileMenuClose();
-          dispatch(logOut())
+        setAnchorEl(null);
+        handleMobileMenuClose();
+        dispatch(logOut())
       }}>Log out</MenuItem>
     </Menu>
   );
@@ -201,6 +207,43 @@ export default function PrimarySearchAppBar() {
   const mw600px = useMediaQuery("(max-width:600px)");
 
   const isAuthed = useSelector(state => state.sign.isAuthed)
+  const allUsers = useSelector(state => state.sign.allUsers)
+
+
+  const [anchor2El, setAnchor2El] = useState(null);
+
+
+  const searchHandler = (e) => {
+    const lowerCase = e.target.value.toLowerCase();
+    setSearchText(lowerCase);
+    setAnchor2El(e.currentTarget)
+  };
+
+  const handleLose = () => {
+    setAnchor2El(null)
+  };
+
+  const open = Boolean(anchor2El);
+  const id = open ? 'simple-popover' : undefined;
+
+  let filteredUsers = allUsers.filter((el) => {
+    if (searchText === '') {
+      return;
+    }
+
+    else {
+
+      if (searchText.length > 2) {
+        return el.data.toLowerCase().includes(searchText)
+      }
+    }
+  })
+
+  const stringAvatar = (name) => {
+    return {
+      children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
+    };
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -248,97 +291,161 @@ export default function PrimarySearchAppBar() {
             </Typography>
 
             <Link href='/' passHref>
-            <Avatar
-              src={logo.src}
-              alt={"catTalk"}
-              sx={
-                mw600px
-                  ? { width: 50, height: 50, marginLeft: 2, cursor: 'pointer' }
-                  : { width: 50, height: 50, marginLeft: 1, cursor: 'pointer' }
-              }
-            />
+              <Avatar
+                src={logo.src}
+                alt={"catTalk"}
+                sx={
+                  mw600px
+                    ? { width: 50, height: 50, marginLeft: 2, cursor: 'pointer' }
+                    : { width: 50, height: 50, marginLeft: 1, cursor: 'pointer' }
+                }
+
+              />
             </Link>
 
             {!mw600px && (
+
               <Search>
                 <SearchIconWrapper>
                   <SearchIcon />
                 </SearchIconWrapper>
                 <StyledInputBase
-                  placeholder="Try to find someone..."
-                  inputProps={{ "aria-label": "Try to find someone" }}
+                  placeholder="Search..."
+                  inputProps={{ "aria-label": "Search" }}
+                  onChange={searchHandler}
+                  value={searchText}
                 />
               </Search>
-            )}
 
-              
+
+            )}
+            {filteredUsers.length !== 0 &&
+              <Popover
+                id={id}
+                open={open}
+                anchorEl={anchor2El}
+                onClose={handleLose}
+                disableAutoFocus
+                disableEnforceFocus
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                PaperProps={{
+                  sx: {
+                    backgroundColor: "#6226dd",
+                    color: "#fff"
+                  }
+                }}
+              >
+
+                <Box sx={{ p: 2 }}>
+                  {filteredUsers.map((item) => (
+                    <Link href={`/profile/${item.id}`} passHref key={item.id}> 
+                      <a target="_blank" rel="noopener noreferrer">
+                        <div style={{
+                          fontFamily: 'Quicksand', fontWeight: 800, display: 'flex', columnGap: '20px',
+                          alignItems: 'center', marginTop: '20px', cursor: 'pointer'
+                        }}> <div>{item.avatar ? (
+                          <Image
+                            width="55px"
+                            height="55px"
+                            style={{ borderRadius: '50%' }}
+                            src={item.avatar}
+                            alt="content__img"
+                          />
+                        ) : (
+                          <Avatar
+                            {...stringAvatar(
+                              item.name +
+                              " " +
+                              item.surname
+                            )}
+                            sx={{
+                              bgcolor: "#fff",
+                              width: "55px",
+                              height: "55px",
+                              fontSize: "20px",
+                              color: '#000000'
+                            }}
+                          />
+                        )}</div>  <div>{item.username}</div>
+                        </div>
+                      </a>
+                    </Link>
+                  ))}</Box>
+              </Popover>}
+
+            {/* {filteredUsers.map((item) => (
+              <li key={item.id}>{item.username}</li>
+            ))} */}
 
             <Box sx={{ flexGrow: 1 }} />
 
             {isAuthed ? <>
-            <Box sx={{ display: { xs: "none", md: "flex" } }}>
-              <IconButton
-                size="large"
-                aria-label="show 4 new mails"
-                color="inherit"
-              >
-                <Badge badgeContent={0} color="error">
-                  <MailIcon />
-                </Badge>
-              </IconButton>
-              <IconButton
-                size="large"
-                aria-label="show 17 new notifications"
-                color="inherit"
-              >
-                <Badge badgeContent={0} color="error">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
-              <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-            </Box>
-            <Box sx={{ display: { xs: "flex", md: "none" } }}>
-              <IconButton
-                size="large"
-                aria-label="show more"
-                aria-controls={mobileMenuId}
-                aria-haspopup="true"
-                onClick={handleMobileMenuOpen}
-                color="inherit"
-              >
-                <MoreIcon />
-              </IconButton>
-            </Box>
+              <Box sx={{ display: { xs: "none", md: "flex" } }}>
+                <IconButton
+                  size="large"
+                  aria-label="show 4 new mails"
+                  color="inherit"
+                >
+                  <Badge badgeContent={0} color="error">
+                    <MailIcon />
+                  </Badge>
+                </IconButton>
+                <IconButton
+                  size="large"
+                  aria-label="show 17 new notifications"
+                  color="inherit"
+                >
+                  <Badge badgeContent={0} color="error">
+                    <NotificationsIcon />
+                  </Badge>
+                </IconButton>
+                <IconButton
+                  size="large"
+                  edge="end"
+                  aria-label="account of current user"
+                  aria-controls={menuId}
+                  aria-haspopup="true"
+                  onClick={handleProfileMenuOpen}
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+              </Box>
+              <Box sx={{ display: { xs: "flex", md: "none" } }}>
+                <IconButton
+                  size="large"
+                  aria-label="show more"
+                  aria-controls={mobileMenuId}
+                  aria-haspopup="true"
+                  onClick={handleMobileMenuOpen}
+                  color="inherit"
+                >
+                  <MoreIcon />
+                </IconButton>
+              </Box>
             </>
-            :  <>
-            <Box sx={{ display: { xs: "flex", md: "flex" } }}>
-              <Link href={'/signup'} passHref>
-              <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-              </Link>
-            </Box>
-            </> }
+              : <>
+                <Box sx={{ display: { xs: "flex", md: "flex" } }}>
+                  <Link href={'/signup'} passHref>
+                    <IconButton
+                      size="large"
+                      edge="end"
+                      aria-label="account of current user"
+                      aria-controls={menuId}
+                      aria-haspopup="true"
+                      onClick={handleProfileMenuOpen}
+                      color="inherit"
+                    >
+                      <AccountCircle />
+                    </IconButton>
+                  </Link>
+                </Box>
+              </>}
 
-            
+
           </Toolbar>
         </AppBar>
         {renderMobileMenu}

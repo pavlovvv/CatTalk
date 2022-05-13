@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getOwnInfo } from "../redux/signSlice";
 import { CircularProgress, Avatar } from "@mui/material";
+import { useRef } from "react";
 
 
 
@@ -20,12 +21,16 @@ function Home({children}) {
   const isAuthFulfilled = useSelector(state => state.sign.isAuthFulfilled)
   const onChatPage = useSelector(state => state.chat.onChatPage)
 
+  const isDone = useRef()
   const dispatch = useDispatch()
 
   useEffect(
     () => {
+      if(!isDone.current) {
+        dispatch(getOwnInfo())
+        isDone.current = true
+      }
 
-      dispatch(getOwnInfo())
     }
   , [])
 
@@ -68,6 +73,17 @@ function Home({children}) {
           <section className={styles.leftone}>
             <h3 className={styles.footertitle}>By Alexey Pavlov</h3>
             <ul className={styles.footertitle__items}>
+            
+            <li className={styles.footertitle__item}>
+                <Image
+                  src={"https://www.google.com/images/icons/product/googlemail-128.png"}
+                  alt="email"
+                  className={styles.footertitle__img}
+                  width='30px'
+                  height='30px'
+                />
+                uapavlof@gmail.com
+              </li>
               <li className={styles.footertitle__item}>
                 <Image
                   src={"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/2048px-Instagram_icon.png"}
@@ -90,7 +106,7 @@ function Home({children}) {
               </li>
               <li className={styles.footertitle__item}>
                 <Image
-                  src="https://cdn.icon-icons.com/icons2/70/PNG/512/viber_14147.png"
+                  src="https://play-lh.googleusercontent.com/lB6Ro6pjPw17G8HnTvv_qerC2yMGlvjVpryNXoeKfxyglyB8Ljk1HUxmegKU85acTmQ"
                   alt="viber"
                   className={styles.footertitle__img}
                   width='30px'

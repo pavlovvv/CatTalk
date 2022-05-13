@@ -2,8 +2,8 @@ import React from "react";
 import style from "./NavDrawer.module.css";
 import logo from "../../images/catlogo1.png";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import GroupIcon from "@mui/icons-material/Group";
 import LoginIcon from "@mui/icons-material/Login";
+import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import { Stack } from "@mui/material";
 import MessageIcon from "@mui/icons-material/Message";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
@@ -34,13 +34,13 @@ const useStyles = makeStyles({
 export default function NavDrawer(props) {
   const classes = useStyles();
 
-  const navItems = ["Profile", "Messages", "Users", "News", "Settings"];
-  const linkItems = ["/profile", "/token", "/profile", "/profile", "/profile"];
+  const navItems = ["Profile", "Messages", "Leaderboard", "News", "Settings"];
+  const linkItems = ["/profile", "/token", "/leaderboard", "/news", "/settings"];
 
   const Icons = [
     AccountCircleIcon,
     MessageIcon,
-    GroupIcon,
+    LeaderboardIcon,
     NewspaperIcon,
     SettingsIcon,
   ];
@@ -48,9 +48,9 @@ export default function NavDrawer(props) {
   const theme = createTheme({
     palette: {
       secondary: {
-        main: "#85C88A",
+        main: "#85C88A"
       },
-    },
+    }
   });
 
   const isAuthed = useSelector(state => state.sign.isAuthed) 
@@ -85,6 +85,7 @@ export default function NavDrawer(props) {
                 variant="outlined"
                 color="secondary"
                 startIcon={<LoginIcon />}
+                sx={{color: "#85C88A"}}
               >
                 Log in
               </Button>

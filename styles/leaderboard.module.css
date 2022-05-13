@@ -1,0 +1,64 @@
+
+
+.leaderboardPage {
+	background-color: #333C83;
+    min-height: 70vh;
+    margin: 0;
+}
+
+.container {
+	max-width: 1605px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 10px 15px;
+}
+
+
+.panel {
+	background-color: rgb(5, 30, 52); 
+    /* #8280FF */
+	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+	border-radius: 5px;
+	overflow: hidden;
+	color: #000000
+}
+
+.panel__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.panel__top {
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+@media(max-width: 714px) {
+    .panel__top {
+        flex-direction: column;
+    }
+
+    .panel__topList {
+        align-self: flex-start;
+    }
+
+    .panel__topSearch {
+        width: 100%;
+    }
+}
+
+.panel_body {
+    margin: 100px 0;
+}
+
+.panel__inner {
+    padding: 20px
+}
+
+.panel__users {
+    margin-top: 50px;
+}

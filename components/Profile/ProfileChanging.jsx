@@ -12,8 +12,45 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import {updateOwnInfo, setProfileError} from '../../redux/signSlice.js'
 import { useEffect, useState } from "react";
+import styled from "@emotion/styled";
+
+
+const StyledTextField = styled(TextField)({
+  "& label": {
+    color: "#fff",
+  },
+  "& label.Mui-focused": {
+    color: "#fff",
+  },
+  "&:hover .MuiInput-underline:hover:before": {
+    borderBottomColor: "#fff",
+  },
+  "&:hover .MuiInput-underline:hover:after": {
+    borderBottomColor: "#fff",
+  },
+  "& .MuiInput-underline:before": {
+    borderBottomColor: "#fff",
+  },
+  "& .MuiInput-underline:after": {
+    borderBottomColor: "#fff",
+  },
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      borderColor: "#fff",
+    },
+    "&:hover fieldset": {
+      borderColor: "#fff",
+      borderWidth: 2,
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#fff",
+    },
+  },
+});
+
 
 export default function ProfileChanging(props) {
+
 
     const dispatch = useDispatch();
     const isProfileUpdatingConfirmed = useSelector(state => state.sign.isProfileUpdatingConfirmed)
@@ -85,7 +122,7 @@ setUpdatingConfirmed(true)
             <div className={s.info__infoItems}>
               <span className={s.info__infoItemName}>name</span>
               <span className={s.info__infoItemValue}>
-                <TextField
+                <StyledTextField
                   id="name"
                   label="Name"
                   variant="outlined"
@@ -99,7 +136,8 @@ setUpdatingConfirmed(true)
                           marginTop: "15px",
                           width: "100%"
                         }
-                      : { input: { color: "#E9D5DA" } } //DADDFC
+                      : { 
+                        input: { color: "#E9D5DA" } } //DADDFC
                   }
                   error={!!errors.name}
                   helperText={errors.name && errors.name.message}
@@ -128,7 +166,7 @@ setUpdatingConfirmed(true)
             <div className={s.info__infoItems}>
               <span className={s.info__infoItemName}>surname</span>
               <span className={s.info__infoItemValue}>
-                <TextField
+                <StyledTextField
                   id="surname"
                   label="Surname"
                   variant="outlined"
@@ -171,7 +209,7 @@ setUpdatingConfirmed(true)
             <div className={s.info__infoItems}>
               <span className={s.info__infoItemName}>username</span>
               <span className={s.info__infoItemValue}>
-                <TextField
+                <StyledTextField
                   id="username"
                   label="Username"
                   variant="outlined"
@@ -232,7 +270,7 @@ setUpdatingConfirmed(true)
             <div className={s.info__infoItems}>
               <span className={s.info__infoItemName}>age</span>
               <span className={s.info__infoItemValue}>
-                <TextField
+                <StyledTextField
                   id="age"
                   label="Age"
                   variant="outlined"
@@ -269,7 +307,7 @@ setUpdatingConfirmed(true)
             <div className={s.info__infoItems}>
               <span className={s.info__infoItemName}>location</span>
               <span className={s.info__infoItemValue}>
-                <TextField
+                <StyledTextField
                   id="location"
                   label="Location"
                   variant="outlined"

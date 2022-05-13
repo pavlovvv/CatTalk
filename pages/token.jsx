@@ -45,6 +45,8 @@ const StyledTextField = styled(TextField)({
   },
 });
 
+
+
 function TokenPage() {
 
 
@@ -102,11 +104,14 @@ function TokenPage() {
   };
 
 useEffect(() => {
+  debugger
   if (foundToken) {
     router.push(`/chat/join/${foundToken}`)
     dispatch(setFoundToken({token: null}))
   }
 }, [foundToken])
+
+
 
   return (
     <MainLayout>
@@ -219,6 +224,7 @@ useEffect(() => {
                       onClose={handlePopoverClose}
                       disableRestoreFocus
                     >
+                      
                       <Typography sx={{ p: 1 }}>{!isCopied ? 'Click to copy' : 'Copied!'}</Typography>
                     </Popover>
                   </div>

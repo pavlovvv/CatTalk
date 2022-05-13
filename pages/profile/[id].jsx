@@ -38,7 +38,7 @@ export async function getServerSideProps({params}) {
     }, [props])
   
   const statistics = [
-    "Total chats", "Total messages sent", "Total characters entered"
+    "Total chats", "Total messages sent", "Total entered characters"
   ];
 
 
@@ -311,7 +311,7 @@ const stringAvatar = name => {
                       width: '100%'
                     }}
                   >
-                    You have no friends
+                    He/she has no friends
                   </Alert></div>)}
 
                   </div>

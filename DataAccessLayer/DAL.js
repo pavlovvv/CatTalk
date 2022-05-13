@@ -36,6 +36,11 @@ export const API = {
         updateOwnInfo: (name, surname, username, age, location) => {
             return instance.put(`auth/updateMyOwnInfo`, {name, surname, username, age, location})
                 .then(response => response)
+        },
+
+        getAllUsers: () => {
+            return instance.get(`users/get?count=100`)
+                .then(response => response)
         }
     },
 
@@ -70,16 +75,29 @@ export const API = {
         enterCharacter: () => {
             return instance.post(`chat/enterCharacter`)
                 .then(response => response)
+        }        
+    },
+
+    usersAPI: {
+        getUsers: (page = 0) => {
+            return instance.get(`users/get?page=${page}`)
+                .then(response => response)
+        },
+
+        getByMostChats: (page = 0) => {
+            return instance.get(`users/mostChats?page=${page}`)
+                .then(response => response)
+        },
+
+        getByMostSentMessages: (page = 0) => {
+            return instance.get(`users/mostSentMessages?page=${page}`)
+                .then(response => response)
+        },
+
+        getByMostEnteredCharacters: (page = 0) => {
+            return instance.get(`users/mostCharactersEntered?page=${page}`)
+                .then(response => response)
         }
         
-        // leave: (token) => {
-        //     return axios.post(`https://cattalkapi.herokuapp.com/chat/leave`, {token} , {
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         keepalive: true
-        //     })
-        //         .then(response => response)
-        // }
     }
 }

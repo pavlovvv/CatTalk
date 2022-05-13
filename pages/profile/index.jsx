@@ -12,7 +12,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
  function Profile(props) {
 
   const stats = [
-    "Total chats", "Total messages sent", "Total characters entered"
+    "Total chats", "Total messages sent", "Total entered characters"
   ];
 
   const friends = [

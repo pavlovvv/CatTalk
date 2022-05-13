@@ -69,6 +69,10 @@ export const getOwnInfo = createAsyncThunk(
     async function (_, {rejectWithValue, dispatch}) {
          try {
 
+            const usersRes = await API.signAPI.getAllUsers()
+
+            dispatch(setUsers({allUsers: usersRes.data.items}))
+
             const response = await API.signAPI.getOwnInfo()
 
             dispatch(setUser({data: response.data}))
@@ -109,6 +113,7 @@ const signSlice = createSlice({
             stats: [],
             friends: [],
         },
+        allUsers: [],
         isRegConfirmed: false,
         error: null,
         logInError: null,
@@ -160,6 +165,24 @@ const signSlice = createSlice({
             state.isAuthFulfilled = true
         },
 
+        setUsers(state, action) {
+            state.allUsers = []
+            action.payload.allUsers.forEach(user => {
+                const data = {
+                    id: user.id, 
+                    avatar: user.info.avatar, 
+                    name: user.info.name,
+                    surname: user.info.surname,
+                    username: user.info.username,
+                    stats: user.stats,
+                    data: user.info.name.toLowerCase() + ' ' + user.info.surname.toLowerCase() + ' ' + user.info.username.toLowerCase()
+                }
+                state.allUsers.push(data)
+
+            })
+
+        },
+
         setAuthFulfilled(state, action) {
             state.isAuthFulfilled = action.payload.isAuthFulfilled
         },
@@ -190,7 +213,7 @@ const signSlice = createSlice({
 
 export const {
     setUsername, confirmReg, setError, setLogInError, setUser, setPending, setAuthFulfilled, setAuth, 
-    setProfileUpdatingConfirmed, setProfileError
+    setProfileUpdatingConfirmed, setProfileError, setUsers
 } = signSlice.actions;
 
 

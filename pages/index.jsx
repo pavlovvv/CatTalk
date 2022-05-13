@@ -51,7 +51,7 @@ export default function Home(props) {
           >
             <h1 className={style.welcome__title}>Welcome to CatTalk</h1>
             <h2 className={style.welcome__text}>
-              A service for one-time correspondence.
+              A service for one-time conversations.
             </h2>
             <h2 className={style.welcome__text}>
               Let`s take a look inside and &nbsp;

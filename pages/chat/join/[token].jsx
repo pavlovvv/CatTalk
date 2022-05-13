@@ -72,10 +72,6 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   const [connected, setConnected] = useState(false)
   const [isPending, setPending] = useState(false)
   const [error, setError] = useState(null)
-  const [focused, setFocused] = useState(false)
-
-  const onFocus = () => setFocused(true)
-  const onBlur = () => setFocused(false)
 
   authRef.current = useSelector((state) => state.sign.userData)
 
@@ -134,14 +130,6 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 
   }, []);
-
-
-
-  useEffect(() => { 
-    if (focused) {
-      router.push("#last");
-    }
-  }, [focused])
 
 
   function connect() {
@@ -715,8 +703,6 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
         <section className={s.bottom}>
           <form onSubmit={onSubmit} className={s.bottom}>
             <TextField
-              onFocus={onFocus}
-              onBlur={onBlur}
               id="outlined-basic"
               placeholder="Write"
               variant="outlined"
