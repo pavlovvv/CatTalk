@@ -493,7 +493,7 @@ export default function Leaderboard(props) {
                                                     </TableHead>
                                                     <TableBody >
                                                         {rows.map((row, idx) => (
-                                                            <Row row={row} idx={idx} />
+                                                            <Row key={idx} row={row} idx={idx} />
                                                         ))}
                                                     </TableBody>
                                                 </Table>
