@@ -20,7 +20,7 @@ export default function News(props) {
                                     <div className={s.newsPage__panelText}>
                                     Over a month of development...
                                     <br />
-                                    Over 5k lines of code...
+                                    Over 8k lines of code...
                                     </div>
 
                                     <div className={s.newsPage__panelImage}>
@@ -28,7 +28,7 @@ export default function News(props) {
                                     </div>
                                 </div>
                                 <div className={s.newsPage__panelDate}>
-                                        ??/??/2022
+                                        24/05/2022
                                 </div>
 
                             </div>
