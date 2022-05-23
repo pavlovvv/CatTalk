@@ -332,7 +332,7 @@ function Settings(props) {
                             pattern: {
                               // value: /@+[a-z]+$/,
                               value: /.*\B@(?=\w{5,32}\b)[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*.*/,
-                              message: 'Not telegram account'
+                              message: 'Not telegram account. Please, start with @'
                             }
                           })}
                         />
