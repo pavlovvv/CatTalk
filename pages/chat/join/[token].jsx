@@ -21,6 +21,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { setChatPage, join, sendChatMessage, enterCharacter } from "../../../redux/chatSlice.js";
 import { useRouter } from "next/router";
+import { setDynamicPage } from "../../../redux/signSlice.js";
 import { motion } from "framer-motion";
 import { getConnectedUsers } from "../../../redux/tokenSlice.js";
 
@@ -57,7 +58,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
- function Chat(props) {
+function Chat(props) {
 
   const dispatch = useDispatch()
   const router = useRouter()
@@ -76,25 +77,14 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   authRef.current = useSelector((state) => state.sign.userData)
 
 
-  
+
   useEffect(() => {
-    dispatch(setChatPage({onChatPage: true}));
+    dispatch(setChatPage({ onChatPage: true }));
+    dispatch(setDynamicPage({ isDynamicPage: true }))
     isLeft.current = false
-    window.addEventListener('beforeunload', (evt) =>{
+    window.addEventListener('beforeunload', (evt) => {
+
       evt.preventDefault()
-      // if(!isLeft.current) {
-      //   fetch('https://cattalkapi.herokuapp.com/chat/leave/', {
-      //     method:'post',
-      //     headers:{
-      //         'Content-Type': 'application/json',
-      //     },
-      //     body: JSON.stringify({
-      //        token: token
-      //     }),
-      //     keepalive: true // this is important!
-      // })
-      //   isLeft.current = true
-      // }
 
       const message = {
         event: "disconnection",
@@ -113,17 +103,17 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     return function disconnection() {
 
       // if (count.current > 1) {
-        console.log('unmount disconnection')
-        const message = {
-          event: "disconnection",
-          username: authRef.current.info[2]?.username,
-          userId: authRef.current.info[4]?.id,
-          id: Date.now()
-        };
-        socket.current?.send(JSON.stringify(message));
-        socket.current?.close()
+      console.log('unmount disconnection')
+      const message = {
+        event: "disconnection",
+        username: authRef.current.info[2]?.username,
+        userId: authRef.current.info[4]?.id,
+        id: Date.now()
+      };
+      socket.current?.send(JSON.stringify(message));
+      socket.current?.close()
 
-        dispatch(setChatPage({onChatPage: false}));
+      dispatch(setChatPage({ onChatPage: false }));
       // }
       // count.current = 2
     }
@@ -148,31 +138,31 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
         id: Date.now(),
       };
       socket.current.send(JSON.stringify(message));
-      dispatch(join({token}))
+      dispatch(join({ token }))
     };
     socket.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
       if (message.event === 'connection' || message.event === 'disconnection') {
         setTimeout(() => {
-          dispatch(getConnectedUsers({token}))
+          dispatch(getConnectedUsers({ token }))
         }, 1000)
       }
       setMessages((prev) => [...prev, message]);
       router.push("#last");
     };
     socket.current.onclose = () => {
-      if(!isLeft.current) {
+      if (!isLeft.current) {
         // dispatch(leave({token}))
         fetch('https://cattalkapi.herokuapp.com/chat/leave/', {
-          method:'post',
-          headers:{
-              'Content-Type': 'application/json',
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-             token: token
+            token: token
           }),
           keepalive: true // this is important!
-      })
+        })
         isLeft.current = true
       }
 
@@ -254,7 +244,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
                         <Image
                           width="80px"
                           height="80px"
-                          className={s.entrancePanel__avatar}
+                          className={s.userAvatar}
                           src={authData.info[7].avatar}
                           alt="content__img"
                         />
@@ -289,7 +279,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
                     disabled={isPending}
                   >
                     {isPending ? <CircularProgress size={30} sx={{ color: "#000000" }} /> : 'JOIN'}
-                  </Button> 
+                  </Button>
                   {error && (
                     <Alert
                       severity="error"
@@ -336,20 +326,20 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     <MainLayout>
       <div className={s.chatPage}>
         <section className={s.chatHeader}>
-            <Button
-                variant="contained"
-                color="error"
-                startIcon={<Logout />}
-                sx={mw369px ? {width: '80%', margin: '20px'} : {width: '150px', margin: '20px'}}
-                onClick={() => {
-                  router.push('/token')
-                }}
-              >
-                Leave
-              </Button>
-              <Typography variant='overline' sx={{color: '#fff', fontSize: '15px'}}>
-                Connected users: {connectedUsersCount}
-              </Typography>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<Logout />}
+            sx={mw369px ? { width: '80%', margin: '20px' } : { width: '150px', margin: '20px' }}
+            onClick={() => {
+              router.push('/token')
+            }}
+          >
+            Leave
+          </Button>
+          <Typography variant='overline' sx={{ color: '#fff', fontSize: '15px' }}>
+            Connected users: {connectedUsersCount}
+          </Typography>
         </section>
         <section className={s.chat}>
           <div className={s.messages + " " + s.chat__messages}>
@@ -384,25 +374,25 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
                           )}
                           {msg.event === "disconnection" && (
                             <div className={s.messages__connection}>
-                            <div className={s.connectionContainer}>
-                              A user &quot;
-                              <Link href={`/profile/${msg.userId}`} passHref>
-                                <a target="_blank" rel="noopener noreferrer">
-                                  <span className={s.messages__connectionUsername}>
-                                    {msg.username}
-                                  </span>
-                                </a>
-                              </Link>
-                              &quot; has left
+                              <div className={s.connectionContainer}>
+                                A user &quot;
+                                <Link href={`/profile/${msg.userId}`} passHref>
+                                  <a target="_blank" rel="noopener noreferrer">
+                                    <span className={s.messages__connectionUsername}>
+                                      {msg.username}
+                                    </span>
+                                  </a>
+                                </Link>
+                                &quot; has left
+                              </div>
                             </div>
-                          </div>
                           )}
                           {msg.event === "own disconnection" && (
                             <div className={s.messages__connection}>
-                            <div className={s.connectionContainer}>
-                              You have been disconnected
+                              <div className={s.connectionContainer}>
+                                You have been disconnected
+                              </div>
                             </div>
-                          </div>
                           )}
                           {msg.event === "message" && (
                             <div className={s.messages__message}>
@@ -552,19 +542,19 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
                       )}
                       {msg.event === "disconnection" && (
                         <div className={s.messages__connection}>
-                              <div className={s.connectionContainer}>
-                                A user &quot;
-                                <Link href={`/profile/${msg.userId}`} passHref>
-                                  <a target="_blank" rel="noopener noreferrer">
-                                    <span className={s.messages__connectionUsername}>
-                                      {msg.username}
-                                    </span>
-                                  </a>
-                                </Link>
-                                &quot; has left
-                              </div>
-                            </div>
-                      )}                      
+                          <div className={s.connectionContainer}>
+                            A user &quot;
+                            <Link href={`/profile/${msg.userId}`} passHref>
+                              <a target="_blank" rel="noopener noreferrer">
+                                <span className={s.messages__connectionUsername}>
+                                  {msg.username}
+                                </span>
+                              </a>
+                            </Link>
+                            &quot; has left
+                          </div>
+                        </div>
+                      )}
                       {msg.event === "message" && (
                         <div className={s.messages__message}>
                           {authData.info[2].username === msg.username ? (
@@ -739,12 +729,12 @@ function Chat2(props) {
 
   const isAuthed = useSelector((state) => state.sign.isAuthed);
   const isAuthFulfilled = useSelector(state => state.sign.isAuthFulfilled)
-  const router = useRouter()  
+  const router = useRouter()
 
-  useEffect(()=> {
+  useEffect(() => {
     if (!isAuthed && isAuthFulfilled) {
 
-        router.push('/signup')
+      router.push('/signup')
 
     }
   }, [isAuthFulfilled])

@@ -95,8 +95,20 @@ function Login(props) {
     showPassword: false,
   });
 
+  const {
+    register,
+    watch,
+    formState: { errors, isValid },
+    handleSubmit,
+    reset,
+    setValue
+  } = useForm({
+    mode: "onBlur",
+  });
+
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
+    setValue(prop, event.target.value)
   };
 
   const handleClickShowPassword = () => {
@@ -123,21 +135,12 @@ function Login(props) {
 
   const mw600px = useMediaQuery("(max-width:600px)");
 
-  const {
-    register,
-    watch,
-    formState: { errors, isValid },
-    handleSubmit,
-    reset,
-  } = useForm({
-    mode: "onBlur",
-  });
-
   const dispatch = useDispatch();
 
   const logInError = useSelector((state) => state.sign.logInError);
 
   const onSubmit = ({ email, password }) => {
+    debugger
     dispatch(auth({ email: email.replace(/\s+/g, ''), password }));
   };
 
@@ -202,9 +205,8 @@ function Login(props) {
                           Password
                         </InputLabel>
                         <StyledInput
-                          required
                           {...register("password", {
-                            required: "Fieled must be filled",
+                            // required: "Field must be filled",
                             minLength: {
                               value: 8,
                               message: "Minimum 8 characters",
@@ -216,9 +218,9 @@ function Login(props) {
                           })}
                           id="password"
                           type={values.showPassword ? "text" : "password"}
-                          value={values.password}
+                          // value={values.password}
                           onChange={handleChange("password")}
-                          error={!!errors.password}
+                          // inputRef={password}
                           sx={{
                             "&:after": {
                               borderBottom: "2px solid #fff !important",
@@ -237,6 +239,7 @@ function Login(props) {
                                 aria-label="toggle password visibility"
                                 onClick={handleClickShowPassword}
                                 onMouseDown={handleMouseDownPassword}
+                                sx={{color: '#fff'}}
                               >
                                 {values.showPassword ? (
                                   <VisibilityOff />

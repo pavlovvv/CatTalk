@@ -5,6 +5,7 @@ import { useState } from "react";
 import Signup from "../components/Signup/Signup.jsx";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
+import Link from "next/link";
 
 
 export default function Home(props) {
@@ -69,12 +70,14 @@ export default function Home(props) {
                 Sign up
               </Button>
               : 
+              <Link href='/token' passHref>
               <Button
               variant="contained"
               color="success"
             >
               WRITE YOUR FIRST MESSAGE
-            </Button>}
+            </Button>
+            </Link>}
               
             </h2>
           </motion.div>

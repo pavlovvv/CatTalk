@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['upload.wikimedia.org', 'cdn.icon-icons.com'],
+    domains: ['localhost', 'upload.wikimedia.org', 'cdn.icon-icons.com'],
     loader: 'akamai',
     path: ''
   },

@@ -70,10 +70,17 @@ export default function NavDrawer(props) {
         <div className={style.container}>
           <section className={style.header}>
             <h1 className={style.header__title}>CatTalk</h1>
-            <Avatar src={logo.src} alt="CatTalk" className={style.header__logo}
+            {/* <Avatar src={logo.src} alt="CatTalk" className={style.header__logo}
             sx={{width: '72px', height: '58px'}} 
             //  width='72px' height='58px' 
-            />
+            /> */}
+            <Image
+                src={'https://cat-talk-s3.s3.eu-central-1.amazonaws.com/2022-05-18T15-42-07.837Zcatlogo1.png'}
+                alt={"CatTalk"}
+                width='72px'
+                height='58px'
+                style={{ borderRadius: '50%' }}
+              />
           </section>
         </div>
         <hr className={style.hr} />
@@ -85,13 +92,14 @@ export default function NavDrawer(props) {
                 variant="outlined"
                 color="secondary"
                 startIcon={<LoginIcon />}
+                size='large'
                 sx={{color: "#85C88A"}}
               >
                 Log in
               </Button>
               </Link>
               <Link href={'/signup'} passHref>
-                 <Button variant="contained" color="success">
+                 <Button variant="contained" color="success" size='large'>
                     Sign up
                  </Button>
               </Link>
@@ -105,6 +113,7 @@ export default function NavDrawer(props) {
                 onClick={() => {
                   dispatch(logOut())
                 }}
+                size='large'
               >
                 Log out
               </Button>

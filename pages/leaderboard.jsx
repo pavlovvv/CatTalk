@@ -28,7 +28,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Image from 'next/image';
 import Link from 'next/link';
-import { sortByMostChats, sortByMostSentMessages, sortByMostEnteredCharacters } from '../redux/usersSlice.js';
+import { sortByMostChats, sortByMostSentMessages, sortByMostEnteredCharacters, searchUsers } from '../redux/usersSlice.js';
 
 
 const Search = styled("div")(({ theme }) => ({
@@ -81,7 +81,6 @@ function Row(props) {
             children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
         };
     };
-
     return (
         <>
             <TableRow sx={{ '& > *': { borderBottom: 'unset' }, display: 'flex', justifyContent: 'flex-start' }}>
@@ -207,23 +206,37 @@ export default function Leaderboard(props) {
         };
     }
 
+    const filteredUsers = useSelector(state => state.users.filteredUsers)
+
     useEffect(() => {
         if (usersData.length === 0 && isAuthFulfilled) {
 
             dispatch(getUsers({ page: page - 1 }))
         }
 
-        if (usersData) {
-            setRows([])
-            usersData.forEach((user, idx) => {
-
-                const data = createUsersData(user.info.username, user.info.id, user.stats.totalChats, user.stats.totalMessagesSent,
-                    user.stats.totalCharactersEntered, user.info.name, user.info.surname, user.info.avatar)
+        if(filteredUsers.length !== 0 || handlerSearchText.length !== 0) {
+            setRows([]) 
+            filteredUsers.forEach(el => {
+                const data = createUsersData(el.username, el.id, el.stats.totalChats, el.stats.totalMessagesSent,
+                    el.stats.totalCharactersEntered, el.name, el.surname, el.avatar)
+    
                 setRows((prev) => [...prev, data])
-
-            })
+            });
         }
-    }, [usersData, isAuthFulfilled])
+
+        else {
+            if (usersData) {
+                setRows([])
+                usersData.forEach((user, idx) => {
+    
+                    const data = createUsersData(user.info.username, user.info.id, user.stats.totalChats, user.stats.totalMessagesSent,
+                        user.stats.totalCharactersEntered, user.info.name, user.info.surname, user.info.avatar)
+                    setRows((prev) => [...prev, data])
+    
+                })
+            }
+        }
+    }, [usersData, isAuthFulfilled, filteredUsers])
 
     const mw767px = useMediaQuery("(max-width:767px)");
     const mw715px = useMediaQuery("(max-width:715px)");
@@ -251,26 +264,16 @@ export default function Leaderboard(props) {
         };
     };
 
-    const allUsers = useSelector(state => state.sign.allUsers)
+    const [handlerSearchText, setSearchText] = useState("")
 
     const searchHandler = (e) => {
         let lowerCase = e.target.value.toLowerCase();
         setRows([])
         setSort('Search')
-        allUsers.filter((el) => {
-            if (lowerCase.length > 1) {
-                
-              return el.data.toLowerCase().includes(lowerCase)
-      
-          }
-        }
-        ).forEach(el => {
+        setSearchText(lowerCase)
 
-            const data = createUsersData(el.username, el.id, el.stats.totalChats, el.stats.totalMessagesSent,
-                el.stats.totalCharactersEntered, el.name, el.surname, el.avatar)
 
-            setRows((prev) => [...prev, data])
-        });
+        dispatch(searchUsers({searchText: lowerCase}))
 
         if(lowerCase.length===0) {
             setSort(sort)
@@ -284,7 +287,6 @@ export default function Leaderboard(props) {
         }
 
       };
-    
 
 
     return (
@@ -434,7 +436,7 @@ export default function Leaderboard(props) {
                                                 <TableBody>
                                                     {rows.map((row, i) => (
                                                         <TableRow
-                                                            key={row.username}
+                                                            key={i}
                                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                                         >
                                                             <TableCell sx={{ fontFamily: 'Quicksand' }}>
@@ -491,7 +493,7 @@ export default function Leaderboard(props) {
                                                     </TableHead>
                                                     <TableBody >
                                                         {rows.map((row, idx) => (
-                                                            <Row key={row.username} row={row} idx={idx} />
+                                                            <Row key={i} row={row} idx={idx} />
                                                         ))}
                                                     </TableBody>
                                                 </Table>

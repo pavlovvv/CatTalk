@@ -5,8 +5,7 @@ import { API } from '../DataAccessLayer/DAL';
 export const signUp = createAsyncThunk(
     'sign/signUp',
     async function ({email, password, firstName, lastName, username}, {rejectWithValue, dispatch}) {
-        try {
-            
+        try {        
             dispatch(setPending({isPending: true}))
             const response = await API.signAPI.signUp(email, password, firstName, lastName, username)
 
@@ -30,7 +29,6 @@ export const auth = createAsyncThunk(
     'sign/auth',
     async function ({email, password}, {rejectWithValue, dispatch}) {
         try {
-    
             dispatch(setPending({isPending: true}))
             const response = await API.signAPI.auth(email, password)
 
@@ -56,7 +54,6 @@ export const logOut = createAsyncThunk(
     'sign/logOut',
     async function (_, {rejectWithValue, dispatch}) {
         try {
-
             const response = await API.signAPI.logOut()
             dispatch(setAuth({isAuthed: false}))
         } catch (error) {
@@ -68,17 +65,17 @@ export const getOwnInfo = createAsyncThunk(
     'sign/getInfo',
     async function (_, {rejectWithValue, dispatch}) {
          try {
-
-            const usersRes = await API.signAPI.getAllUsers()
-
-            dispatch(setUsers({allUsers: usersRes.data.items}))
-
+            dispatch(setProfileDone({isDone: true}))
+            
             const response = await API.signAPI.getOwnInfo()
 
             dispatch(setUser({data: response.data}))
+
+            dispatch(setProfileDone({isDone: false}))
         }
          catch (error) {
             dispatch(setAuthFulfilled({isAuthFulfilled: true}))
+            dispatch(setProfileDone({isDone: false}))
         }
     }
 );
@@ -87,7 +84,6 @@ export const updateOwnInfo = createAsyncThunk(
     'sign/updateInfo',
     async function ({name, surname, username, age, location}, {rejectWithValue, dispatch}) {
          try {
-
             dispatch(setPending({isPending: true}))
             const response = await API.signAPI.updateOwnInfo(name, surname, username, age, location)
 
@@ -124,7 +120,9 @@ const signSlice = createSlice({
         uniKey: 1,
         isAuthed: false,
         isAuthFulfilled: false,
+        isDynamicPage: false,
         isPending: false,
+        isProfileDone: false
     },
     reducers: {
 
@@ -155,6 +153,10 @@ const signSlice = createSlice({
         setAuth(state, action) {
             state.isAuthed = action.payload.isAuthed
             state.uniKey++
+        },
+
+        setDynamicPage(state, action) {
+            state.isDynamicPage = action.payload.isDynamicPage
         },
 
         setUser(state, action) {
@@ -191,6 +193,10 @@ const signSlice = createSlice({
             state.isPending = action.payload.isPending
         },
 
+        setProfileDone(state, action) {
+            state.isProfileDone = action.payload.isDone
+        },
+
         setProfileUpdatingConfirmed(state, action) {
             state.isProfileUpdatingConfirmed = action.payload.isProfileUpdatingConfirmed
         },
@@ -198,22 +204,14 @@ const signSlice = createSlice({
         setProfileError(state, action) {
             state.profileError = action.payload.profileError
         }
-        // toggleComplete(state, action) {
-        //     const toggledTodo = state.todos.find(todo => todo.id === action.payload.id);
-        //     toggledTodo.completed = !toggledTodo.completed;
-        // },
-        // removeTodo(state, action) {
-        //     state.todos = state.todos.filter(todo => todo.id !== action.payload.id);
-        // }
-
        
     },
 });
 
 
 export const {
-    setUsername, confirmReg, setError, setLogInError, setUser, setPending, setAuthFulfilled, setAuth, 
-    setProfileUpdatingConfirmed, setProfileError, setUsers
+    setUsername, confirmReg, setError, setLogInError, setUser, setDynamicPage, setPending, setAuthFulfilled, setAuth, 
+    setProfileUpdatingConfirmed, setProfileError, setUsers, setProfileDone
 } = signSlice.actions;
 
 

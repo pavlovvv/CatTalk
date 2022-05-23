@@ -3,13 +3,17 @@ import Image from "next/image";
 import s from "../../styles/profile.module.css";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { Button, createTheme, ThemeProvider, Alert, Avatar } from "@mui/material";
+import { Button, createTheme, ThemeProvider, Alert, Avatar, Popover, Typography } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import ProfileChanging from "../../components/Profile/ProfileChanging.jsx";
 import SettingsIcon from '@mui/icons-material/Settings';
+import Link from "next/link";
+import instagramIcon from '../../images/Instagram_icon.webp'
+import telegramIcon from '../../images/Telegram_icon.webp'
+import discordIcon from '../../images/discord-icon.svg'
 
 
- function Profile(props) {
+function Profile(props) {
 
   const stats = [
     "Total chats", "Total messages sent", "Total entered characters"
@@ -17,10 +21,10 @@ import SettingsIcon from '@mui/icons-material/Settings';
 
   const friends = [
     {
-        name: "Antony",
-        surname: "Taylor",
-        img: "https://static.vecteezy.com/system/resources/previews/002/275/847/large_2x/male-avatar-profile-icon-of-smiling-caucasian-man-vector.jpg?imwidth=96",
-      }
+      name: "Antony",
+      surname: "Taylor",
+      img: "https://static.vecteezy.com/system/resources/previews/002/275/847/large_2x/male-avatar-profile-icon-of-smiling-caucasian-man-vector.jpg?imwidth=96",
+    }
   ];
 
   const [infoOption, setInfo] = useState("info");
@@ -37,15 +41,39 @@ import SettingsIcon from '@mui/icons-material/Settings';
     },
   });
 
-const dispatch = useDispatch()
+  const dispatch = useDispatch()
 
-const isProfileUpdatingConfirmed = useSelector(state => state.sign.isProfileUpdatingConfirmed)
+  const isProfileUpdatingConfirmed = useSelector(state => state.sign.isProfileUpdatingConfirmed)
 
-const stringAvatar = name => {
-  return {
-    children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+  const stringAvatar = name => {
+    return {
+      children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+    };
+  }
+
+  const [anchorTelegramEl, setAnchorTelegramEl] = useState(null);
+  const [anchorDiscordEl, setAnchorDiscordEl] = useState(null);
+  const [isTelegramCopied, setTelegramCopy] = useState(false)
+  const [isDiscordCopied, setDiscordCopy] = useState(false)
+
+  const handlePopoverTelegramOpen = (event) => {
+    setAnchorTelegramEl(event.currentTarget);
   };
-}
+
+  const handlePopoverTelegramClose = () => {
+    setAnchorTelegramEl(null);
+  };
+
+  const handlePopoverDiscordOpen = (event) => {
+    setAnchorDiscordEl(event.currentTarget);
+  };
+
+  const handlePopoverDiscordClose = () => {
+    setAnchorDiscordEl(null);
+  };
+
+  const telegramOpen = Boolean(anchorTelegramEl);
+  const discordOpen = Boolean(anchorDiscordEl);
 
   return (
     <MainLayout>
@@ -62,10 +90,10 @@ const stringAvatar = name => {
                     src={authData.info[7].avatar}
                     alt="content__img"
                   /> :
-                  <Avatar {...stringAvatar(authData.info[0]?.name + ' ' + authData.info[1]?.surname)} 
-                  sx={{ bgcolor: '#2A2550', width: '150px', height: '150px', fontSize:'35px' }} />
-                }
-                  
+                    <Avatar {...stringAvatar(authData.info[0]?.name + ' ' + authData.info[1]?.surname)}
+                      sx={{ bgcolor: '#2A2550', width: '150px', height: '150px', fontSize: '35px' }} />
+                  }
+
                 </div>
                 <div className={s.top__logotext}>
                   <h2>{authData.info[0]?.name} {authData.info[1]?.surname}</h2>
@@ -78,113 +106,214 @@ const stringAvatar = name => {
             <div className={s.container}>
               <div className={s.info__inner}>
                 <div className={s.panel + " " + s.info__info}>
-                  {!isChanging ? 
-                  <div> 
-                    {isProfileUpdatingConfirmed && <Alert severity="success" color="primary" variant="filled" 
-                sx={{backgroundColor:'#4E9F3D', color:'#fff'}}>
-                  Updating confirmed
-                  </Alert>}
-
-                    {infoOption === "info" ? (
-                    <div>        
-                      <div className={s.info__menu}>
-                      
-                        <Button
-                          variant="contained"
-                          color="secondary"
-                          sx={{ width: "100px" }}
-                        >
-                          INFO
-                        </Button>
-                        <Button
-                          variant="contained"
-                          sx={{ width: "100px" }}
-                          onClick={() => {
-                            setInfo("stats");
-                          }}
-                        >
-                          STATISTICS
-                        </Button>
-
-                        <div className={s.info__settingsIcon} onClick={() => {
-                          setChanging(true)
-                        }}>
-                        <SettingsIcon fontSize="large"/>
-                      </div>
-
-                      </div>
-
-                      {authData.info.map((e, i) => {
-                        const key = Object.keys(e)
-                        const value = Object.values(e)
-
-                        return (
-                          <div key={i}>
-                            {(key[0] !== '_id' && key[0] !== 'instagramLink' && key[0] !== 'avatar') &&
-                          <div>
-                          <div className={s.info__infoItems}>
-                            <span className={s.info__infoItemName}>
-                              {key[0]}
-                            </span>
-                            <span className={s.info__infoItemValue}>
-                                  {value[0] ?? "unknown"}
-                            </span>
-                          </div>
-
-                          {i !== authData.info.length - 3 && (
-                            <hr className={s.hrUnder} />
-                          )}
-                        </div>  
-                            }
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
+                  {!isChanging ?
                     <div>
-                      <div className={s.info__menu}>
-                        <Button
-                          variant="contained"
-                          sx={{ width: "100px" }}
-                          onClick={() => {
-                            setInfo("info");
-                          }}
-                        >
-                          INFO
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="secondary"
-                          sx={{ width: "100px" }}
-                        >
-                          STATISTICS
-                        </Button>
-                      </div>
-                      {authData.stats.map((e, i) => {
-                        const value = Object.values(e)
-                        return (
-                          <div key={i}>
-                            <div className={s.info__infoItems}>
-                              <span className={s.info__infoItemName}>
-                                {stats[i]}
-                              </span>
-                              <span className={s.info__infoItemValue}>
-                               {value[0]}
-                              </span>
+                      {isProfileUpdatingConfirmed && <Alert severity="success" color="primary" variant="filled"
+                        sx={{ backgroundColor: '#4E9F3D', color: '#fff' }}>
+                        Updating confirmed
+                      </Alert>}
+
+                      {infoOption === "info" ? (
+                        <div>
+                          <div className={s.info__menu}>
+
+                            <Button
+                              variant="contained"
+                              color="secondary"
+                              sx={{ width: "125px" }}
+                            >
+                              INFO
+                            </Button>
+                            <Button
+                              variant="contained"
+                              sx={{ width: "125px" }}
+                              onClick={() => {
+                                setInfo("stats");
+                              }}
+                            >
+                              STATISTICS
+                            </Button>
+
+                            <div className={s.info__settingsIcon} onClick={() => {
+                              setChanging(true)
+                            }}>
+                              <SettingsIcon fontSize="large" />
                             </div>
 
-                            {i !== authData.stats.length - 1 && (
-                              <hr className={s.hrUnder} />
-                            )}
                           </div>
-                        );
-                      })}
-                    </div>
-                  )} </div> 
-                  :
-                  <ProfileChanging info={authData.info} setChanging={setChanging}/>
+
+                          {authData.info.map((e, i) => {
+                            const key = Object.keys(e)
+                            const value = Object.values(e)
+
+                            return (
+                              <div key={i}>
+                                {(key[0] !== '_id' && key[0] !== 'instagramLink' && key[0] !== 'telegramUsername'
+                                  && key[0] !== 'discordUsername' && key[0] !== 'avatar') &&
+                                  <div>
+                                    <div className={s.info__infoItems}>
+                                      <span className={s.info__infoItemName}>
+                                        {key[0]}
+                                      </span>
+                                      <span className={s.info__infoItemValue}>
+                                        {value[0] ?? "unknown"}
+                                      </span>
+                                    </div>
+
+                                    {i !== authData.info.length - 5 && (
+                                      <hr className={s.hrUnder} />
+                                    )}
+                                  </div>
+                                }
+                              </div>
+                            );
+                          })}
+                          <div className={s.info__links}>
+                            {authData.info[8]?.instagramLink && <div>
+                              <Link href={authData.info[8].instagramLink}>
+                                <a target='_blank'>
+                                  <Image src={instagramIcon.src}
+                                    width='50px'
+                                    height='50px' 
+                                    alt='instagramIcon'/>
+                                </a>
+                              </Link>
+                            </div>}
+                            {authData.info[9]?.telegramUsername && <div style={{cursor: 'pointer'}}>
+
+                              <Image src={telegramIcon.src}
+                                width='50px'
+                                height='50px'
+                                onMouseEnter={handlePopoverTelegramOpen}
+                                onMouseLeave={handlePopoverTelegramClose}
+                                alt='telegramIcon'
+                                onClick={() => { 
+                                  setTelegramCopy(true)
+                                  setDiscordCopy(false)
+                                  navigator.clipboard.writeText(authData.info[9].telegramUsername) 
+                                }}
+                              />
+
+                              <Popover
+                                id="mouse-over-popover"
+                                sx={{
+                                  pointerEvents: 'none',
+                                }}
+                                open={telegramOpen}
+                                anchorEl={anchorTelegramEl}
+                                anchorOrigin={{
+                                  vertical: 'bottom',
+                                  horizontal: 'left',
+                                }}
+                                transformOrigin={{
+                                  vertical: 'top',
+                                  horizontal: 'left',
+                                }}
+                                onClose={handlePopoverTelegramClose}
+                                disableRestoreFocus
+                                PaperProps={{
+                                  sx: {
+                                    backgroundColor: "rgb(5, 30, 52)",
+                                    color: "#fff"
+                                  }
+                                }}
+                              >
+                                <Typography sx={{ p: 1 }}>{!isTelegramCopied ? 'Click to copy' : 'Copied!'}</Typography>
+                              </Popover>
+
+                            </div>}
+
+                            {authData.info[10]?.discordUsername && <div style={{cursor: 'pointer'}}>
+
+                              <Image src={discordIcon.src}
+                                width='50px'
+                                height='50px'
+                                onMouseEnter={handlePopoverDiscordOpen}
+                                onMouseLeave={handlePopoverDiscordClose}
+                                alt='discordIcon'
+                                onClick={() => { 
+                                  setDiscordCopy(true)
+                                  setTelegramCopy(false)
+                                  navigator.clipboard.writeText(authData.info[10].discordUsername) 
+                                }}
+                              />
+
+                              <Popover
+                                id="mouse-over-popover"
+                                sx={{
+                                  pointerEvents: 'none',
+                                }}
+                                open={discordOpen}
+                                anchorEl={anchorDiscordEl}
+                                anchorOrigin={{
+                                  vertical: 'bottom',
+                                  horizontal: 'left',
+                                }}
+                                transformOrigin={{
+                                  vertical: 'top',
+                                  horizontal: 'left',
+                                }}
+                                onClose={handlePopoverDiscordClose}
+                                disableRestoreFocus
+                                PaperProps={{
+                                  sx: {
+                                    backgroundColor: "rgb(5, 30, 52)",
+                                    color: "#fff"
+                                  }
+                                }}
+                              >
+                                <Typography sx={{ p: 1 }}>{!isDiscordCopied ? 'Click to copy' : 'Copied!'}</Typography>
+                              </Popover>
+
+                            </div>}
+                          </div>
+
+                        </div>
+                      ) : (
+                        <div>
+                          <div className={s.info__menu}>
+                            <Button
+                              variant="contained"
+                              sx={{ width: "125px" }}
+                              onClick={() => {
+                                setInfo("info");
+                              }}
+                            >
+                              INFO
+                            </Button>
+                            <Button
+                              variant="contained"
+                              color="secondary"
+                              sx={{ width: "125px" }}
+                            >
+                              STATISTICS
+                            </Button>
+                          </div>
+                          {authData.stats.map((e, i) => {
+                            const value = Object.values(e)
+                            return (
+                              <div key={i}>
+                                <div className={s.info__infoItems}>
+                                  <span className={s.info__infoItemName}>
+                                    {stats[i]}
+                                  </span>
+                                  <span className={s.info__infoItemValue}>
+                                    {value[0]}
+                                  </span>
+                                </div>
+
+                                {i !== authData.stats.length - 1 && (
+                                  <hr className={s.hrUnder} />
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )} </div>
+                    :
+                    <ProfileChanging info={authData.info} setChanging={setChanging} />
                   }
-                  
+
                 </div>
 
                 <div className={s.panel + " " + s.info__friends}>
@@ -202,58 +331,65 @@ const stringAvatar = name => {
 
                   <div className={s.info__friendsItems}>
 
-                  {(authData.friends.length !== 0 && !isFriendsAdvanced) && (<div>
-                        {authData.friends.map((e, i) => {
-                          
-                          return(
-                            <div key={i}>
-                                {(i <= 2) && (<div
-                                className={
-                                  s.infoMemberItem +
-                                  " " +
-                                  s.infoMemberItem_margin_20px0
-                                }
-                              >
-                                <Image
-                                  width="75px"
-                                  height="75px"
-                                  className={s.infoMemberItem__ava}
-                                  src={e.img}
-                                  alt="ava"
-                                />
+                    {(authData.friends.totalFriendsCount !== 0 && !isFriendsAdvanced) && (<div>
+                      {authData.friends.confirmedFriends?.map((e, i) => {
 
-                                <div className={s.infoMemberItem__text}>
-                                  <span className={s.infoMemberItem__name}>
-                                    {e.name}
-                                  </span>
-                                  <br />
-                                  <span className={s.infoMemberItem__surname}>
-                                    {e.surname}
-                                  </span>
-                                </div>
-                                
+                        return (
+                          <div key={i}>
+                            {(i <= 2) && (
+                              <Link href={`/profile/${e.id}`}>
+                              <a target='_blank'>
+                                <div
+                              className={
+                                s.infoMemberItem +
+                                " " +
+                                s.infoMemberItem_margin_20px0
+                              }
+                            >
+                              {e.avatar ? <Image
+                                width="75px"
+                                height="75px"
+                                className={s.infoMemberItem__ava}
+                                src={e.avatar}
+                                alt="ava"
+                              /> : <Avatar {...stringAvatar(e.name + ' ' + e.surname)}
+                      sx={{ bgcolor: '#333C83', width: '75px', height: '75px', fontSize: '25px', fontFamily: 'Quicksand' }} />}
+
+                              <div className={s.infoMemberItem__text}>
+                                <span className={s.infoMemberItem__name}>
+                                  {e.name}
+                                </span>
+                                <br />
+                                <span className={s.infoMemberItem__surname}>
+                                  {e.surname}
+                                </span>
                               </div>
-                              )}
-                              {(i <= 1) && (
-                                <hr className={s.hrUnder} />
-                              )}
                             </div>
-                          )
-                        })}
-                       
-                        {authData.friends.length > 3 && <div className={s.showAndHide} onClick={() => {
-                          setFriendsAdvanced(true)
-                        }}>
-                            Show {authData.friends.length - 3} more 
-                        </div>}                        
-                            </div>
-                    )} 
-        
-                    {(authData.friends.length !== 0 && isFriendsAdvanced) && (
+                            </a>
+                            </Link>
+                            )}
+                            {(i !== authData.friends.confirmedFriends.length - 1 && i <= 1) && (
+                              <hr className={s.hrUnder} />
+                            )}
+                          </div>
+                        )
+                      })}
+
+                      {authData.friends.confirmedFriends?.length > 3 && <div className={s.showAndHide} onClick={() => {
+                        setFriendsAdvanced(true)
+                      }}>
+                        Show {authData.friends.confirmedFriends.length - 3} more
+                      </div>}
+                    </div>
+                    )}
+
+                    {(authData.friends.totalFriendsCount !== 0 && isFriendsAdvanced) && (
                       <div>
-                        {authData.friends.map((e, i) => {
+                        {authData.friends.confirmedFriends.map((e, i) => {
                           return (
                             <div key={i}>
+                              <Link href={`/profile/${e.id}`}>
+                              <a target='_blank'>
                               <div
                                 className={
                                   s.infoMemberItem +
@@ -261,13 +397,14 @@ const stringAvatar = name => {
                                   s.infoMemberItem_margin_20px0
                                 }
                               >
-                                <Image
-                                  width="75px"
-                                  height="75px"
-                                  className={s.infoMemberItem__ava}
-                                  src={e.img}
-                                  alt="ava"
-                                />
+                              {e.avatar ? <Image
+                                width="75px"
+                                height="75px"
+                                className={s.infoMemberItem__ava}
+                                src={e.avatar}
+                                alt="ava"
+                              /> : <Avatar {...stringAvatar(e.name + ' ' + e.surname)}
+                      sx={{ bgcolor: '#333C83', width: '75px', height: '75px', fontSize: '25px', fontFamily: 'Quicksand' }} />}
 
                                 <div className={s.infoMemberItem__text}>
                                   <span className={s.infoMemberItem__name}>
@@ -279,36 +416,38 @@ const stringAvatar = name => {
                                   </span>
                                 </div>
                               </div>
-                              {i !== authData.friends.length - 1 && (
+                              </a>
+                              </Link>
+                              {i !== authData.friends.totalFriendsCount - 1 && (
                                 <hr className={s.hrUnder} />
-                              )}  
+                              )}
                             </div>
-                            
+
                           );
                         })}
                         <div className={s.showAndHide} onClick={() => {
                           setFriendsAdvanced(false)
                         }}>
-                            Hide  
+                          Hide
                         </div>
                       </div>
                     )
                     }
-                    
-                    {authData.friends.length === 0 && (
-                        <div>
+
+                    {authData.friends.totalFriendsCount === 0 && (
+                      <div>
                         <Alert
-                    severity="info"
-                    color="primary"
-                    variant="filled"
-                    sx={{
-                      backgroundColor: "rgb(2, 136, 209)",
-                      color: "#fff",
-                      width: '100%'
-                    }}
-                  >
-                    You have no friends
-                  </Alert></div>)}
+                          severity="info"
+                          color="primary"
+                          variant="filled"
+                          sx={{
+                            backgroundColor: "rgb(2, 136, 209)",
+                            color: "#fff",
+                            width: '100%'
+                          }}
+                        >
+                          You have no friends
+                        </Alert></div>)}
 
                   </div>
                 </div>
@@ -321,20 +460,20 @@ const stringAvatar = name => {
   );
 }
 
- function Pro2file(props){
+function Pro2file(props) {
 
   const isAuthed = useSelector((state) => state.sign.isAuthed);
   const isAuthFulfilled = useSelector(state => state.sign.isAuthFulfilled)
-  const router = useRouter()  
+  const router = useRouter()
 
-  useEffect(()=> {
+  useEffect(() => {
     if (!isAuthed && isAuthFulfilled) {
 
-        router.push('/signup')
+      router.push('/signup')
 
     }
   }, [isAuthFulfilled])
-  
+
 
   return (
     <Profile {...props} />
@@ -344,7 +483,7 @@ const stringAvatar = name => {
 export default function InitialProfile(props) {
   const uniKey = useSelector(state => state.sign.uniKey)
 
-  return <Pro2file key={uniKey} {...props}/>
+  return <Pro2file key={uniKey} {...props} />
 }
 
 

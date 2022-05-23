@@ -102,7 +102,7 @@ setUpdatingConfirmed(true)
         main: "#E9D5DA",
       },
       error: {
-        main: "#9B0000",
+        main: "#FF4949",
       },
     },
   });
@@ -238,7 +238,7 @@ setUpdatingConfirmed(true)
                       message: "Maximum 15 characters",
                     },
                     pattern: {
-                      value: /^[A-Za-z0-9]+$/,
+                      value: /^[\w](?!.*?\.{2})[\w.]{1,28}[\w]$/,
                       message:
                         "Use only letters of the Latin alphabet",
                     },
@@ -346,7 +346,7 @@ setUpdatingConfirmed(true)
                       disabled={isPending}
                       sx={{ marginLeft: "20px",  marginBottom: "20px" }}
                     >
-                      {isPending ? <CircularProgress size={30} sx={{color: "#000000"}}/> : 'CONFIRM'}
+                      {isPending ? <CircularProgress size={30} sx={{color: "#fff"}}/> : 'CONFIRM'}
                     </Button>
                     <Button 
                       variant="outlined"

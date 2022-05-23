@@ -104,7 +104,6 @@ function TokenPage() {
   };
 
 useEffect(() => {
-  debugger
   if (foundToken) {
     router.push(`/chat/join/${foundToken}`)
     dispatch(setFoundToken({token: null}))

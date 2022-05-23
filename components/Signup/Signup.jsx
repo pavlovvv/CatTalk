@@ -111,8 +111,20 @@ export default function Signup(props) {
     showPassword: false,
   });
 
+  const {
+    register,
+    watch,
+    formState: { errors, isValid },
+    handleSubmit,
+    reset,
+    setValue
+  } = useForm({
+    mode: "onBlur",
+  });
+
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
+    setValue(prop, event.target.value)
   };
 
   const handleClickShowPassword = () => {
@@ -166,15 +178,15 @@ export default function Signup(props) {
     },
   };
 
-  const {
-    register,
-    watch,
-    formState: { errors, isValid },
-    handleSubmit,
-    reset,
-  } = useForm({
-    mode: "onBlur",
-  });
+  const onContinue = () => {
+      setHide(true);
+
+      setTimeout(() => {
+        setMakenHidden(true);
+      }, 1000);
+
+    
+  };
 
   const onSubmit = ({email, password, firstName, lastName, username}) => {
     dispatch(signUp({email: email.replace(/\s+/g, '').toLowerCase(), 
@@ -213,7 +225,7 @@ export default function Signup(props) {
 
               <div className={s.signup__inputs}>
                 <form
-                  onSubmit={handleSubmit(onSubmit)}
+                  onSubmit={handleSubmit(onContinue)}
                   className={s.signup__inputs}
                 >
                   <motion.div
@@ -303,6 +315,7 @@ export default function Signup(props) {
                               aria-label="toggle password visibility"
                               onClick={handleClickShowPassword}
                               onMouseDown={handleMouseDownPassword}
+                              sx={{color: '#fff'}}
                             >
                               {values.showPassword ? (
                                 <VisibilityOff />
@@ -333,17 +346,9 @@ export default function Signup(props) {
                   </Typography>
 
                   <Button
+                  type='submit'
                     variant="contained"
                     sx={{ marginTop: "15px", width: "100%" }}
-                    onClick={() => {
-                      if (isValid) {
-                        setHide(true);
-
-                        setTimeout(() => {
-                          setMakenHidden(true);
-                        }, 1000);
-                      }
-                    }}
                   >
                     NEXT
                   </Button>
@@ -494,7 +499,7 @@ export default function Signup(props) {
                           message: "Maximum 14 characters",
                         },
                         pattern: {
-                          value: /^[A-Za-z0-9]+$/,
+                          value: /^[\w](?!.*?\.{2})[\w.]{1,28}[\w]$/,
                           message:
                             "Use only letters of the Latin alphabet",
                         },

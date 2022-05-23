@@ -3,13 +3,15 @@ import signSlice from './signSlice';
 import chatSlice from './chatSlice';
 import tokenSlice from './tokenSlice';
 import usersSlice from './usersSlice';
+import settingsSlice from './settingsSlice';
 
 const store = configureStore({
   reducer: {
     sign: signSlice,
     token: tokenSlice,
     chat: chatSlice,
-    users: usersSlice
+    users: usersSlice,
+    settings: settingsSlice
   },
 });
 

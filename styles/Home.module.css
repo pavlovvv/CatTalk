@@ -3,7 +3,7 @@
 }
 
 .footer {
-  background-color: #000000;
+  background-color: #1B1A17;
   color: #fff;
   font-family: "Roboto", serif;
 }
@@ -48,6 +48,16 @@
 .footertitle__thirditem {
     display: block;
     text-align: center;
+}
+
+@media(max-width: 599px) {
+  .footertitle {
+    font-size: 16px;
+  }
+
+  .footertitle__items {
+    font-size: 15px;
+  }
 }
 
 

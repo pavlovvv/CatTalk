@@ -97,8 +97,9 @@
 .title {
 	line-height: 60px;
 	font-size: 20px;
-	font-family: 'kanit', sans-serif;
+	font-family: 'Kanit', sans-serif;
 	background-color:  rgb(5, 30, 52);
+	letter-spacing: 3px;
 }
 
 
@@ -138,6 +139,8 @@
 	padding-top: 20px;
 	padding-left: 30px;
 	column-gap: 25px;
+	flex-wrap: wrap;
+	row-gap: 15px;
 }
 
 .info__infoItems {
@@ -168,6 +171,15 @@
 	/* word-break: break-word;
 	overflow-wrap: break-word;
 	hyphens: auto; */
+}
+
+.info__links {
+	display: flex;
+	justify-content: flex-end;
+	flex-direction: row;
+	column-gap: 30px;
+	padding-bottom: 10px;
+	padding-right: 20px;
 }
 
 
@@ -241,10 +253,11 @@
 	justify-content: space-around;
 	align-items: center;
 	flex-wrap: nowrap;
+	cursor: pointer;
 }
 
 .infoMemberItem_margin_20px0 {
-	margin: 20px 0;
+	margin: 10px 0;
 }
 
 
