@@ -436,7 +436,7 @@ export default function Leaderboard(props) {
                                                 <TableBody>
                                                     {rows.map((row, i) => (
                                                         <TableRow
-                                                            key={i}
+                                                            key={row.username}
                                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                                         >
                                                             <TableCell sx={{ fontFamily: 'Quicksand' }}>
@@ -493,7 +493,7 @@ export default function Leaderboard(props) {
                                                     </TableHead>
                                                     <TableBody >
                                                         {rows.map((row, idx) => (
-                                                            <Row key={i} row={row} idx={idx} />
+                                                            <Row row={row} idx={idx} />
                                                         ))}
                                                     </TableBody>
                                                 </Table>
