@@ -301,6 +301,8 @@ function Login(props) {
   );
 }
 
+
+
 export default function Log(props) {
   const key = useSelector((state) => state.sign.key);
   const isAuthed = useSelector((state) => state.sign.isAuthed);
@@ -311,7 +313,6 @@ export default function Log(props) {
     router.push('/')
   }
 
-  
   return (
     <Login {...props} key={key} />
   )
