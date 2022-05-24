@@ -311,6 +311,7 @@ export default function Log(props) {
     router.push('/')
   }
 
+  
   return (
     <Login {...props} key={key} />
   )
