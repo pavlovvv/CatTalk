@@ -278,7 +278,7 @@ function Chat(props) {
                     }}
                     disabled={isPending}
                   >
-                    {isPending ? <CircularProgress size={30} sx={{ color: "#000000" }} /> : 'JOIN'}
+                    {isPending ? <CircularProgress size={30} sx={{ color: "#fff" }} /> : 'JOIN'}
                   </Button>
                   {error && (
                     <Alert

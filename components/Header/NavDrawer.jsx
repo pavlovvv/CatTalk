@@ -132,7 +132,7 @@ export default function NavDrawer(props) {
                   return (
                     <Link href={linkItems[i]} key={i} passHref>
                     <li className={style.navigation__item} style={{cursor: 'pointer'}}>
-                      <Icon />
+                      <Icon sx={{marginRight: '8px'}}/>
                        &nbsp; {item}
                     </li>
                     </Link>

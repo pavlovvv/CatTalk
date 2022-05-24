@@ -181,7 +181,7 @@ useEffect(() => {
                     }
                   }}
                 >
-                  {isGetPending && <CircularProgress size={30} sx={{ color: "#000000" }} />}
+                  {isGetPending && <CircularProgress size={30} sx={{ color: "#fff" }} />}
                   {token && 'YOUR TOKEN IS:'}
                   {!isGetPending && !token && 'GET TOKEN'}
                 </Button>
