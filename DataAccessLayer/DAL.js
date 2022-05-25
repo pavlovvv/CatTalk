@@ -2,7 +2,7 @@ import * as axios from 'axios'
 
 const instance = axios.create({
     withCredentials: true,
-    baseURL: 'https://cattalkapi.herokuapp.com/',
+    baseURL: 'https://cat-talk-dev-api.herokuapp.com/',
     // headers: {
     //     'API-KEY': 'a8dab053-cce8-4320-be78-9be947286577'
     // }

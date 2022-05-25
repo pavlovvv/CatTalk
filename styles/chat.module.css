@@ -190,6 +190,19 @@
   justify-content: flex-start;
   align-items: center;
   padding-top: 10px;
+  overflow: hidden;
+  white-space: pre-wrap;
+  text-align: left;
+}
+
+.messages__messageText a {
+    text-decoration: underline;
+    color: gold;
+}
+
+.messages__messageText ul {
+  list-style: inside;
+  list-style-type: disc;
 }
 
 .messages__messageTime {
@@ -215,4 +228,8 @@
     bottom: 0;
     width: 100%;
     z-index: 1000;
+}
+
+.bottom fieldset {
+  border-radius: 0;
 }

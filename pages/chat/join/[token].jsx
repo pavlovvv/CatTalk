@@ -12,6 +12,7 @@ import {
   useMediaQuery
 } from "@mui/material";
 import Logout from "@mui/icons-material/Logout";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { Send } from "@mui/icons-material";
 import s from "../../../styles/chat.module.css";
 import { useState, useRef, useEffect } from "react";
@@ -25,6 +26,7 @@ import { setDynamicPage } from "../../../redux/signSlice.js";
 import { motion } from "framer-motion";
 import { getConnectedUsers } from "../../../redux/tokenSlice.js";
 import ReactMarkdown from 'react-markdown'
+
 
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -719,6 +721,13 @@ function Chat(props) {
 
         <section className={s.bottom}>
           <form onSubmit={onSubmit} className={s.bottom} >
+          <Button
+                variant="contained"
+                sx={{borderRadius: 0}}
+              >
+                <AttachFileIcon />
+              </Button>
+
             <TextField
               id="outlined-basic"
               placeholder="Write"
@@ -759,7 +768,7 @@ function Chat(props) {
                   }
                 }}
               >
-                <Send />
+                <Send sx={{color: '#fff'}}/>
               </Button>
             </Link>
           </form>
