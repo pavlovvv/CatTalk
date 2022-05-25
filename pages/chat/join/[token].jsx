@@ -24,6 +24,7 @@ import { useRouter } from "next/router";
 import { setDynamicPage } from "../../../redux/signSlice.js";
 import { motion } from "framer-motion";
 import { getConnectedUsers } from "../../../redux/tokenSlice.js";
+import ReactMarkdown from 'react-markdown'
 
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -59,6 +60,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 function Chat(props) {
+
 
   const dispatch = useDispatch()
   const router = useRouter()
@@ -181,6 +183,13 @@ function Chat(props) {
 
   const sendMessage = async () => {
     const now = new Date();
+    const minutes = 0;
+    if (now.getMinutes().length === 1 ) {
+       minutes = 0 + '' + now.getMinutes() 
+    }
+    else {
+       minutes = now.getMinutes()
+    }
     const message = {
       username: authData.info[2].username,
       name: authData.info[0].name,
@@ -190,9 +199,8 @@ function Chat(props) {
       id: Date.now(),
       message: value,
       event: "message",
-      date: now.getHours() + ":" + now.getMinutes(),
+      date: now.getHours() + ":" + minutes,
     };
-
     socket.current.send(JSON.stringify(message));
     setValue("");
   };
@@ -211,6 +219,7 @@ function Chat(props) {
     },
   });
 
+  const mw999px = useMediaQuery("(max-width:999px)");
   const mw499px = useMediaQuery("(max-width:499px)");
   const mw369px = useMediaQuery("(max-width:369px)");
 
@@ -226,6 +235,7 @@ function Chat(props) {
     },
   };
 
+  
   if (!connected) {
     return (
       <MainLayout>
@@ -278,7 +288,7 @@ function Chat(props) {
                     }}
                     disabled={isPending}
                   >
-                    {isPending ? <CircularProgress size={30} sx={{ color: "#000000" }} /> : 'JOIN'}
+                    {isPending ? <CircularProgress size={30} sx={{ color: "#fff" }} /> : 'JOIN'}
                   </Button>
                   {error && (
                     <Alert
@@ -318,6 +328,7 @@ function Chat(props) {
   const onSubmit = (e) => {
     e.preventDefault();
     if (value.replace(/\s+/g, "") !== "") {
+      dispatch(sendChatMessage())
       sendMessage();
     }
   };
@@ -344,7 +355,23 @@ function Chat(props) {
         <section className={s.chat}>
           <div className={s.messages + " " + s.chat__messages}>
             {messages.map((msg, idx) => {
+              const boldCount = 1;
+            
+              const boldReplaced = msg.message?.replaceAll('**', e => {
+                if (count % 2 !== 0) {
+                  boldCount++
+                  return "<b>"
+                }
 
+                else {
+                  boldCount++
+                  return "</b>"
+                }
+
+              });
+
+              const boldFormattedText = msg.message?.split('*')
+              
               return (
                 <div key={msg.id}>
                   {idx === messages.length - 1 ?
@@ -417,7 +444,7 @@ function Chat(props) {
                                     </div>
 
                                     <div className={s.messages__messageText}>
-                                      {msg.message}
+                                      <ReactMarkdown>{msg.message}</ReactMarkdown>
                                     </div>
                                   </div>
                                   <Link href={`/profile/${msg.userId}`} passHref>
@@ -514,7 +541,7 @@ function Chat(props) {
                                     </div>
 
                                     <div className={s.messages__messageText}>
-                                      {msg.message}
+                                    <ReactMarkdown>{msg.message}</ReactMarkdown>
                                     </div>
                                   </div>
 
@@ -578,7 +605,7 @@ function Chat(props) {
                                 </div>
 
                                 <div className={s.messages__messageText}>
-                                  {msg.message}
+                                <ReactMarkdown>{msg.message}</ReactMarkdown>
                                 </div>
                               </div>
                               <Link href={`/profile/${msg.userId}`} passHref>
@@ -674,7 +701,7 @@ function Chat(props) {
                                 </div>
 
                                 <div className={s.messages__messageText}>
-                                  {msg.message}
+                                <ReactMarkdown>{msg.message}</ReactMarkdown>
                                 </div>
                               </div>
 
@@ -691,22 +718,40 @@ function Chat(props) {
         </section>
 
         <section className={s.bottom}>
-          <form onSubmit={onSubmit} className={s.bottom}>
+          <form onSubmit={onSubmit} className={s.bottom} >
             <TextField
               id="outlined-basic"
               placeholder="Write"
               variant="outlined"
-              sx={{ width: "100%", bgcolor: "#fff" }}
+              sx={{ width: "100%", bgcolor: "#fff", borderRadius: '0px' }}
               value={value}
-              onChange={(e) => {
-                setValue(e.target.value)
-                dispatch(enterCharacter())
+              multiline
+              maxRows={3}
+              fullWidth
+              onFocus={() => {
+                if (mw999px) {
+                  router.push('#last')
+                }
               }}
+              onChange={(e) => {
+                  setValue(e.target.value)
+                  dispatch(enterCharacter())
+              }}
+              onKeyDown={e => {
+                if(e.keyCode === 13 && !e.shiftKey) {
+                  e.preventDefault();
+                  sendMessage();
+                  dispatch(sendChatMessage())
+                  setValue("")
+                }
+              }
+            }
             />
 
             <Link href="#last" passHref>
               <Button
                 variant="contained"
+                sx={{borderRadius: 0}}
                 onClick={(e) => {
                   if (value.replace(/\s+/g, "") !== "") {
                     sendMessage();
