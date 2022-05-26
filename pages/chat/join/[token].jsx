@@ -77,7 +77,6 @@ function Chat(props) {
   const [connected, setConnected] = useState(false)
   const [isPending, setPending] = useState(false)
   const [error, setError] = useState(null)
-  const [isFocused, setFocus] = useState(1)
 
   authRef.current = useSelector((state) => state.sign.userData)
 
@@ -126,12 +125,7 @@ function Chat(props) {
 
   }, []);
 
-  useEffect(() => {
 
-      window.visualViewport.addEventListener('resize', () => {
-        router.push('#last')
-
-  }, [isFocused])});
 
 
   function connect() {
@@ -755,12 +749,10 @@ function Chat(props) {
               fullWidth
               onFocus={() => {
                 if (mw999px) {
-                  setFocus(isFocused + 1)
-                }
-              }}
-              onBlur={() => {
-                if (mw999px) {
-                  setFocus(isFocused + 1)
+                  setTimeout(() => {
+                    router.push('#last')
+                  }, 100);
+                  
                 }
               }}
               onChange={(e) => {
