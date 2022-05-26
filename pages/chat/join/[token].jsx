@@ -77,12 +77,14 @@ function Chat(props) {
   const [connected, setConnected] = useState(false)
   const [isPending, setPending] = useState(false)
   const [error, setError] = useState(null)
+  const [isFocused, setFocus] = useState(1)
 
   authRef.current = useSelector((state) => state.sign.userData)
 
 
 
   useEffect(() => {
+
     dispatch(setChatPage({ onChatPage: true }));
     dispatch(setDynamicPage({ isDynamicPage: true }))
     isLeft.current = false
@@ -122,8 +124,14 @@ function Chat(props) {
       // count.current = 2
     }
 
-
   }, []);
+
+  useEffect(() => {
+
+      window.visualViewport.addEventListener('resize', () => {
+        router.push('#last')
+
+  }, [isFocused])});
 
 
   function connect() {
@@ -338,6 +346,7 @@ function Chat(props) {
       sendMessage();
     }
   };
+
 
   return (
     <MainLayout>
@@ -724,7 +733,6 @@ function Chat(props) {
           </div>
         </section>
 
-            <div id='down'></div>
 
         <section className={s.bottom}>
           <form onSubmit={onSubmit} className={s.bottom} >
@@ -747,7 +755,12 @@ function Chat(props) {
               fullWidth
               onFocus={() => {
                 if (mw999px) {
-                  router.push('#down')
+                  setFocus(isFocused + 1)
+                }
+              }}
+              onBlur={() => {
+                if (mw999px) {
+                  setFocus(isFocused + 1)
                 }
               }}
               onChange={(e) => {
