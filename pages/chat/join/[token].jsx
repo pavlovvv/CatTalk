@@ -186,7 +186,7 @@ function Chat(props) {
   const sendMessage = async () => {
     const now = new Date();
     const minutes = 0;
-    if (now.getMinutes().length === 1 ) {
+    if (now.getMinutes() <= 9 ) {
        minutes = 0 + '' + now.getMinutes() 
     }
     else {
@@ -217,6 +217,10 @@ function Chat(props) {
     palette: {
       secondary: {
         main: "#4B7BE5",
+      },
+
+      purple: {
+        main: "#8479E1",
       },
     },
   });
@@ -337,6 +341,7 @@ function Chat(props) {
 
   return (
     <MainLayout>
+      <ThemeProvider theme={theme}>
       <div className={s.chatPage}>
         <section className={s.chatHeader}>
           <Button
@@ -719,13 +724,16 @@ function Chat(props) {
           </div>
         </section>
 
+            <div id='down'></div>
+
         <section className={s.bottom}>
           <form onSubmit={onSubmit} className={s.bottom} >
           <Button
                 variant="contained"
+                color='purple'
                 sx={{borderRadius: 0}}
               >
-                <AttachFileIcon />
+                <AttachFileIcon sx={{color: '#fff'}}/>
               </Button>
 
             <TextField
@@ -739,7 +747,7 @@ function Chat(props) {
               fullWidth
               onFocus={() => {
                 if (mw999px) {
-                  router.push('#last')
+                  router.push('#down')
                 }
               }}
               onChange={(e) => {
@@ -760,6 +768,7 @@ function Chat(props) {
             <Link href="#last" passHref>
               <Button
                 variant="contained"
+                color='purple'
                 sx={{borderRadius: 0}}
                 onClick={(e) => {
                   if (value.replace(/\s+/g, "") !== "") {
@@ -774,6 +783,7 @@ function Chat(props) {
           </form>
         </section>
       </div>
+      </ThemeProvider>
     </MainLayout>
   );
 }

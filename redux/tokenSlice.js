@@ -39,7 +39,6 @@ export const getConnectedUsers = createAsyncThunk(
     async function ({token}, {rejectWithValue, dispatch}) {
          try {
             const response = await API.tokenAPI.getConnectedUsers(token)
-            debugger
             dispatch(setConnectedUsersCount({connectedUsersCount: response.data.connectedUsers}))
         }
          catch (error) {      
