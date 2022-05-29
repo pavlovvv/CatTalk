@@ -149,7 +149,7 @@ useEffect(() => {
                         sx={{ marginTop: "20px", width: "100%" }}
                         disabled={isFindPending}
                       >
-                        {isFindPending ? <CircularProgress size={30} sx={{ color: "#000000" }} /> : 'ENTER'}
+                        {isFindPending ? <CircularProgress size={30} sx={{ color: "#fff" }} /> : 'ENTER'}
                       </Button>
                     </div>
                   </form>

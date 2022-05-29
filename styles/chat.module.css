@@ -140,6 +140,7 @@
   justify-content: flex-start;
 }
 
+
 @media (max-width: 499px) {
   .messages__messageRight, .messages__messageLeft {
     column-gap: 10px;
@@ -193,6 +194,13 @@
   overflow: hidden;
   white-space: pre-wrap;
   text-align: left;
+}
+
+.messages__fileMessage {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 20px;
 }
 
 .messages__messageText a {
