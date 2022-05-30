@@ -14,9 +14,11 @@ import {
   Fade,
   Slide,
   LinearProgress,
-  Box
+  Box,
+  Popover
 } from "@mui/material";
 import Logout from "@mui/icons-material/Logout";
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import { Send } from "@mui/icons-material";
@@ -33,6 +35,7 @@ import { motion } from "framer-motion";
 import { getConnectedUsers } from "../../../redux/tokenSlice.js";
 import ReactMarkdown from 'react-markdown'
 import * as axios from 'axios'
+import { getOwnInfo } from "../../../redux/signSlice.js";
 
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -101,7 +104,7 @@ function LinearProgressWithLabel(props) {
             justifyContent: 'center',
           }}
         >
-          <Typography variant="caption" component="div" sx={{color: '#fff', padding: 1}}>
+          <Typography variant="caption" component="div" sx={{ color: '#fff', padding: 1 }}>
             {`${Math.round(props.value)}%`}
           </Typography>
         </Box>
@@ -110,26 +113,26 @@ function LinearProgressWithLabel(props) {
   }
 
   return (
-    <ThemeProvider theme={theme}> 
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-    <Box sx={{ maxWidth: 55, marginRight: '10px'}}>
-        <Typography variant="body2" sx={{color: '#fff', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden'}}>{
-          props.filename
-        }</Typography>
-      </Box> {
-        !mw599px ? <><Box sx={{ width: '300px', mr: 1 }}>
-        <LinearProgress variant="determinate" color='orange' {...props} />
+    <ThemeProvider theme={theme}>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ maxWidth: 55, marginRight: '10px' }}>
+          <Typography variant="body2" sx={{ color: '#fff', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{
+            props.filename
+          }</Typography>
+        </Box> {
+          !mw599px ? <><Box sx={{ width: '300px', mr: 1 }}>
+            <LinearProgress variant="determinate" color='orange' {...props} />
+          </Box>
+            <Box sx={{ minWidth: 35 }}>
+              <Typography variant="body2" sx={{ color: '#fff' }}>{`${Math.round(
+                props.value,
+              )}%`}</Typography>
+            </Box></> : <Box sx={{ mr: 1 }}>
+            <CircularProgressWithLabel value={props.value} />
+          </Box>
+        }
+
       </Box>
-      <Box sx={{ minWidth: 35 }}>
-        <Typography variant="body2" sx={{color: '#fff'}}>{`${Math.round(
-          props.value,
-        )}%`}</Typography>
-      </Box></> : <Box sx={{ mr: 1 }}>
-        <CircularProgressWithLabel value={props.value}/>
-      </Box>
-      }
-      
-    </Box>
     </ThemeProvider>
   );
 }
@@ -156,6 +159,9 @@ function Chat(props) {
   });
   const [isLoadingOver, setLoadingOver] = useState(false)
   const [fileName, setFileName] = useState(null)
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [drag, setDrag] = useState(false);
+  const [uploadingError, setUploadingError] = useState(false);
 
 
   authRef.current = useSelector((state) => state.sign.userData)
@@ -232,7 +238,7 @@ function Chat(props) {
         }, 1000)
       }
       setMessages((prev) => [...prev, message]);
-        router.push('#last')
+      router.push('#last')
 
     };
     socket.current.onclose = () => {
@@ -302,6 +308,10 @@ function Chat(props) {
 
       purple: {
         main: "#8479E1",
+      },
+
+      white: {
+        main: '#fff'
       }
     },
   });
@@ -421,6 +431,124 @@ function Chat(props) {
     }
   };
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
+  const uploadFile = (files) => {
+    const formData = new FormData()
+    for (const file of Object.entries(files)) {
+      formData.append('file', file[1])
+    }
+
+    setFileName(files.length > 1 ? files.length + ' files' : files[0].name)
+
+      axios.post(`https://cat-talk-dev-api.herokuapp.com/chat/uploadFile`, formData, {
+        withCredentials: true,
+        onUploadProgress: e => {
+          setUploadingError(false)
+
+          setSnackbarState({
+            snackbarOpen: true,
+            Transition: SlideTransition,
+          });
+  
+          setFileUploadingProgress(Math.round(e.loaded * 100 / e.total))
+        }
+      })
+        .then(response => {
+  
+          setTimeout(() => {
+            setLoadingOver(true)
+            response.data.forEach((file, i) => {
+  
+              setTimeout(() => {
+                const now = new Date();
+                let minutes = 0;
+                if (now.getMinutes() <= 9) {
+                  minutes = 0 + '' + now.getMinutes()
+                }
+                else {
+                  minutes = now.getMinutes()
+                }
+                const message = {
+                  username: authData.info[2].username,
+                  name: authData.info[0].name,
+                  surname: authData.info[1].surname,
+                  avatar: authData.info[7].avatar ?? null,
+                  userId: authData.info[4].id,
+                  id: Date.now(),
+                  isFile: true,
+                  link: file.Location,
+                  message: file.Key.slice(24),
+                  event: "message",
+                  date: now.getHours() + ":" + minutes,
+                };
+  
+                socket.current.send(JSON.stringify(message));
+              }, i * 500)
+            })
+            dispatch(getOwnInfo())
+          }, 500);
+  
+          setTimeout(() => {
+            setSnackbarState({
+              ...snackbarState,
+              snackbarOpen: false,
+            });
+            setFileUploadingProgress(null)
+            setLoadingOver(false)
+  
+          }, 4000);
+  
+        }).catch(err => {
+          setFileUploadingProgress(null)
+          setUploadingError(true)
+          setTimeout(() => {
+            setUploadingError(false)
+            setSnackbarState({
+              ...snackbarState,
+              snackbarOpen: false,
+            });
+          }, 4000);
+        })
+
+  }
+
+
+  const hiddenFileUploadInput = () => {
+    return <input
+      type="file"
+      multiple
+      onChange={(e) => {
+        uploadFile(e.target.files)
+      }}
+      hidden
+    />
+  }
+
+  const dragStartHandler = e => {
+    e.preventDefault()
+    setDrag(true)
+  }
+
+  const dragLeaveHandler = e => {
+    e.preventDefault()
+    setDrag(false)
+  }
+
+  const onDropHandler = e => {
+    e.preventDefault()
+    uploadFile(e.dataTransfer.files)
+    setDrag(false)
+  }
 
   return (
     <MainLayout>
@@ -521,10 +649,10 @@ function Chat(props) {
                                       <div className={s.messages__messageText}>
 
                                         {!msg.isFile ? <ReactMarkdown>{msg.message}</ReactMarkdown> : <div className={s.messages__fileMessage}>
-                                        <a href={msg.link} target='_blank' rel="noopener noreferrer" style={{minWidth: '25px'}}><InsertDriveFileIcon fontSize='large' sx={{color: '#fff'}}/></a>
+                                          <a href={msg.link} target='_blank' rel="noopener noreferrer" style={{ minWidth: '25px' }}><InsertDriveFileIcon fontSize='large' sx={{ color: '#fff' }} /></a>
                                           <a href={msg.link} target='_blank' rel="noopener noreferrer">{msg.message}</a>
-                                          </div>}
-                                  
+                                        </div>}
+
                                       </div>
                                     </div>
                                     <Link href={`/profile/${msg.userId}`} passHref>
@@ -621,10 +749,10 @@ function Chat(props) {
                                       </div>
 
                                       <div className={s.messages__messageText}>
-                                      {!msg.isFile ? <ReactMarkdown>{msg.message}</ReactMarkdown> : <div className={s.messages__fileMessage}>
+                                        {!msg.isFile ? <ReactMarkdown>{msg.message}</ReactMarkdown> : <div className={s.messages__fileMessage}>
                                           <a href={msg.link} target='_blank' rel="noopener noreferrer">{msg.message}</a>
-                                        <a href={msg.link} target='_blank' rel="noopener noreferrer" style={{minWidth: '25px'}}><InsertDriveFileIcon fontSize='large' sx={{color: '#fff'}}/></a>
-                                          </div>}
+                                          <a href={msg.link} target='_blank' rel="noopener noreferrer" style={{ minWidth: '25px' }}><InsertDriveFileIcon fontSize='large' sx={{ color: '#fff' }} /></a>
+                                        </div>}
                                       </div>
                                     </div>
 
@@ -688,10 +816,10 @@ function Chat(props) {
                                   </div>
 
                                   <div className={s.messages__messageText}>
-                                  {!msg.isFile ? <ReactMarkdown>{msg.message}</ReactMarkdown> : <div className={s.messages__fileMessage}>
-                                        <a href={msg.link} target='_blank' rel="noopener noreferrer" style={{minWidth: '25px'}}><InsertDriveFileIcon fontSize='large' sx={{color: '#fff'}}/></a>
-                                          <a href={msg.link} target='_blank' rel="noopener noreferrer">{msg.message}</a>
-                                          </div>}
+                                    {!msg.isFile ? <ReactMarkdown>{msg.message}</ReactMarkdown> : <div className={s.messages__fileMessage}>
+                                      <a href={msg.link} target='_blank' rel="noopener noreferrer" style={{ minWidth: '25px' }}><InsertDriveFileIcon fontSize='large' sx={{ color: '#fff' }} /></a>
+                                      <a href={msg.link} target='_blank' rel="noopener noreferrer">{msg.message}</a>
+                                    </div>}
                                   </div>
                                 </div>
                                 <Link href={`/profile/${msg.userId}`} passHref>
@@ -787,10 +915,10 @@ function Chat(props) {
                                   </div>
 
                                   <div className={s.messages__messageText}>
-                                  {!msg.isFile ? <ReactMarkdown>{msg.message}</ReactMarkdown> : <div className={s.messages__fileMessage}>
-                                          <a href={msg.link} target='_blank' rel="noopener noreferrer">{msg.message}</a>
-                                        <a href={msg.link} target='_blank' rel="noopener noreferrer" style={{minWidth: '25px'}}><InsertDriveFileIcon fontSize='large' sx={{color: '#fff'}}/></a>
-                                          </div>}
+                                    {!msg.isFile ? <ReactMarkdown>{msg.message}</ReactMarkdown> : <div className={s.messages__fileMessage}>
+                                      <a href={msg.link} target='_blank' rel="noopener noreferrer">{msg.message}</a>
+                                      <a href={msg.link} target='_blank' rel="noopener noreferrer" style={{ minWidth: '25px' }}><InsertDriveFileIcon fontSize='large' sx={{ color: '#fff' }} /></a>
+                                    </div>}
                                   </div>
                                 </div>
 
@@ -807,12 +935,13 @@ function Chat(props) {
                 open={snackbarState.snackbarOpen}
                 TransitionComponent={snackbarState.Transition}
                 key={snackbarState.Transition.name}
-                sx={{ marginBottom: !mw599px ? '40px' : '57px'}}
+                sx={{ marginBottom: !mw599px ? '40px' : '57px' }}
               >
-                {!isLoadingOver ? <Alert
+                {!uploadingError ? <div> 
+                  {!isLoadingOver ? <Alert
                   severity="info"
-                  color="primary"
                   variant="filled"
+                  color='primary'
                   sx={{
                     backgroundColor: "rgb(2, 136, 209)",
                     color: "#fff",
@@ -820,14 +949,14 @@ function Chat(props) {
                     alignItems: 'center'
                   }}
                 >
-                  <Box sx={{ width:  '100%', display: 'block' }}>
+                  <Box sx={{ width: '100%', display: 'block' }}>
                     <LinearProgressWithLabel value={fileUploadingProgress} filename={fileName} />
                   </Box>
 
                 </Alert> : <Alert
                   severity="success"
-                  color="primary"
                   variant="filled"
+                  color='primary'
                   sx={{
                     backgroundColor: "rgb(56, 142, 60)",
                     color: "#fff",
@@ -835,6 +964,18 @@ function Chat(props) {
                 >
                   Done
                 </Alert>}
+                </div> : <Alert
+                  severity="error"
+                  variant="filled"
+                  color='primary'
+                  sx={{
+                    backgroundColor: "rgb(211, 47, 47)",
+                    color: "#fff",
+                  }}
+                >
+                  Not enough free space
+                </Alert>}
+                
               </Snackbar>
             </div>
 
@@ -843,95 +984,70 @@ function Chat(props) {
 
           <section className={s.bottom}>
             <form onSubmit={onSubmit} className={s.bottom} >
-              <Button
-                variant="contained"
-                color='purple'
-                sx={{ borderRadius: 0 }}
-                component='label'
-              >
-                 <AttachFileIcon sx={{ color: '#fff' }} /> 
+              <div style={{ display: 'flex' }}>
+                <Button
+                  variant="contained"
+                  color='purple'
+                  sx={{ borderRadius: 0 }}
+                  component='label'
+                  onClick={handleClick}
+                >
+                  <AttachFileIcon sx={{ color: '#fff' }} />
+                </Button>
 
-                <input
-                  type="file"
-                  multiple
-                  onChange={(e) => {
-                    const formData = new FormData()
-                      for (const file of Object.entries(e.target.files)) {
-                         formData.append('file', file[1])
-                      }
-                      
-                    setFileName(e.target.files.length > 1 ? e.target.files.length + ' files' : e.target.files[0].name)
-                    axios.put(`https://cat-talk-dev-api.herokuapp.com/chat/uploadFile`, formData, {
-                      withCredentials: true,
-                      onUploadProgress: e => {
- 
-                        setSnackbarState({
-                          snackbarOpen: true,
-                          Transition: SlideTransition,
-                        });
-
-                        setFileUploadingProgress(Math.round(e.loaded * 100 / e.total))
-
-                        
-                      }
-                    })
-                      .then(response => {
-
-                        setTimeout(() => {
-                          setLoadingOver(true)
-                          response.data.forEach((file, i) => {
-
-                            setTimeout(() => {            
-                              const now = new Date();
-                              let minutes = 0;
-                              if (now.getMinutes() <= 9) {
-                                minutes = 0 + '' + now.getMinutes()
-                              }
-                              else {
-                                minutes = now.getMinutes()
-                              }
-                              const message = {
-                                username: authData.info[2].username,
-                                name: authData.info[0].name,
-                                surname: authData.info[1].surname,
-                                avatar: authData.info[7].avatar ?? null,
-                                userId: authData.info[4].id,
-                                id: Date.now(),
-                                isFile: true,
-                                link: file.Location,
-                                message: file.key.slice(24),
-                                event: "message",
-                                date: now.getHours() + ":" + minutes,
-                              };
-
-                              socket.current.send(JSON.stringify(message));
-                            }, i * 500)
-
-                              })
-                            
-
-                        }, 500);
-
-                        setTimeout(() => {
-                          setSnackbarState({
-                            ...snackbarState,
-                            snackbarOpen: false,
-                          });
-                          setFileUploadingProgress(null)
-                          setLoadingOver(false)
-                          
-                        }, 4000);
-
-                      })
-
+                <Popover
+                  id={id}
+                  open={open}
+                  anchorEl={anchorEl}
+                  onClose={handleClose}
+                  onDragStart={e => dragStartHandler(e)}
+                  onDragLeave={e => dragLeaveHandler(e)}
+                  onDragOver={e => dragStartHandler(e)}
+                  onDrop={e => onDropHandler(e)}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
                   }}
-                  hidden
-                />
-              </Button>
+                  transformOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  }}
+                  PaperProps={ {
+                    sx: {
+                      backgroundColor: "#8479E1",
+                      color: "#fff"
+                    }                     
+                  } 
+                  
+                }
+                >
+                  <div className={s.bottom__dragArea} style={drag ? {border: '2px dashed #000000'} : null}>
+                    <div className={s.bottom__dragAreaInfo}>
+                      <div>Every day you are provided 1 gb free space and 100 files</div>
+                      <div>
+                        <div>Current usage:</div>
+                        <div><span>{parseInt(authData.limits.freeSpaceTaken)}/1000 Mb</span> <span>{authData.limits.filesSent}/100 files</span></div>
+                      </div>
+                    </div>
+                    {!mw999px ? <>
+                      <div className={s.bottom__dragAreaIcon}>
+                      <label>
+                        <FileUploadIcon sx={{ color: '#fff', fontSize: '45px' }} />
+                        {hiddenFileUploadInput()}
+                      </label>
+                    </div>
+                    <header>Drag & Drop to Upload File</header>
+                    <span>OR</span>
+                    <Button variant="contained" color='white' component='label' sx={{ color: '#000000' }}>Browse files {hiddenFileUploadInput()}</Button>
+                    </> :
+                    <Button variant="contained" color='white' component='label' sx={{ color: '#000000', marginTop: '30px' }}>Got it {hiddenFileUploadInput()}</Button>}
 
+                  </div>
+                </Popover>
+              </div>
               <TextField
                 id="outlined-basic"
-                placeholder="Write"
+                placeholder="Message"
                 variant="outlined"
                 sx={{ width: "100%", bgcolor: "#fff", borderRadius: '0px' }}
                 value={value}
@@ -942,7 +1058,7 @@ function Chat(props) {
                   if (mw999px) {
                     setTimeout(() => {
                       router.push('#last')
-                    }, 50);
+                    }, 100);
 
                   }
                 }}

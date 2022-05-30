@@ -40,9 +40,11 @@
   border-radius: 15px;
   display: flex;
   flex-direction: column;
+  row-gap: 50px;
   overflow: hidden;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
+
 
 .title {
     font-size: 25px;
@@ -64,6 +66,10 @@
     column-gap: 30px;
 }
 
+.newsPage__panelImage {
+  min-width: 80px
+}
+
 .newsPage__panelText{
     max-width: 400px;
     line-height: 30px;
@@ -76,6 +82,10 @@
 
     .newsPage__panelInfo {
         column-gap: 15px;
+    }
+
+    .container {
+      padding: 30px 20px;
     }
 }
 
