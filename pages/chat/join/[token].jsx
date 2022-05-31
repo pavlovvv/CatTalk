@@ -116,9 +116,9 @@ function Chat(props) {
       socket.current?.close()
 
       dispatch(setChatPage({ onChatPage: false }));
-      // }
-      // count.current = 2
-    }
+      }
+    //   count.current = 2
+    // }
 
 
   }, []);
@@ -127,8 +127,6 @@ function Chat(props) {
   function connect() {
     const token = router.query.token
     isLeft.current = false
-
-
     socket.current = new WebSocket(`wss://${token}.glitch.me/`);
 
     socket.current.onopen = () => {
@@ -333,6 +331,7 @@ function Chat(props) {
     }
   };
 
+<<<<<<< HEAD
   return (
     <MainLayout>
       <div className={s.chatPage}>
@@ -361,6 +360,51 @@ function Chat(props) {
                 if (count % 2 !== 0) {
                   boldCount++
                   return "<b>"
+=======
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
+  const uploadFile = (files) => {
+    const formData = new FormData()
+    for (const file of Object.entries(files)) {
+      formData.append('file', file[1])
+    }
+
+    setFileName(files.length > 1 ? files.length + ' files' : files[0].name)
+
+      axios.post(`https://cattalkapi.herokuapp.com/chat/uploadFile`, formData, {
+        withCredentials: true,
+        onUploadProgress: e => {
+          setUploadingError(false)
+
+          setSnackbarState({
+            snackbarOpen: true,
+            Transition: SlideTransition,
+          });
+  
+          setFileUploadingProgress(Math.round(e.loaded * 100 / e.total))
+        }
+      })
+        .then(response => {
+  
+          setTimeout(() => {
+            setLoadingOver(true)
+            response.data.forEach((file, i) => {
+  
+              setTimeout(() => {
+                const now = new Date();
+                let minutes = 0;
+                if (now.getMinutes() <= 9) {
+                  minutes = 0 + '' + now.getMinutes()
+>>>>>>> d3c9268 (update-1.1)
                 }
 
                 else {

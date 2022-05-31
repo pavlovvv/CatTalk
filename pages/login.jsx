@@ -140,7 +140,6 @@ function Login(props) {
   const logInError = useSelector((state) => state.sign.logInError);
 
   const onSubmit = ({ email, password }) => {
-    debugger
     dispatch(auth({ email: email.replace(/\s+/g, ''), password }));
   };
 

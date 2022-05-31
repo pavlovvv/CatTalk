@@ -20,7 +20,6 @@ import { useRef } from "react";
 
 
 
-
 function Home({children}) {
 
   const isAuthFulfilled = useSelector(state => state.sign.isAuthFulfilled)
@@ -71,11 +70,9 @@ function Home({children}) {
       <header className={styles.header}>
         <Header />
       </header>
-
       <main>
         {children}
         </main>
-
       {!onChatPage && <footer className={styles.footer}>
       <div className={styles.container}>
         <div className={styles.sections}>
@@ -182,9 +179,7 @@ function Home({children}) {
         </div>
       </div>
     </footer>
-      }
-
-      
+      }   
       </div>
        
        <div className={isAuthFulfilled ? styles.none : styles.undefined}>
@@ -194,8 +189,6 @@ function Home({children}) {
          </div>
        </div>  
        </div>
-      
-     
     </div>
   );
 }
