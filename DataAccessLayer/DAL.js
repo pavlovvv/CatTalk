@@ -2,7 +2,7 @@ import * as axios from 'axios'
 
 const instance = axios.create({
     withCredentials: true,
-    baseURL: 'https://cat-talk-dev-api.herokuapp.com/',
+    baseURL: 'https://cattalkapi.herokuapp.com/',
     // headers: {
     //     'API-KEY': 'a8dab053-cce8-4320-be78-9be947286577'
     // }
@@ -142,7 +142,7 @@ export const API = {
         updateAvatar: (file) => {
             const formData = new FormData()
             formData.append('avatar', file)
-            return axios.put(`https://cat-talk-dev-api.herokuapp.com/auth/updateAvatar`, formData, {
+            return axios.put(`https://cattalkapi.herokuapp.com/auth/updateAvatar`, formData, {
                 withCredentials: true,
             })
                 .then(response => response)

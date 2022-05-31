@@ -203,9 +203,9 @@ function Chat(props) {
       socket.current?.close()
 
       dispatch(setChatPage({ onChatPage: false }));
-      // }
-      // count.current = 2
-    }
+      }
+    //   count.current = 2
+    // }
 
   }, []);
 
@@ -215,8 +215,6 @@ function Chat(props) {
   function connect() {
     const token = router.query.token
     isLeft.current = false
-
-
     socket.current = new WebSocket(`wss://${token}.glitch.me/`);
 
     socket.current.onopen = () => {
@@ -450,7 +448,7 @@ function Chat(props) {
 
     setFileName(files.length > 1 ? files.length + ' files' : files[0].name)
 
-      axios.post(`https://cat-talk-dev-api.herokuapp.com/chat/uploadFile`, formData, {
+      axios.post(`https://cattalkapi.herokuapp.com/chat/uploadFile`, formData, {
         withCredentials: true,
         onUploadProgress: e => {
           setUploadingError(false)

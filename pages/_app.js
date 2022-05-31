@@ -4,7 +4,6 @@ import store from '../redux/store.js'
 import Head from 'next/head';
 import favicon from '../public/favicon1.ico'
 
-
 function MyApp({ Component, pageProps }) {
 
   return <>

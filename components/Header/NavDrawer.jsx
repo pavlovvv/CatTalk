@@ -62,7 +62,7 @@ export default function NavDrawer(props) {
       <div>
         <CloseIcon
           fontSize="large"
-          sx={{ float: "right", cursor: "pointer" }}
+          sx={{ float: "right", cursor: "pointer", marginRight: '5px' }}
           onClick={() => props.setDrawer(false)}
           // className={style.close}
           className={classes.tr}

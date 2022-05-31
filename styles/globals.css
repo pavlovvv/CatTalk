@@ -111,3 +111,25 @@ label {
 legend {
   display: block;
 }
+
+html, body {
+  background-color: #333C83;
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #777 #555;
+}
+
+html::-webkit-scrollbar {
+	width: 0.6vw;
+  background-color: #555;
+}
+
+html::-webkit-scrollbar-thumb {
+	background-color: #777;
+}
+
+html::-webkit-scrollbar-track {
+	background-color: #555;
+}
