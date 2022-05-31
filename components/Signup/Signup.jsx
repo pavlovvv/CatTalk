@@ -191,9 +191,9 @@ export default function Signup(props) {
   const onSubmit = ({email, password, firstName, lastName, username}) => {
     dispatch(signUp({email: email.replace(/\s+/g, '').toLowerCase(), 
       password, 
-      firstName: firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase(), 
-      lastName: lastName.charAt(0).toUpperCase() + lastName.slice(1).toLowerCase(), 
-      username: username.toLowerCase()}))
+      firstName: firstName.charAt(0).toUpperCase() + firstName.slice(1).replace(/\s+/g, '').toLowerCase(), 
+      lastName: lastName.charAt(0).toUpperCase() + lastName.slice(1).replace(/\s+/g, '').toLowerCase(), 
+      username: username.replace(/\s+/g, '').toLowerCase()}))
   };
 
   const password = useRef({});
@@ -423,7 +423,7 @@ export default function Signup(props) {
                           message: "Maximum 15 characters",
                         },
                         pattern: {
-                          value: /^[A-Za-zА-Яа-яЁё]+$/,
+                          value: /^[A-Za-zА-Яа-яЁё]+\s*$/,
                           message:
                             "Use only letters of the Russian and Latin alphabets",
                         },
@@ -462,7 +462,7 @@ export default function Signup(props) {
                           message: "Maximum 15 characters",
                         },
                         pattern: {
-                          value: /^[A-Za-zА-Яа-яЁё]+$/,
+                          value: /^[A-Za-zА-Яа-яЁё]+\s*$/,
                           message:
                             "Use only letters of the Russian and Latin alphabets",
                         },
@@ -499,9 +499,9 @@ export default function Signup(props) {
                           message: "Maximum 14 characters",
                         },
                         pattern: {
-                          value: /^[\w](?!.*?\.{2})[\w.]{1,28}[\w]$/,
+                          value: /^[\w](?!.*?\.{2})[\w.]{1,28}[\w]+\s*$/,
                           message:
-                            "Use only letters of the Latin alphabet",
+                            "Use only letters of the Latin alphabet and numbers",
                         },
                       })}
                     />
