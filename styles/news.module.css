@@ -30,7 +30,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 80vh;
+    min-height: 80vh;
   }
 
 .container {
@@ -83,10 +83,12 @@
     .newsPage__panelInfo {
         column-gap: 15px;
     }
+}
 
-    .container {
-      padding: 30px 20px;
-    }
+@media(max-width: 399px) {
+  .container {
+    padding: 30px 20px;
+  }
 }
 
 .newsPage__panelDate {

@@ -85,9 +85,9 @@ export default function ProfileChanging(props) {
   const onSubmit = ({ name, surname, username, age, location }) => {
     dispatch(setProfileError({profileError: null}))
     dispatch(updateOwnInfo({
-    name: name.charAt(0).toUpperCase() + name.slice(1).toLowerCase(), 
-    surname: surname.charAt(0).toUpperCase() + surname.slice(1).toLowerCase(), 
-    username: username.toLowerCase(),
+    name: name.charAt(0).toUpperCase() + name.slice(1).replace(/\s+/g, '').toLowerCase(), 
+    surname: surname.charAt(0).toUpperCase() + surname.slice(1).replace(/\s+/g, '').toLowerCase(), 
+    username: username.replace(/\s+/g, '').toLowerCase(),
     age : (age.length == 0 ? null : age), 
     location: (location.length == 0 ? null : location)
 }))
@@ -152,7 +152,7 @@ setUpdatingConfirmed(true)
                       message: "Maximum 15 characters",
                     },
                     pattern: {
-                      value: /^[A-Za-zА-Яа-яЁё]+$/,
+                      value: /^[A-Za-zА-Яа-яЁё]+\s*$/,
                       message:
                         "Use only letters of the Russian and Latin alphabets",
                     },
@@ -195,7 +195,7 @@ setUpdatingConfirmed(true)
                       message: "Maximum 15 characters",
                     },
                     pattern: {
-                      value: /^[A-Za-zА-Яа-яЁё]+$/,
+                      value: /^[A-Za-zА-Яа-яЁё]+\s*$/,
                       message:
                         "Use only letters of the Russian and Latin alphabets",
                     },
@@ -238,7 +238,7 @@ setUpdatingConfirmed(true)
                       message: "Maximum 15 characters",
                     },
                     pattern: {
-                      value: /^[\w](?!.*?\.{2})[\w.]{1,28}[\w]$/,
+                      value: /^[\w](?!.*?\.{2})[\w.]{1,28}[\w]+\s*$/,
                       message:
                         "Use only letters of the Latin alphabet",
                     },

@@ -148,8 +148,8 @@ function Settings(props) {
                               message: "Minimum 2 characters",
                             },
                             maxLength: {
-                              value: 25,
-                              message: "Maximum 25 characters",
+                              value: 35,
+                              message: "Maximum 35 characters",
                             },
                             pattern: {
                               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]+\s*$/i,
