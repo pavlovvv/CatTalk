@@ -253,8 +253,8 @@ export default function Signup(props) {
                           message: "Minimum 8 characters",
                         },
                         maxLength: {
-                          value: 25,
-                          message: "Maximum 25 characters",
+                          value: 40,
+                          message: "Maximum 40 characters",
                         },
                         pattern: {
                           value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]+\s*$/i,
