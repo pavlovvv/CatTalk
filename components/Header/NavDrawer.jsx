@@ -62,11 +62,7 @@ export default function NavDrawer(props) {
       <div>
         <CloseIcon
           fontSize="large"
-<<<<<<< HEAD
-          sx={{ float: "left", cursor: "pointer" }}
-=======
           sx={{ float: "right", cursor: "pointer", marginRight: '5px' }}
->>>>>>> d3c9268 (update-1.1)
           onClick={() => props.setDrawer(false)}
           // className={style.close}
           className={classes.tr}
@@ -136,7 +132,7 @@ export default function NavDrawer(props) {
                   return (
                     <Link href={linkItems[i]} key={i} passHref>
                     <li className={style.navigation__item} style={{cursor: 'pointer'}}>
-                      <Icon />
+                      <Icon sx={{marginRight: '8px'}}/>
                        &nbsp; {item}
                     </li>
                     </Link>

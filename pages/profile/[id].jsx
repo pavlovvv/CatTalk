@@ -12,21 +12,9 @@ import instagramIcon from '../../images/Instagram_icon.webp'
 import telegramIcon from '../../images/Telegram_icon.webp'
 import discordIcon from '../../images/discord-icon.svg'
 
-export async function getStaticPaths() {
 
-  const paths = []
 
-  for (let i = 1; i <= 150; i++) {
-      paths.push({params: {id: i.toString()}}) 
-  }
-
-  return {
-    paths,
-    fallback: true,
-  }
-}
-
-export async function getStaticProps({ params }) {
+export async function getServerSideProps({ params }) {
 
   const res = await fetch(`https://cattalkapi.herokuapp.com/users/search/${params.id}`)
   const user = await res.json();
@@ -58,21 +46,15 @@ export default function Profile(props) {
   useEffect(() => {
 
     dispatch(setDynamicPage({isDynamicPage: true}))
+
     if (props.userData) {
 
-      if (props.userData?.msg) {
-        return function unknown(){
-        return;}
-      }
-      
-      else {
-        setInform(Object.entries(props.userData.info).map(entry => ({ [entry[0]]: entry[1] })))
-        setStats(Object.entries(props.userData.stats).map(entry => ({ [entry[0]]: entry[1] })))
-        setFriends(props.userData.friends)
-      }
+      setInform(Object.entries(props.userData.info).map(entry => ({ [entry[0]]: entry[1] })))
+      setStats(Object.entries(props.userData.stats).map(entry => ({ [entry[0]]: entry[1] })))
+      setFriends(props.userData.friends)
 
       if (authData) {
-        debugger
+
         const friend = authData.friends.confirmedFriends?.filter(e => {
           if (e.id === props.userData.info.id) return e
         })
@@ -136,11 +118,11 @@ export default function Profile(props) {
 
   const telegramOpen = Boolean(anchorTelegramEl);
   const discordOpen = Boolean(anchorDiscordEl);
-//lka
+
   return (
     <MainLayout>
       <ThemeProvider theme={theme}>
-        {!props.userData?.msg ?         <div>
+        <div>
           <section className={s.top}>
             <div className={s.container}>
               <div className={s.top__items}>
@@ -588,10 +570,8 @@ export default function Profile(props) {
               </div>
             </div>
           </section>
-        </div> : <div style={{minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px'}}>Unknown user</div>}
-
+        </div>
       </ThemeProvider>
     </MainLayout>
   );
 }
-

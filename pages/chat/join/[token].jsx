@@ -9,9 +9,18 @@ import {
   CircularProgress,
   Alert,
   Typography,
-  useMediaQuery
+  useMediaQuery,
+  Snackbar,
+  Fade,
+  Slide,
+  LinearProgress,
+  Box,
+  Popover
 } from "@mui/material";
 import Logout from "@mui/icons-material/Logout";
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import { Send } from "@mui/icons-material";
 import s from "../../../styles/chat.module.css";
 import { useState, useRef, useEffect } from "react";
@@ -25,6 +34,8 @@ import { setDynamicPage } from "../../../redux/signSlice.js";
 import { motion } from "framer-motion";
 import { getConnectedUsers } from "../../../redux/tokenSlice.js";
 import ReactMarkdown from 'react-markdown'
+import * as axios from 'axios'
+import { getOwnInfo } from "../../../redux/signSlice.js";
 
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -59,6 +70,73 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
+function SlideTransition(props) {
+  return <Slide {...props} direction="up" />;
+}
+
+function LinearProgressWithLabel(props) {
+  const theme = createTheme({
+    palette: {
+      secondary: {
+        main: '#fff'
+      },
+      orange: {
+        main: '#EBD671'
+      },
+    },
+  });
+
+  const mw599px = useMediaQuery("(max-width:599px)");
+
+  function CircularProgressWithLabel(props) {
+    return (
+      <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+        <CircularProgress variant="determinate" color='secondary' {...props} />
+        <Box
+          sx={{
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            position: 'absolute',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Typography variant="caption" component="div" sx={{ color: '#fff', padding: 1 }}>
+            {`${Math.round(props.value)}%`}
+          </Typography>
+        </Box>
+      </Box>
+    );
+  }
+
+  return (
+    <ThemeProvider theme={theme}>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ maxWidth: 55, marginRight: '10px' }}>
+          <Typography variant="body2" sx={{ color: '#fff', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{
+            props.filename
+          }</Typography>
+        </Box> {
+          !mw599px ? <><Box sx={{ width: '300px', mr: 1 }}>
+            <LinearProgress variant="determinate" color='orange' {...props} />
+          </Box>
+            <Box sx={{ minWidth: 35 }}>
+              <Typography variant="body2" sx={{ color: '#fff' }}>{`${Math.round(
+                props.value,
+              )}%`}</Typography>
+            </Box></> : <Box sx={{ mr: 1 }}>
+            <CircularProgressWithLabel value={props.value} />
+          </Box>
+        }
+
+      </Box>
+    </ThemeProvider>
+  );
+}
+
 function Chat(props) {
 
 
@@ -69,18 +147,28 @@ function Chat(props) {
   const [messages, setMessages] = useState([])
   const [value, setValue] = useState("")
   const socket = useRef()
-  const count = useRef()
   const authRef = useRef()
   const isLeft = useRef()
   const [connected, setConnected] = useState(false)
   const [isPending, setPending] = useState(false)
   const [error, setError] = useState(null)
+  const [fileUploadingProgress, setFileUploadingProgress] = useState(null)
+  const [snackbarState, setSnackbarState] = useState({
+    snackbarOpen: false,
+    Transition: Fade,
+  });
+  const [isLoadingOver, setLoadingOver] = useState(false)
+  const [fileName, setFileName] = useState(null)
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [drag, setDrag] = useState(false);
+  const [uploadingError, setUploadingError] = useState(false);
+
 
   authRef.current = useSelector((state) => state.sign.userData)
 
 
-
   useEffect(() => {
+
     dispatch(setChatPage({ onChatPage: true }));
     dispatch(setDynamicPage({ isDynamicPage: true }))
     isLeft.current = false
@@ -105,7 +193,6 @@ function Chat(props) {
     return function disconnection() {
 
       // if (count.current > 1) {
-      console.log('unmount disconnection')
       const message = {
         event: "disconnection",
         username: authRef.current.info[2]?.username,
@@ -120,8 +207,9 @@ function Chat(props) {
     //   count.current = 2
     // }
 
-
   }, []);
+
+
 
 
   function connect() {
@@ -148,7 +236,8 @@ function Chat(props) {
         }, 1000)
       }
       setMessages((prev) => [...prev, message]);
-      router.push("#last");
+      router.push('#last')
+
     };
     socket.current.onclose = () => {
       if (!isLeft.current) {
@@ -181,12 +270,12 @@ function Chat(props) {
 
   const sendMessage = async () => {
     const now = new Date();
-    const minutes = 0;
-    if (now.getMinutes().length === 1 ) {
-       minutes = 0 + '' + now.getMinutes() 
+    let minutes = 0;
+    if (now.getMinutes() <= 9) {
+      minutes = 0 + '' + now.getMinutes()
     }
     else {
-       minutes = now.getMinutes()
+      minutes = now.getMinutes()
     }
     const message = {
       username: authData.info[2].username,
@@ -214,12 +303,21 @@ function Chat(props) {
       secondary: {
         main: "#4B7BE5",
       },
+
+      purple: {
+        main: "#8479E1",
+      },
+
+      white: {
+        main: '#fff'
+      }
     },
   });
 
   const mw999px = useMediaQuery("(max-width:999px)");
   const mw499px = useMediaQuery("(max-width:499px)");
   const mw369px = useMediaQuery("(max-width:369px)");
+  const mw599px = useMediaQuery("(max-width:599px)");
 
   const moveTop = {
     visible: {
@@ -233,7 +331,7 @@ function Chat(props) {
     },
   };
 
-  
+
   if (!connected) {
     return (
       <MainLayout>
@@ -331,36 +429,6 @@ function Chat(props) {
     }
   };
 
-<<<<<<< HEAD
-  return (
-    <MainLayout>
-      <div className={s.chatPage}>
-        <section className={s.chatHeader}>
-          <Button
-            variant="contained"
-            color="error"
-            startIcon={<Logout />}
-            sx={mw369px ? { width: '80%', margin: '20px' } : { width: '150px', margin: '20px' }}
-            onClick={() => {
-              router.push('/token')
-            }}
-          >
-            Leave
-          </Button>
-          <Typography variant='overline' sx={{ color: '#fff', fontSize: '15px' }}>
-            Connected users: {connectedUsersCount}
-          </Typography>
-        </section>
-        <section className={s.chat}>
-          <div className={s.messages + " " + s.chat__messages}>
-            {messages.map((msg, idx) => {
-              const boldCount = 1;
-            
-              const boldReplaced = msg.message?.replaceAll('**', e => {
-                if (count % 2 !== 0) {
-                  boldCount++
-                  return "<b>"
-=======
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -404,154 +472,203 @@ function Chat(props) {
                 let minutes = 0;
                 if (now.getMinutes() <= 9) {
                   minutes = 0 + '' + now.getMinutes()
->>>>>>> d3c9268 (update-1.1)
                 }
-
                 else {
-                  boldCount++
-                  return "</b>"
+                  minutes = now.getMinutes()
                 }
+                const message = {
+                  username: authData.info[2].username,
+                  name: authData.info[0].name,
+                  surname: authData.info[1].surname,
+                  avatar: authData.info[7].avatar ?? null,
+                  userId: authData.info[4].id,
+                  id: Date.now(),
+                  isFile: true,
+                  link: file.Location,
+                  message: file.Key.slice(24),
+                  event: "message",
+                  date: now.getHours() + ":" + minutes,
+                };
+  
+                socket.current.send(JSON.stringify(message));
+              }, i * 500)
+            })
+            dispatch(getOwnInfo())
+          }, 500);
+  
+          setTimeout(() => {
+            setSnackbarState({
+              ...snackbarState,
+              snackbarOpen: false,
+            });
+            setFileUploadingProgress(null)
+            setLoadingOver(false)
+  
+          }, 4000);
+  
+        }).catch(err => {
+          setFileUploadingProgress(null)
+          setUploadingError(true)
+          setTimeout(() => {
+            setUploadingError(false)
+            setSnackbarState({
+              ...snackbarState,
+              snackbarOpen: false,
+            });
+          }, 4000);
+        })
 
-              });
+  }
 
-              const boldFormattedText = msg.message?.split('*')
-              
-              return (
-                <div key={msg.id}>
-                  {idx === messages.length - 1 ?
-                    (
-                      <div id='last'>
-                        <motion.div
-                          initial="hidden"
-                          animate="visible"
-                          variants={moveTop}
-                          viewport={{ amount: 0.9555 }}
-                        >
 
-                          {msg.event === "connection" && (
-                            <div className={s.messages__connection}>
-                              <div className={s.connectionContainer}>
-                                A user &quot;
-                                <Link href={`/profile/${msg.userId}`} passHref>
-                                  <a target="_blank" rel="noopener noreferrer">
-                                    <span className={s.messages__connectionUsername}>
-                                      {msg.username}
-                                    </span>
-                                  </a>
-                                </Link>
-                                &quot; has joined
-                              </div>
-                            </div>
-                          )}
-                          {msg.event === "disconnection" && (
-                            <div className={s.messages__connection}>
-                              <div className={s.connectionContainer}>
-                                A user &quot;
-                                <Link href={`/profile/${msg.userId}`} passHref>
-                                  <a target="_blank" rel="noopener noreferrer">
-                                    <span className={s.messages__connectionUsername}>
-                                      {msg.username}
-                                    </span>
-                                  </a>
-                                </Link>
-                                &quot; has left
-                              </div>
-                            </div>
-                          )}
-                          {msg.event === "own disconnection" && (
-                            <div className={s.messages__connection}>
-                              <div className={s.connectionContainer}>
-                                You have been disconnected
-                              </div>
-                            </div>
-                          )}
-                          {msg.event === "message" && (
-                            <div className={s.messages__message}>
-                              {authData.info[2].username === msg.username ? (
-                                <div
-                                  className={
-                                    s.messages__messageRight
-                                  }
-                                >
-                                  <div className={s.messages__messageContainer + ' ' + s.messages__messageContainer_right}>
-                                    <div className={s.messages__messageInfo}>
-                                      <div className={s.messages__messageName}>
-                                        <Link href={`/profile/${msg.userId}`} passHref>
-                                          <a target="_blank" rel="noopener noreferrer">
-                                            {msg.username}
-                                          </a>
-                                        </Link>
-                                      </div>
-                                      <div className={s.messages__messageTime}>
-                                        {msg.date}
-                                      </div>
-                                    </div>
+  const hiddenFileUploadInput = () => {
+    return <input
+      type="file"
+      multiple
+      onChange={(e) => {
+        uploadFile(e.target.files)
+      }}
+      hidden
+    />
+  }
 
-                                    <div className={s.messages__messageText}>
-                                      <ReactMarkdown>{msg.message}</ReactMarkdown>
-                                    </div>
-                                  </div>
+  const dragStartHandler = e => {
+    e.preventDefault()
+    setDrag(true)
+  }
+
+  const dragLeaveHandler = e => {
+    e.preventDefault()
+    setDrag(false)
+  }
+
+  const onDropHandler = e => {
+    e.preventDefault()
+    uploadFile(e.dataTransfer.files)
+    setDrag(false)
+  }
+
+  return (
+    <MainLayout>
+      <ThemeProvider theme={theme}>
+        <div className={s.chatPage}>
+          <section className={s.chatHeader}>
+            <Button
+              variant="contained"
+              color="error"
+              startIcon={<Logout />}
+              sx={mw369px ? { width: '80%', margin: '20px' } : { width: '150px', margin: '20px' }}
+              onClick={() => {
+                router.push('/token')
+              }}
+            >
+              Leave
+            </Button>
+            <Typography variant='overline' sx={{ color: '#fff', fontSize: '15px' }}>
+              Connected users: {connectedUsersCount}
+            </Typography>
+          </section>
+          <section className={s.chat}>
+            <div className={s.messages + " " + s.chat__messages}>
+              {messages.map((msg, idx) => {
+
+                return (
+                  <div key={!msg.isFile ? msg.id : idx}>
+                    {idx === messages.length - 1 ?
+                      (
+                        <div id='last'>
+                          <motion.div
+                            initial="hidden"
+                            animate="visible"
+                            variants={moveTop}
+                            viewport={{ amount: 0.9555 }}
+                          >
+
+                            {msg.event === "connection" && (
+                              <div className={s.messages__connection}>
+                                <div className={s.connectionContainer}>
+                                  A user &quot;
                                   <Link href={`/profile/${msg.userId}`} passHref>
                                     <a target="_blank" rel="noopener noreferrer">
-                                      {msg.avatar ? (
-                                        <Image
-                                          width="70px"
-                                          height="70px"
-                                          className={s.userAvatar}
-                                          src={authData.info[7].avatar}
-                                          alt="content__img"
-                                        />
-                                      ) : (
-                                        <Avatar
-                                          {...stringAvatar(
-                                            authData.info[0].name +
-                                            " " +
-                                            authData.info[1].surname
-                                          )}
-                                          sx={mw499px ? {
-                                            bgcolor: "#2A2550",
-                                            width: "60px",
-                                            height: "60px",
-                                            fontSize: "20px",
-                                          } : {
-                                            bgcolor: "#2A2550",
-                                            width: "70px",
-                                            height: "70px",
-                                            fontSize: "20px",
-                                          }}
-                                        />
-                                      )}
+                                      <span className={s.messages__connectionUsername}>
+                                        {msg.username}
+                                      </span>
                                     </a>
                                   </Link>
-
+                                  &quot; has joined
                                 </div>
-                              ) : (
-                                <div
-                                  className={
-                                    s.messages__messageLeft
-                                  }
-                                >
+                              </div>
+                            )}
+                            {msg.event === "disconnection" && (
+                              <div className={s.messages__connection}>
+                                <div className={s.connectionContainer}>
+                                  A user &quot;
                                   <Link href={`/profile/${msg.userId}`} passHref>
                                     <a target="_blank" rel="noopener noreferrer">
-                                      <StyledBadge
-                                        overlap="circular"
-                                        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                                        variant="dot"
-                                      >
+                                      <span className={s.messages__connectionUsername}>
+                                        {msg.username}
+                                      </span>
+                                    </a>
+                                  </Link>
+                                  &quot; has left
+                                </div>
+                              </div>
+                            )}
+                            {msg.event === "own disconnection" && (
+                              <div className={s.messages__connection}>
+                                <div className={s.connectionContainer}>
+                                  You have been disconnected. <br />
+                                  You may have been inactive for a while
+                                </div>
+                              </div>
+                            )}
+                            {msg.event === "message" && (
+                              <div className={s.messages__message}>
+                                {authData.info[2].username === msg.username ? (
+                                  <div
+                                    className={
+                                      s.messages__messageRight
+                                    }
+                                  >
+                                    <div className={s.messages__messageContainer + ' ' + s.messages__messageContainer_right}>
+                                      <div className={s.messages__messageInfo}>
+                                        <div className={s.messages__messageName}>
+                                          <Link href={`/profile/${msg.userId}`} passHref>
+                                            <a target="_blank" rel="noopener noreferrer">
+                                              {msg.username}
+                                            </a>
+                                          </Link>
+                                        </div>
+                                        <div className={s.messages__messageTime}>
+                                          {msg.date}
+                                        </div>
+                                      </div>
+
+                                      <div className={s.messages__messageText}>
+
+                                        {!msg.isFile ? <ReactMarkdown>{msg.message}</ReactMarkdown> : <div className={s.messages__fileMessage}>
+                                          <a href={msg.link} target='_blank' rel="noopener noreferrer" style={{ minWidth: '25px' }}><InsertDriveFileIcon fontSize='large' sx={{ color: '#fff' }} /></a>
+                                          <a href={msg.link} target='_blank' rel="noopener noreferrer">{msg.message}</a>
+                                        </div>}
+
+                                      </div>
+                                    </div>
+                                    <Link href={`/profile/${msg.userId}`} passHref>
+                                      <a target="_blank" rel="noopener noreferrer">
                                         {msg.avatar ? (
                                           <Image
                                             width="70px"
                                             height="70px"
                                             className={s.userAvatar}
-                                            src={msg.avatar}
+                                            src={authData.info[7].avatar}
                                             alt="content__img"
                                           />
                                         ) : (
                                           <Avatar
                                             {...stringAvatar(
-                                              msg.name +
+                                              authData.info[0].name +
                                               " " +
-                                              msg.surname
+                                              authData.info[1].surname
                                             )}
                                             sx={mw499px ? {
                                               bgcolor: "#2A2550",
@@ -566,152 +683,159 @@ function Chat(props) {
                                             }}
                                           />
                                         )}
-                                      </StyledBadge>
-                                    </a>
-                                  </Link>
-
-                                  <div className={s.messages__messageContainer + ' ' + s.messages__messageContainer_left}>
-                                    <div className={s.messages__messageInfo}>
-                                      <div className={s.messages__messageName}>
-                                        <Link href={`/profile/${msg.userId}`} passHref>
-                                          <a target="_blank" rel="noopener noreferrer">
-                                            {msg.username}
-                                          </a>
-                                        </Link>
-                                      </div>
-                                      <div className={s.messages__messageTime}>
-                                        {msg.date}
-                                      </div>
-                                    </div>
-
-                                    <div className={s.messages__messageText}>
-                                    <ReactMarkdown>{msg.message}</ReactMarkdown>
-                                    </div>
-                                  </div>
-
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </motion.div>
-                      </div>)
-                    : (<div>
-                      {msg.event === "connection" && (
-                        <div className={s.messages__connection}>
-                          <div className={s.connectionContainer}>
-                            A user &quot;
-                            <Link href={`/profile/${msg.userId}`} passHref>
-                              <a target="_blank" rel="noopener noreferrer">
-                                <span className={s.messages__connectionUsername}>
-                                  {msg.username}
-                                </span>
-                              </a>
-                            </Link>
-                            &quot; has joined
-                          </div>
-                        </div>
-                      )}
-                      {msg.event === "disconnection" && (
-                        <div className={s.messages__connection}>
-                          <div className={s.connectionContainer}>
-                            A user &quot;
-                            <Link href={`/profile/${msg.userId}`} passHref>
-                              <a target="_blank" rel="noopener noreferrer">
-                                <span className={s.messages__connectionUsername}>
-                                  {msg.username}
-                                </span>
-                              </a>
-                            </Link>
-                            &quot; has left
-                          </div>
-                        </div>
-                      )}
-                      {msg.event === "message" && (
-                        <div className={s.messages__message}>
-                          {authData.info[2].username === msg.username ? (
-                            <div
-                              className={
-                                s.messages__messageRight
-                              }
-                            >
-                              <div className={s.messages__messageContainer + ' ' + s.messages__messageContainer_right}>
-                                <div className={s.messages__messageInfo}>
-                                  <div className={s.messages__messageName}>
-                                    <Link href={`/profile/${msg.userId}`} passHref>
-                                      <a target="_blank" rel="noopener noreferrer">
-                                        {msg.username}
                                       </a>
                                     </Link>
-                                  </div>
-                                  <div className={s.messages__messageTime}>
-                                    {msg.date}
-                                  </div>
-                                </div>
 
-                                <div className={s.messages__messageText}>
-                                <ReactMarkdown>{msg.message}</ReactMarkdown>
-                                </div>
+                                  </div>
+                                ) : (
+                                  <div
+                                    className={
+                                      s.messages__messageLeft
+                                    }
+                                  >
+                                    <Link href={`/profile/${msg.userId}`} passHref>
+                                      <a target="_blank" rel="noopener noreferrer">
+                                        <StyledBadge
+                                          overlap="circular"
+                                          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                                          variant="dot"
+                                        >
+                                          {msg.avatar ? (
+                                            <Image
+                                              width="70px"
+                                              height="70px"
+                                              className={s.userAvatar}
+                                              src={msg.avatar}
+                                              alt="content__img"
+                                            />
+                                          ) : (
+                                            <Avatar
+                                              {...stringAvatar(
+                                                msg.name +
+                                                " " +
+                                                msg.surname
+                                              )}
+                                              sx={mw499px ? {
+                                                bgcolor: "#2A2550",
+                                                width: "60px",
+                                                height: "60px",
+                                                fontSize: "20px",
+                                              } : {
+                                                bgcolor: "#2A2550",
+                                                width: "70px",
+                                                height: "70px",
+                                                fontSize: "20px",
+                                              }}
+                                            />
+                                          )}
+                                        </StyledBadge>
+                                      </a>
+                                    </Link>
+
+                                    <div className={s.messages__messageContainer + ' ' + s.messages__messageContainer_left}>
+                                      <div className={s.messages__messageInfo}>
+                                        <div className={s.messages__messageName}>
+                                          <Link href={`/profile/${msg.userId}`} passHref>
+                                            <a target="_blank" rel="noopener noreferrer">
+                                              {msg.username}
+                                            </a>
+                                          </Link>
+                                        </div>
+                                        <div className={s.messages__messageTime}>
+                                          {msg.date}
+                                        </div>
+                                      </div>
+
+                                      <div className={s.messages__messageText}>
+                                        {!msg.isFile ? <ReactMarkdown>{msg.message}</ReactMarkdown> : <div className={s.messages__fileMessage}>
+                                          <a href={msg.link} target='_blank' rel="noopener noreferrer">{msg.message}</a>
+                                          <a href={msg.link} target='_blank' rel="noopener noreferrer" style={{ minWidth: '25px' }}><InsertDriveFileIcon fontSize='large' sx={{ color: '#fff' }} /></a>
+                                        </div>}
+                                      </div>
+                                    </div>
+
+                                  </div>
+                                )}
                               </div>
+                            )}
+                          </motion.div>
+                        </div>)
+                      : (<div>
+                        {msg.event === "connection" && (
+                          <div className={s.messages__connection}>
+                            <div className={s.connectionContainer}>
+                              A user &quot;
                               <Link href={`/profile/${msg.userId}`} passHref>
                                 <a target="_blank" rel="noopener noreferrer">
-                                  {msg.avatar ? (
-                                    <Image
-                                      width="70px"
-                                      height="70px"
-                                      className={s.userAvatar}
-                                      src={authData.info[7].avatar}
-                                      alt="content__img"
-                                    />
-                                  ) : (
-                                    <Avatar
-                                      {...stringAvatar(
-                                        authData.info[0].name +
-                                        " " +
-                                        authData.info[1].surname
-                                      )}
-                                      sx={mw499px ? {
-                                        bgcolor: "#2A2550",
-                                        width: "60px",
-                                        height: "60px",
-                                        fontSize: "20px",
-                                      } : {
-                                        bgcolor: "#2A2550",
-                                        width: "70px",
-                                        height: "70px",
-                                        fontSize: "20px",
-                                      }}
-                                    />
-                                  )}
+                                  <span className={s.messages__connectionUsername}>
+                                    {msg.username}
+                                  </span>
                                 </a>
                               </Link>
+                              &quot; has joined
                             </div>
-                          ) : (
-                            <div
-                              className={
-                                s.messages__messageLeft
-                              }
-                            >
+                          </div>
+                        )}
+                        {msg.event === "disconnection" && (
+                          <div className={s.messages__connection}>
+                            <div className={s.connectionContainer}>
+                              A user &quot;
                               <Link href={`/profile/${msg.userId}`} passHref>
                                 <a target="_blank" rel="noopener noreferrer">
-                                  <StyledBadge
-                                    overlap="circular"
-                                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                                    variant="dot"
-                                  >
+                                  <span className={s.messages__connectionUsername}>
+                                    {msg.username}
+                                  </span>
+                                </a>
+                              </Link>
+                              &quot; has left
+                            </div>
+                          </div>
+                        )}
+                        {msg.event === "message" && (
+                          <div className={s.messages__message}>
+                            {authData.info[2].username === msg.username ? (
+                              <div
+                                className={
+                                  s.messages__messageRight
+                                }
+                              >
+                                <div className={s.messages__messageContainer + ' ' + s.messages__messageContainer_right}>
+                                  <div className={s.messages__messageInfo}>
+                                    <div className={s.messages__messageName}>
+                                      <Link href={`/profile/${msg.userId}`} passHref>
+                                        <a target="_blank" rel="noopener noreferrer">
+                                          {msg.username}
+                                        </a>
+                                      </Link>
+                                    </div>
+                                    <div className={s.messages__messageTime}>
+                                      {msg.date}
+                                    </div>
+                                  </div>
+
+                                  <div className={s.messages__messageText}>
+                                    {!msg.isFile ? <ReactMarkdown>{msg.message}</ReactMarkdown> : <div className={s.messages__fileMessage}>
+                                      <a href={msg.link} target='_blank' rel="noopener noreferrer" style={{ minWidth: '25px' }}><InsertDriveFileIcon fontSize='large' sx={{ color: '#fff' }} /></a>
+                                      <a href={msg.link} target='_blank' rel="noopener noreferrer">{msg.message}</a>
+                                    </div>}
+                                  </div>
+                                </div>
+                                <Link href={`/profile/${msg.userId}`} passHref>
+                                  <a target="_blank" rel="noopener noreferrer">
                                     {msg.avatar ? (
                                       <Image
                                         width="70px"
                                         height="70px"
                                         className={s.userAvatar}
-                                        src={msg.avatar}
+                                        src={authData.info[7].avatar}
                                         alt="content__img"
                                       />
                                     ) : (
                                       <Avatar
                                         {...stringAvatar(
-                                          msg.name +
+                                          authData.info[0].name +
                                           " " +
-                                          msg.surname
+                                          authData.info[1].surname
                                         )}
                                         sx={mw499px ? {
                                           bgcolor: "#2A2550",
@@ -726,89 +850,251 @@ function Chat(props) {
                                         }}
                                       />
                                     )}
-                                  </StyledBadge>
-                                </a>
-                              </Link>
-
-                              <div className={s.messages__messageContainer + ' ' + s.messages__messageContainer_left}>
-                                <div className={s.messages__messageInfo}>
-                                  <div className={s.messages__messageName}>
-                                    <Link href={`/profile/${msg.userId}`} passHref>
-                                      <a target="_blank" rel="noopener noreferrer">
-                                        {msg.username}
-                                      </a>
-                                    </Link>
-                                  </div>
-                                  <div className={s.messages__messageTime}>
-                                    {msg.date}
-                                  </div>
-                                </div>
-
-                                <div className={s.messages__messageText}>
-                                <ReactMarkdown>{msg.message}</ReactMarkdown>
-                                </div>
+                                  </a>
+                                </Link>
                               </div>
+                            ) : (
+                              <div
+                                className={
+                                  s.messages__messageLeft
+                                }
+                              >
+                                <Link href={`/profile/${msg.userId}`} passHref>
+                                  <a target="_blank" rel="noopener noreferrer">
+                                    <StyledBadge
+                                      overlap="circular"
+                                      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                                      variant="dot"
+                                    >
+                                      {msg.avatar ? (
+                                        <Image
+                                          width="70px"
+                                          height="70px"
+                                          className={s.userAvatar}
+                                          src={msg.avatar}
+                                          alt="content__img"
+                                        />
+                                      ) : (
+                                        <Avatar
+                                          {...stringAvatar(
+                                            msg.name +
+                                            " " +
+                                            msg.surname
+                                          )}
+                                          sx={mw499px ? {
+                                            bgcolor: "#2A2550",
+                                            width: "60px",
+                                            height: "60px",
+                                            fontSize: "20px",
+                                          } : {
+                                            bgcolor: "#2A2550",
+                                            width: "70px",
+                                            height: "70px",
+                                            fontSize: "20px",
+                                          }}
+                                        />
+                                      )}
+                                    </StyledBadge>
+                                  </a>
+                                </Link>
 
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>)}
+                                <div className={s.messages__messageContainer + ' ' + s.messages__messageContainer_left}>
+                                  <div className={s.messages__messageInfo}>
+                                    <div className={s.messages__messageName}>
+                                      <Link href={`/profile/${msg.userId}`} passHref>
+                                        <a target="_blank" rel="noopener noreferrer">
+                                          {msg.username}
+                                        </a>
+                                      </Link>
+                                    </div>
+                                    <div className={s.messages__messageTime}>
+                                      {msg.date}
+                                    </div>
+                                  </div>
 
-                </div>
-              );
-            })}
-          </div>
-        </section>
+                                  <div className={s.messages__messageText}>
+                                    {!msg.isFile ? <ReactMarkdown>{msg.message}</ReactMarkdown> : <div className={s.messages__fileMessage}>
+                                      <a href={msg.link} target='_blank' rel="noopener noreferrer">{msg.message}</a>
+                                      <a href={msg.link} target='_blank' rel="noopener noreferrer" style={{ minWidth: '25px' }}><InsertDriveFileIcon fontSize='large' sx={{ color: '#fff' }} /></a>
+                                    </div>}
+                                  </div>
+                                </div>
 
-        <section className={s.bottom}>
-          <form onSubmit={onSubmit} className={s.bottom} >
-            <TextField
-              id="outlined-basic"
-              placeholder="Write"
-              variant="outlined"
-              sx={{ width: "100%", bgcolor: "#fff", borderRadius: '0px' }}
-              value={value}
-              multiline
-              maxRows={3}
-              fullWidth
-              onFocus={() => {
-                if (mw999px) {
-                  router.push('#last')
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>)}
+
+                  </div>
+                );
+              })}
+              <Snackbar
+                open={snackbarState.snackbarOpen}
+                TransitionComponent={snackbarState.Transition}
+                key={snackbarState.Transition.name}
+                sx={{ marginBottom: !mw599px ? '40px' : '57px' }}
+              >
+                {!uploadingError ? <div> 
+                  {!isLoadingOver ? <Alert
+                  severity="info"
+                  variant="filled"
+                  color='primary'
+                  sx={{
+                    backgroundColor: "rgb(2, 136, 209)",
+                    color: "#fff",
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
+                  <Box sx={{ width: '100%', display: 'block' }}>
+                    <LinearProgressWithLabel value={fileUploadingProgress} filename={fileName} />
+                  </Box>
+
+                </Alert> : <Alert
+                  severity="success"
+                  variant="filled"
+                  color='primary'
+                  sx={{
+                    backgroundColor: "rgb(56, 142, 60)",
+                    color: "#fff",
+                  }}
+                >
+                  Done
+                </Alert>}
+                </div> : <Alert
+                  severity="error"
+                  variant="filled"
+                  color='primary'
+                  sx={{
+                    backgroundColor: "rgb(211, 47, 47)",
+                    color: "#fff",
+                  }}
+                >
+                  Not enough free space
+                </Alert>}
+                
+              </Snackbar>
+            </div>
+
+          </section>
+
+
+          <section className={s.bottom}>
+            <form onSubmit={onSubmit} className={s.bottom} >
+              <div style={{ display: 'flex' }}>
+                <Button
+                  variant="contained"
+                  color='purple'
+                  sx={{ borderRadius: 0 }}
+                  component='label'
+                  onClick={handleClick}
+                >
+                  <AttachFileIcon sx={{ color: '#fff' }} />
+                </Button>
+
+                <Popover
+                  id={id}
+                  open={open}
+                  anchorEl={anchorEl}
+                  onClose={handleClose}
+                  onDragStart={e => dragStartHandler(e)}
+                  onDragLeave={e => dragLeaveHandler(e)}
+                  onDragOver={e => dragStartHandler(e)}
+                  onDrop={e => onDropHandler(e)}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                  }}
+                  transformOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  }}
+                  PaperProps={ {
+                    sx: {
+                      backgroundColor: "#8479E1",
+                      color: "#fff"
+                    }                     
+                  } 
+                  
                 }
-              }}
-              onChange={(e) => {
-                  setValue(e.target.value)
-                  dispatch(enterCharacter())
-              }}
-              onKeyDown={e => {
-                if(e.keyCode === 13 && !e.shiftKey) {
-                  e.preventDefault();
-                  sendMessage();
-                  dispatch(sendChatMessage())
-                  setValue("")
-                }
-              }
-            }
-            />
+                >
+                  <div className={s.bottom__dragArea} style={drag ? {border: '2px dashed #000000'} : null}>
+                    <div className={s.bottom__dragAreaInfo}>
+                      <div>Every day you are provided 1 gb free space and 100 files</div>
+                      <div>
+                        <div>Current usage:</div>
+                        <div><span>{parseInt(authData.limits.freeSpaceTaken)}/1000 Mb</span> <span>{authData.limits.filesSent}/100 files</span></div>
+                      </div>
+                    </div>
+                    {!mw999px ? <>
+                      <div className={s.bottom__dragAreaIcon}>
+                      <label>
+                        <FileUploadIcon sx={{ color: '#fff', fontSize: '45px' }} />
+                        {hiddenFileUploadInput()}
+                      </label>
+                    </div>
+                    <header>Drag & Drop to Upload File</header>
+                    <span>OR</span>
+                    <Button variant="contained" color='white' component='label' sx={{ color: '#000000' }}>Browse files {hiddenFileUploadInput()}</Button>
+                    </> :
+                    <Button variant="contained" color='white' component='label' sx={{ color: '#000000', marginTop: '30px' }}>Got it {hiddenFileUploadInput()}</Button>}
 
-            <Link href="#last" passHref>
-              <Button
-                variant="contained"
-                sx={{borderRadius: 0}}
-                onClick={(e) => {
-                  if (value.replace(/\s+/g, "") !== "") {
-                    sendMessage();
-                    dispatch(sendChatMessage())
+                  </div>
+                </Popover>
+              </div>
+              <TextField
+                id="outlined-basic"
+                placeholder="Message"
+                variant="outlined"
+                sx={{ width: "100%", bgcolor: "#fff", borderRadius: '0px' }}
+                value={value}
+                multiline
+                maxRows={3}
+                fullWidth
+                onFocus={() => {
+                  if (mw999px) {
+                    setTimeout(() => {
+                      router.push('#last')
+                    }, 100);
+
                   }
                 }}
-              >
-                <Send />
-              </Button>
-            </Link>
-          </form>
-        </section>
-      </div>
+                onChange={(e) => {
+                  setValue(e.target.value)
+                  dispatch(enterCharacter())
+                }}
+                onKeyDown={e => {
+                  if (e.keyCode === 13 && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                    dispatch(sendChatMessage())
+                    setValue("")
+                  }
+                }
+                }
+              />
+
+              <Link href="#last" passHref>
+                <Button
+                  variant="contained"
+                  color='purple'
+                  sx={{ borderRadius: 0 }}
+                  onClick={(e) => {
+                    if (value.replace(/\s+/g, "") !== "") {
+                      sendMessage();
+                      dispatch(sendChatMessage())
+                    }
+                  }}
+                >
+                  <Send sx={{ color: '#fff' }} />
+                </Button>
+              </Link>
+            </form>
+          </section>
+        </div>
+      </ThemeProvider>
+
     </MainLayout>
   );
 }

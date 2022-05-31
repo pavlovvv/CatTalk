@@ -513,7 +513,7 @@ export default function Signup(props) {
                     sx={{ marginTop: "30px", width: "100%" }}
                     disabled={isPending}
                   >
-                    {isPending ? <CircularProgress size={30} sx={{color: "#000000"}}/> : 'SIGN UP'}
+                    {isPending ? <CircularProgress size={30} sx={{color: "#fff"}}/> : 'SIGN UP'}
                   </Button>
                 </form>
 

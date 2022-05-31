@@ -415,6 +415,7 @@ export default function PrimarySearchAppBar() {
             </Typography>
 
             <Link href='/' passHref>
+              <a>
               <Image
                 src={'https://cat-talk-s3.s3.eu-central-1.amazonaws.com/2022-05-18T15-42-07.837Zcatlogo1.png'}
                 alt={"catTalk"}
@@ -424,6 +425,7 @@ export default function PrimarySearchAppBar() {
                   ? { margin: 2, cursor: 'pointer', borderRadius: '50%' }
                   : { margin: 1, cursor: 'pointer', borderRadius: '50%' }}
               />
+              </a>
             </Link>
 
             {!mw600px && (

@@ -140,6 +140,7 @@
   justify-content: flex-start;
 }
 
+
 @media (max-width: 499px) {
   .messages__messageRight, .messages__messageLeft {
     column-gap: 10px;
@@ -190,6 +191,26 @@
   justify-content: flex-start;
   align-items: center;
   padding-top: 10px;
+  overflow: hidden;
+  white-space: pre-wrap;
+  text-align: left;
+}
+
+.messages__fileMessage {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 20px;
+}
+
+.messages__messageText a {
+    text-decoration: underline;
+    color: gold;
+}
+
+.messages__messageText ul {
+  list-style: inside;
+  list-style-type: disc;
 }
 
 .messages__messageTime {
@@ -215,4 +236,57 @@
     bottom: 0;
     width: 100%;
     z-index: 1000;
+}
+
+.bottom fieldset {
+  border-radius: 0;
+}
+
+
+
+.bottom__dragArea{
+  font-family: 'Quicksand';
+  height: 350px;
+  width: 300px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+@media(max-width: 999px) {
+  .bottom__dragArea{
+    height: 200px;
+  }
+}
+
+.bottom__dragArea.active{
+  border: 2px solid #fff;
+}
+
+.bottom__dragAreaIcon{
+  font-size: 10px;
+  color: #fff;
+  margin: 15px 0;
+}
+.bottom__dragArea header{
+  font-size: 20px;
+  font-weight: 500;
+  color: #fff;
+}
+.bottom__dragArea span{
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+  margin: 10px 0 15px 0;
+}
+
+.bottom__dragAreaInfo {
+  font-size: 18px;
+  display: flex;
+  flex-direction: column; 
+  justify-content: center;
+  align-items: center;
+  text-align: center
 }

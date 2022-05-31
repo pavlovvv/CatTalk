@@ -2,11 +2,8 @@ import Image from 'next/image'
 import MainLayout from '../components/MainLayout.jsx'
 import s from '../styles/news.module.css'
 import catTalkIcon from '../images/catlogo1.png'
-<<<<<<< HEAD
-=======
 import fileUpload from '../images/fileUpload.png'
 import { motion } from 'framer-motion'
->>>>>>> d3c9268 (update-1.1)
 
 export default function News(props) {
 
@@ -39,9 +36,6 @@ export default function News(props) {
             <div className={s.newsPage}>
                 <div className={s.newsPage__panel}>
                     <div className={s.container}>
-<<<<<<< HEAD
-                        <section>
-=======
                         <motion.section
                             initial="hidden"
                             animate="visible"
@@ -81,7 +75,6 @@ export default function News(props) {
                                   variants={moveRight}
                                   viewport={{ amount: 0.9555 }}
                         >
->>>>>>> d3c9268 (update-1.1)
                             <div className={s.title}>
                                 Release 1.0
                             </div>
@@ -89,23 +82,12 @@ export default function News(props) {
 
                                 <div className={s.newsPage__panelInfo}>
                                     <div className={s.newsPage__panelText}>
-<<<<<<< HEAD
-                                    Over a month of development...
-                                    <br />
-                                    Over 8k lines of code...
-=======
                                         Over a month of development...
                                         <br />
                                         Over 8k lines of code...
->>>>>>> d3c9268 (update-1.1)
                                     </div>
-
                                     <div className={s.newsPage__panelImage}>
-<<<<<<< HEAD
-                                        <Image width='100px' height='80px' src={catTalkIcon.src} alt='CatTalk'/>
-=======
                                         <Image width='100px' height='80px' src={catTalkIcon.src} alt='CatTalk' />
->>>>>>> d3c9268 (update-1.1)
                                     </div>
                                 </div>
                                 <div className={s.newsPage__panelDate}>

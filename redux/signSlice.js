@@ -163,6 +163,7 @@ const signSlice = createSlice({
             state.userData.info = Object.entries(action.payload.data.info).map(entry => ({[entry[0]]: entry[1]}));
             state.userData.stats = Object.entries(action.payload.data.stats).map(entry => ({[entry[0]]: entry[1]}));
             state.userData.friends = action.payload.data.friends
+            state.userData.limits = action.payload.data.limits
             state.isAuthed = true
             state.isAuthFulfilled = true
         },

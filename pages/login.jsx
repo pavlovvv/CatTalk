@@ -274,7 +274,7 @@ function Login(props) {
                       sx={{ marginTop: "20px", width: "100%" }}
                       disabled={isPending}
                     >
-                      {isPending ? <CircularProgress size={30} sx={{ color: "#000000" }} /> : 'LOG IN'}
+                      {isPending ? <CircularProgress size={30} sx={{ color: "#fff" }} /> : 'LOG IN'}
                     </Button>
                   </form>
                   {logInError && (
