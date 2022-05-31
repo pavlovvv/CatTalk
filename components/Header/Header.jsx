@@ -1,32 +1,31 @@
-import * as React from "react";
-import { styled, alpha } from "@mui/material/styles";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import InputBase from "@mui/material/InputBase";
-import Badge from "@mui/material/Badge";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+import MenuIcon from "@mui/icons-material/Menu";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import { createTheme, ThemeProvider, Popover, Button } from "@mui/material";
-import { useState } from "react";
-import Drawer from "@mui/material/Drawer";
-import NavDrawer from "./NavDrawer";
-import logo from "../../images/catlogo1.png";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import SearchIcon from "@mui/icons-material/Search";
+import { Button, createTheme, Popover, ThemeProvider } from "@mui/material";
+import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
+import Badge from "@mui/material/Badge";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import InputBase from "@mui/material/InputBase";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { alpha, styled } from "@mui/material/styles";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Link from "next/link";
-import { logOut } from '../../redux/signSlice.js'
-import { useSelector, useDispatch } from 'react-redux'
 import Image from "next/image";
+import Link from "next/link";
+import * as React from "react";
+import { useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { logOut } from '../../redux/signSlice.js';
 import { confirmFriendRequest, rejectFriendRequest, searchUsers } from "../../redux/usersSlice.js";
+import NavDrawer from "./NavDrawer";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",

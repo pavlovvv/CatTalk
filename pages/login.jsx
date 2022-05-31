@@ -182,8 +182,8 @@ function Login(props) {
                             message: "Minimum 8 characters",
                           },
                           maxLength: {
-                            value: 40,
-                            message: "Maximum 40 characters",
+                            value: 35,
+                            message: "Maximum 35 characters",
                           },
                           pattern: {
                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]+\s*$/i,
