@@ -168,9 +168,7 @@
 	font-weight: 600;
 	margin-top: auto;
 	margin-bottom: auto;
-	/* word-break: break-word;
-	overflow-wrap: break-word;
-	hyphens: auto; */
+	word-break: break-word;
 }
 
 .info__links {
