@@ -22,10 +22,11 @@ import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 import { useState } from "react";
-import { useDispatch, useSelector } from 'react-redux';
-import { logOut } from '../../redux/signSlice.js';
-import { confirmFriendRequest, rejectFriendRequest, searchUsers } from "../../redux/usersSlice.js";
+import { logOut } from '../../redux/signSlice';
+import { confirmFriendRequest, rejectFriendRequest, searchUsers } from "../../redux/usersSlice";
 import NavDrawer from "./NavDrawer";
+import { IStringAvatar, IWaitingFriendsItem, IFilteredUser } from "../../typescript/interfaces/data.js";
+import { useAppDispatch, useAppSelector } from "../../typescript/hook";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -67,59 +68,70 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function PrimarySearchAppBar() {
+declare module '@mui/material/styles' {
+  interface Theme {
+    status: {
+      danger: string;
+    };
+  }
+  interface ThemeOptions {
+    status?: {
+      danger?: string;
+    };
+  }
+}
+
+export default function PrimarySearchAppBar () {
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
+  const authData = useAppSelector(state => state.sign.userData)
+
+  const [searchText, setSearchText] = useState<string>("");
 
 
+  const isMenuOpen: boolean = Boolean(anchorEl);
+  const isMobileMenuOpen: boolean = Boolean(mobileMoreAnchorEl);
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-  const authData = useSelector(state => state.sign.userData)
-
-  const [searchText, setSearchText] = useState("");
-
-
-  const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  const handleProfileMenuOpen = (event) => {
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>): void => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMobileMenuClose = () => {
+  const handleMobileMenuClose = (): void => {
     setMobileMoreAnchorEl(null);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = (): void => {
     setAnchorEl(null);
     handleMobileMenuClose();
   };
 
-  const handleMobileMenuOpen = (event) => {
+  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>): void => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  const stringAvatar = (name) => {
+  const stringAvatar = (name: string): IStringAvatar => {
     return {
       children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
     };
   };
 
-  const menuId = "primary-search-account-menu";
+  const menuId: string = "primary-search-account-menu";
 
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   
-  const [anchorFriendsMobileEl, setAnchorFriendsMobileEl] = useState(null);
+  const [anchorFriendsMobileEl, setAnchorFriendsMobileEl] = useState<null | HTMLElement>(null);
 
-  const handleFriendsMobileClick = (event) => {
+  const handleFriendsMobileClick = (event: React.MouseEvent<HTMLElement>): void => {
     setAnchorFriendsMobileEl(event.currentTarget);
   };
 
-  const handleFriendsMobileClose = () => {
+  const handleFriendsMobileClose = (): void => {
     setAnchorFriendsMobileEl(null);
   };
 
-  const notificationMobileOpen = Boolean(anchorFriendsMobileEl);
-  const notificationMobileId = notificationMobileOpen ? 'simple-friends-popover-mobile' : undefined;
+  const notificationMobileOpen: boolean = Boolean(anchorFriendsMobileEl);
+  const notificationMobileId: string | undefined = notificationMobileOpen ? 'simple-friends-popover-mobile' : undefined;
 
   const renderMenu = (
     <Menu
@@ -153,7 +165,9 @@ export default function PrimarySearchAppBar() {
     </Menu>
   );
 
-  const mobileMenuId = "primary-search-account-menu-mobile";
+
+
+  const mobileMenuId: string = "primary-search-account-menu-mobile";
   const renderMobileMenu = (
     <Menu
       anchorEl={mobileMoreAnchorEl}
@@ -232,7 +246,7 @@ export default function PrimarySearchAppBar() {
                   >
 
                     {authData.friends.waitingFriends?.length !== 0 ? <Box sx={{ p: 2 }}>
-                    {authData.friends.waitingFriends?.map((item) => (
+                    {authData.friends.waitingFriends?.map((item: IWaitingFriendsItem) => (
                       <div style={{display:'flex', flexDirection: 'column', rowGap: '15px'}} key={item.id}>
                         <div>
                     <Link href={`/profile/${item.id}`} passHref>
@@ -314,59 +328,59 @@ export default function PrimarySearchAppBar() {
       error: {
         main: "rgb(211, 47, 47)"
       },
-      components: {
-        MuiDrawer: {
-          styleOverrides: {
-            paper: {
-              background: "orange",
-            },
-          },
-        },
-      },
+      // components: {
+      //   MuiDrawer: {
+      //     styleOverrides: {
+      //       paper: {
+      //         background: "orange",
+      //       },
+      //     },
+      //   },
+      // },
     },
   });
 
-  const [drawer, setDrawer] = useState(false);
+  const [drawer, setDrawer] = useState<boolean>(false);
 
-  const toggleDrawer = (e) => {
+  const toggleDrawer = (e: boolean): void => {
     setDrawer(e);
   };
 
   const mw600px = useMediaQuery("(max-width:600px)");
 
-  const isAuthed = useSelector(state => state.sign.isAuthed)
+  const isAuthed = useAppSelector(state => state.sign.isAuthed)
 
 
-  const [anchorSearchEl, setAnchorSearchEl] = useState(null);
-  const filteredUsers = useSelector(state => state.users.filteredUsers)
+  const [anchorSearchEl, setAnchorSearchEl] = useState<null | HTMLElement>(null);
+  const filteredUsers = useAppSelector(state => state.users.filteredUsers)
 
-  const searchHandler = (e) => {
+  const searchHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const lowerCase = e.target.value.toLowerCase();
     setSearchText(lowerCase);
     setAnchorSearchEl(e.currentTarget)
     dispatch(searchUsers({searchText: lowerCase}))
   };
 
-  const handleLose = () => {
+  const handleLose = (): void => {
     setAnchorSearchEl(null)
   };
 
-  const open = Boolean(anchorSearchEl);
-  const id = open ? 'simple-popover' : undefined;
+  const open: boolean = Boolean(anchorSearchEl);
+  const id: string | undefined = open ? 'simple-popover' : undefined;
 
 
-  const [anchorFriendsEl, setAnchorFriendsEl] = useState(null);
+  const [anchorFriendsEl, setAnchorFriendsEl] = useState<null | HTMLElement>(null);
 
-  const handleFriendsClick = (event) => {
+  const handleFriendsClick = (event: any): void => {
     setAnchorFriendsEl(event.currentTarget);
   };
 
-  const handleFriendsClose = () => {
+  const handleFriendsClose = (): void => {
     setAnchorFriendsEl(null);
   };
 
-  const notificationOpen = Boolean(anchorFriendsEl);
-  const notificationId = notificationOpen ? 'simple-friends-popover' : undefined;
+  const notificationOpen: boolean = Boolean(anchorFriendsEl);
+  const notificationId: string | undefined = notificationOpen ? 'simple-friends-popover' : undefined;
 
   return (
     <ThemeProvider theme={theme}>
@@ -464,7 +478,7 @@ export default function PrimarySearchAppBar() {
               >
 
                 <Box sx={{ p: 2 }}>
-                  {filteredUsers.map((item) => (
+                  {filteredUsers.map((item: IFilteredUser) => (
                     <Link href={`/profile/${item.id}`} passHref key={item.id}>
                       <a target="_blank" rel="noopener noreferrer">
                         <div style={{
@@ -514,7 +528,9 @@ export default function PrimarySearchAppBar() {
                   color="inherit"
                 >
                   <Badge badgeContent={authData.friends.waitingFriends?.length} color="error">
-                    <NotificationsIcon onClick={handleFriendsClick}/>
+                    <NotificationsIcon onClick={(e) => {
+                      handleFriendsClick(e)
+                      }}/>
                   </Badge>
 
                   <Popover
@@ -538,7 +554,7 @@ export default function PrimarySearchAppBar() {
                   >
 
                     {authData.friends.waitingFriends?.length !== 0 ? <Box sx={{ p: 2 }}>
-                    {authData.friends.waitingFriends?.map((item) => (
+                    {authData.friends.waitingFriends?.map((item: IFilteredUser) => (
                       <div style={{display:'flex', flexDirection: 'column', rowGap: '15px'}} key={item.id}>
                         <div>
                     <Link href={`/profile/${item.id}`} passHref>

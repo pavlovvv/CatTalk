@@ -1,6 +1,5 @@
 import React from "react";
 import style from "./NavDrawer.module.css";
-import logo from "../../images/catlogo1.png";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LoginIcon from "@mui/icons-material/Login";
 import LeaderboardIcon from '@mui/icons-material/Leaderboard';
@@ -8,7 +7,6 @@ import { Stack } from "@mui/material";
 import MessageIcon from "@mui/icons-material/Message";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
 import SettingsIcon from "@mui/icons-material/Settings";
-import withDefaultHOC from "../HOC/withDefaultHOC";
 import Button from "@mui/material/Button";
 import { createTheme } from "@mui/material";
 import { ThemeProvider } from "@mui/material";
@@ -19,7 +17,6 @@ import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { logOut } from "../../redux/signSlice";
-import { Avatar } from "@mui/material";
 
 const useStyles = makeStyles({
   tr: {
@@ -128,7 +125,7 @@ export default function NavDrawer(props) {
             <nav>
               <ul>
                 {navItems.map((item, i) => {
-                  let Icon = withDefaultHOC(Icons[i]);
+                  let Icon = Icons[i]
                   return (
                     <Link href={linkItems[i]} key={i} passHref>
                     <li className={style.navigation__item} style={{cursor: 'pointer'}}>

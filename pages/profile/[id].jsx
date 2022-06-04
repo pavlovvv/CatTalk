@@ -6,8 +6,8 @@ import { useRouter } from "next/router";
 import { Button, createTheme, ThemeProvider, Alert, Avatar, Popover, Typography, CircularProgress } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import Link from "next/link";
-import { setDynamicPage } from "../../redux/signSlice.js";
-import { addFriend, refuseOwnFriendRequest, deleteFriend } from "../../redux/usersSlice.js";
+import { setDynamicPage } from "../../redux/signSlice";
+import { addFriend, refuseOwnFriendRequest, deleteFriend } from "../../redux/usersSlice";
 import instagramIcon from '../../images/Instagram_icon.webp'
 import telegramIcon from '../../images/Telegram_icon.webp'
 import discordIcon from '../../images/discord-icon.svg'

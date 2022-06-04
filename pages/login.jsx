@@ -13,9 +13,9 @@ import { styled } from "@mui/material/styles";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { FormHelperText } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { auth } from "../redux/signSlice.js";
+import { auth } from "../redux/signSlice";
 import { useRouter } from "next/router";
 import Link from "next/link";
 

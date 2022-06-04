@@ -1,6 +1,6 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-import Header from "./Header/Header.jsx";
+import Header from "./Header/Header.tsx";
 import reactIcon from '/images/react-icon.png'
 import reduxIcon from '/images/redux-icon.webp'
 import nodeIcon from '/images/node-js-icon.webp'

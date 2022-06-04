@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import {updateOwnInfo, setProfileError} from '../../redux/signSlice.js'
+import {updateOwnInfo, setProfileError} from '../../redux/signSlice'
 import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 

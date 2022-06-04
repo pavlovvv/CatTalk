@@ -23,12 +23,12 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton'
-import { getUsers } from "../redux/usersSlice.js";
+import { getUsers } from "../redux/usersSlice";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Image from 'next/image';
 import Link from 'next/link';
-import { sortByMostChats, sortByMostSentMessages, sortByMostEnteredCharacters, searchUsers } from '../redux/usersSlice.js';
+import { sortByMostChats, sortByMostSentMessages, sortByMostEnteredCharacters, searchUsers } from '../redux/usersSlice';
 
 
 const Search = styled("div")(({ theme }) => ({

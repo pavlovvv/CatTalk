@@ -99,7 +99,7 @@ export const API = {
                 .then(response => response)
         },
 
-        addFriend: (id, name, surname, username, avatar = null) => {
+        addFriend: (id, name, surname, username, avatar) => {
             return instance.post(`users/addFriend`, {id, name, surname, username, avatar})
                 .then(response => response)
         },
@@ -114,7 +114,7 @@ export const API = {
                 .then(response => response)
         },
 
-        confirmFriend: (id, name, surname, username, avatar = null) => {
+        confirmFriend: (id, name, surname, username, avatar) => {
             debugger
             return instance.post(`users/confirmFriend`, {id, name, surname, username, avatar})
                 .then(response => response)

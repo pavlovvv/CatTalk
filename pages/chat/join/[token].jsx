@@ -30,12 +30,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { setChatPage, join, sendChatMessage, enterCharacter } from "../../../redux/chatSlice.js";
 import { useRouter } from "next/router";
-import { setDynamicPage } from "../../../redux/signSlice.js";
+import { setDynamicPage } from "../../../redux/signSlice";
 import { motion } from "framer-motion";
 import { getConnectedUsers } from "../../../redux/tokenSlice.js";
 import ReactMarkdown from 'react-markdown'
 import * as axios from 'axios'
-import { getOwnInfo } from "../../../redux/signSlice.js";
+import { getOwnInfo } from "../../../redux/signSlice";
 
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
