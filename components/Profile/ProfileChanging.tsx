@@ -1,19 +1,17 @@
-import s from "../../styles/profile.module.css";
-import {
-  Button,
-  TextField,
-  createTheme,
-  ThemeProvider,
-  useMediaQuery,
-  CircularProgress,
-  Alert
-} from "@mui/material";
-import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import {updateOwnInfo, setProfileError} from '../../redux/signSlice.js'
-import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
-
+import {
+  Alert, Button, CircularProgress, createTheme, TextField, ThemeProvider,
+  useMediaQuery
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { setProfileError, updateOwnInfo } from "../../redux/signSlice";
+import s from "../../styles/profile.module.css";
+import { useAppDispatch, useAppSelector } from "../../typescript/hook";
+import {
+  IProfileChangingProps,
+  IProfileChangingSubmit
+} from "../../typescript/interfaces/data";
 
 const StyledTextField = styled(TextField)({
   "& label": {
@@ -49,32 +47,27 @@ const StyledTextField = styled(TextField)({
 });
 
 
-export default function ProfileChanging(props) {
+export default function ProfileChanging(props: IProfileChangingProps) {
+  const dispatch = useAppDispatch();
+  const isProfileUpdatingConfirmed = useAppSelector(
+    (state) => state.sign.isProfileUpdatingConfirmed
+  );
+  const isPending = useAppSelector((state) => state.sign.isPending);
+  const profileError = useAppSelector((state) => state.sign.profileError);
 
+  const [isUpdatingConfirmed, setUpdatingConfirmed] = useState(false);
 
-    const dispatch = useDispatch();
-    const isProfileUpdatingConfirmed = useSelector(state => state.sign.isProfileUpdatingConfirmed)
-    const isPending = useSelector(state => state.sign.isPending)
-    const profileError = useSelector(state => state.sign.profileError)
-
-    const [isUpdatingConfirmed, setUpdatingConfirmed] = useState(false)
-
-    useEffect(() => {
-
-      if(isUpdatingConfirmed && !profileError && isPending === false) {
-
-      if(isProfileUpdatingConfirmed) {
-        setUpdatingConfirmed(false)
-        props.setChanging(false)
+  useEffect(() => {
+    if (isUpdatingConfirmed && !profileError && isPending === false) {
+      if (isProfileUpdatingConfirmed) {
+        setUpdatingConfirmed(false);
+        props.setChanging(false);
       }
-}
-
-    }, [isPending])
-
+    }
+  }, [isPending]);
 
   const {
     register,
-    watch,
     formState: { errors, isValid },
     handleSubmit,
     reset,
@@ -82,28 +75,40 @@ export default function ProfileChanging(props) {
     mode: "onBlur",
   });
 
-  const onSubmit = ({ name, surname, username, age, location }) => {
-    dispatch(setProfileError({profileError: null}))
-    dispatch(updateOwnInfo({
-    name: name.charAt(0).toUpperCase() + name.slice(1).replace(/\s+/g, '').toLowerCase(), 
-    surname: surname.charAt(0).toUpperCase() + surname.slice(1).replace(/\s+/g, '').toLowerCase(), 
-    username: username.replace(/\s+/g, '').toLowerCase(),
-    age : (age.length == 0 ? null : age), 
-    location: (location.length == 0 ? null : location)
-}))
-setUpdatingConfirmed(true)
-};
+  const onSubmit = ({
+    name,
+    surname,
+    username,
+    age,
+    location,
+  }: IProfileChangingSubmit) => {
+    dispatch(setProfileError(null));
+    dispatch(
+      updateOwnInfo({
+        name:
+          name.charAt(0).toUpperCase() +
+          name.slice(1).replace(/\s+/g, "").toLowerCase(),
+        surname:
+          surname.charAt(0).toUpperCase() +
+          surname.slice(1).replace(/\s+/g, "").toLowerCase(),
+        username: username.replace(/\s+/g, "").toLowerCase(),
+        age: age !== null && age >= 0 ? age : null,
+        location: location.length == 0 ? null : location,
+      })
+    );
+    setUpdatingConfirmed(true);
+  };
   const theme = createTheme({
     palette: {
+      primary: {
+        main: "#E9D5DA",
+      },
       secondary: {
         main: "#333C83",
       },
-      third: {
-        main: "#E9D5DA",
-      },
       error: {
         main: "#FF4949",
-      },
+      }
     },
   });
 
@@ -127,17 +132,18 @@ setUpdatingConfirmed(true)
                   label="Name"
                   variant="outlined"
                   required
-                  color="third"
+                  color="primary"
                   defaultValue={props.info[0].name}
                   sx={
                     mw441px
                       ? {
                           input: { color: "#E9D5DA" },
                           marginTop: "15px",
-                          width: "100%"
+                          width: "100%",
                         }
-                      : { 
-                        input: { color: "#E9D5DA" } } //DADDFC
+                      : {
+                          input: { color: "#E9D5DA" },
+                        } //DADDFC
                   }
                   error={!!errors.name}
                   helperText={errors.name && errors.name.message}
@@ -172,14 +178,14 @@ setUpdatingConfirmed(true)
                   variant="outlined"
                   required
                   error={!!errors.surname}
-                  color="third"
+                  color="primary"
                   defaultValue={props.info[1].surname}
                   sx={
                     mw441px
                       ? {
                           input: { color: "#E9D5DA" },
                           marginTop: "15px",
-                          width: "100%"
+                          width: "100%",
                         }
                       : { input: { color: "#E9D5DA" } }
                   }
@@ -215,14 +221,14 @@ setUpdatingConfirmed(true)
                   variant="outlined"
                   required
                   error={!!errors.username}
-                  color="third"
+                  color="primary"
                   defaultValue={props.info[2].username}
                   sx={
                     mw441px
                       ? {
                           input: { color: "#E9D5DA" },
                           marginTop: "15px",
-                          width: "100%"
+                          width: "100%",
                         }
                       : { input: { color: "#E9D5DA" } }
                   }
@@ -239,8 +245,7 @@ setUpdatingConfirmed(true)
                     },
                     pattern: {
                       value: /^[\w](?!.*?\.{2})[\w.]{1,28}[\w]+\s*$/,
-                      message:
-                        "Use only letters of the Latin alphabet",
+                      message: "Use only letters of the Latin alphabet",
                     },
                   })}
                 />
@@ -250,8 +255,12 @@ setUpdatingConfirmed(true)
             <hr className={s.hrUnder} />
 
             <div className={s.info__infoItems}>
-              <span className={s.info__infoItemName + ' ' + s.info_changedName}>email</span>
-              <span className={s.info__infoItemValue + ' ' + s.info_changedValue}>
+              <span className={s.info__infoItemName + " " + s.info_changedName}>
+                email
+              </span>
+              <span
+                className={s.info__infoItemValue + " " + s.info_changedValue}
+              >
                 {props.info[3]?.email}
               </span>
             </div>
@@ -259,10 +268,14 @@ setUpdatingConfirmed(true)
             <hr className={s.hrUnder} />
 
             <div className={s.info__infoItems}>
-              <span className={s.info__infoItemName + ' ' + s.info_changedName}>id</span>
-              <span className={s.info__infoItemValue + ' ' + s.info_changedValue}>
-                  {props.info[4]?.id}
-                </span>
+              <span className={s.info__infoItemName + " " + s.info_changedName}>
+                id
+              </span>
+              <span
+                className={s.info__infoItemValue + " " + s.info_changedValue}
+              >
+                {props.info[4]?.id}
+              </span>
             </div>
 
             <hr className={s.hrUnder} />
@@ -275,14 +288,14 @@ setUpdatingConfirmed(true)
                   label="Age"
                   variant="outlined"
                   error={!!errors.age}
-                  color="third"
+                  color="primary"
                   defaultValue={props.info[5].age}
                   sx={
                     mw441px
                       ? {
                           input: { color: "#E9D5DA" },
                           marginTop: "15px",
-                          width: "100%"
+                          width: "100%",
                         }
                       : { input: { color: "#E9D5DA" } }
                   }
@@ -294,8 +307,7 @@ setUpdatingConfirmed(true)
                     },
                     pattern: {
                       value: /^[ 0-9]+$/,
-                      message:
-                        "Use only numbers",
+                      message: "Use only numbers",
                     },
                   })}
                 />
@@ -312,14 +324,14 @@ setUpdatingConfirmed(true)
                   label="Location"
                   variant="outlined"
                   error={!!errors.location}
-                  color="third"
+                  color="primary"
                   defaultValue={props.info[6].location}
                   sx={
                     mw441px
                       ? {
                           input: { color: "#E9D5DA" },
                           marginTop: "15px",
-                          width: "100%"
+                          width: "100%",
                         }
                       : { input: { color: "#E9D5DA" } }
                   }
@@ -332,41 +344,50 @@ setUpdatingConfirmed(true)
                     maxLength: {
                       value: 25,
                       message: "Maximum 25 characters",
-                    }
+                    },
                   })}
                 />
               </span>
             </div>
             <div>
-            <Button
-                      type="submit"
-                      variant="contained"
-                      color='success'
-                      size='large'
-                      disabled={isPending}
-                      sx={{ marginLeft: "20px",  marginBottom: "20px" }}
-                    >
-                      {isPending ? <CircularProgress size={30} sx={{color: "#fff"}}/> : 'CONFIRM'}
-                    </Button>
-                    <Button 
-                      variant="outlined"
-                      color='error'
-                      size='large'
-                      sx={{ marginLeft: "20px",  marginBottom: "20px" }}
-                      onClick={() => {
-                          props.setChanging(false)
-                      }}
-                    >
-                        Cancel
-                    </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="success"
+                size="large"
+                disabled={isPending}
+                sx={{ marginLeft: "20px", marginBottom: "20px" }}
+              >
+                {isPending ? (
+                  <CircularProgress size={30} sx={{ color: "#fff" }} />
+                ) : (
+                  "CONFIRM"
+                )}
+              </Button>
+              <Button
+                variant="outlined"
+                color="error"
+                size="large"
+                sx={{ marginLeft: "20px", marginBottom: "20px" }}
+                onClick={() => {
+                  props.setChanging(false);
+                }}
+              >
+                Cancel
+              </Button>
             </div>
-            {profileError && <Alert severity="error" color="primary" variant="filled" 
-                      sx={{
-                        backgroundColor: "rgb(211, 47, 47)",
-                        color: "#fff",
-                      }}>
-                  {profileError}
-                  </Alert>}
+            {profileError && (
+              <Alert
+                severity="error"
+                variant="filled"
+                sx={{
+                  backgroundColor: "rgb(211, 47, 47)",
+                  color: "#fff",
+                }}
+              >
+                {profileError}
+              </Alert>
+            )}
           </div>
         </form>
       </div>

@@ -1,16 +1,22 @@
-import MainLayout from "../components/MainLayout.jsx";
-import s from "../styles/token.module.css";
-import { TextField, Button, Alert } from "@mui/material";
-import { createTheme, ThemeProvider, CircularProgress , Popover, Typography} from "@mui/material";
+import {
+  Alert,
+  Button,
+  CircularProgress,
+  createTheme,
+  Popover,
+  TextField,
+  ThemeProvider,
+  Typography,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useForm } from "react-hook-form";
-import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
-import { getToken, findToken, setFoundToken } from "../redux/tokenSlice.js";
-
-
-
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import MainLayout from "../components/MainLayout";
+import { findToken, getToken, setFoundToken } from "../redux/tokenSlice";
+import s from "../styles/token.module.css";
+import { useAppDispatch, useAppSelector } from "../typescript/hook";
+import { ITokenSubmit } from "./../typescript/interfaces/data";
 
 const StyledTextField = styled(TextField)({
   "& label": {
@@ -45,18 +51,27 @@ const StyledTextField = styled(TextField)({
   },
 });
 
-
+declare module "@mui/material/styles" {
+  interface Theme {
+    status: {
+      danger: string;
+    };
+  }
+  interface ThemeOptions {
+    status?: {
+      danger?: string;
+    };
+  }
+}
 
 function TokenPage() {
-
-
   const theme = createTheme({
     palette: {
       primary: {
         main: "#fff",
       },
-      third: {
-        main: '#000000'
+      secondary: {
+        main: "#000000",
       },
       error: {
         main: "#FF5959",
@@ -66,7 +81,6 @@ function TokenPage() {
 
   const {
     register,
-    watch,
     formState: { errors, isValid },
     handleSubmit,
     reset,
@@ -74,43 +88,38 @@ function TokenPage() {
     mode: "onBlur",
   });
 
-  const dispatch = useDispatch();
-  const router = useRouter()
+  const dispatch = useAppDispatch();
+  const router = useRouter();
 
+  const isGetPending = useAppSelector((state) => state.token.isGetPending);
+  const isFindPending = useAppSelector((state) => state.token.isFindPending);
+  const token = useAppSelector((state) => state.token.token);
+  const foundToken = useAppSelector((state) => state.token.foundToken);
+  const error = useAppSelector((state) => state.token.error);
 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isCopied, setCopy] = useState<boolean>(false);
 
-
-  const isGetPending = useSelector((state) => state.token.isGetPending);
-  const isFindPending = useSelector((state) => state.token.isFindPending);
-  const token = useSelector((state) => state.token.token);
-  const foundToken = useSelector((state) => state.token.foundToken);
-  const error = useSelector((state) => state.token.error);
-
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [isCopied, setCopy] = useState(false)
-
-  const handlePopoverOpen = (event) => {
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>): void => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handlePopoverClose = () => {
+  const handlePopoverClose = (): void => {
     setAnchorEl(null);
   };
 
-  const open = Boolean(anchorEl);
+  const open: boolean = Boolean(anchorEl);
 
-  const onSubmit = e => {
-    dispatch(findToken({token: e.token}))
+  const onSubmit = (e: ITokenSubmit): void => {
+    dispatch(findToken({ token: e.token }));
   };
 
-useEffect(() => {
-  if (foundToken) {
-    router.push(`/chat/join/${foundToken}`)
-    dispatch(setFoundToken({token: null}))
-  }
-}, [foundToken])
-
-
+  useEffect(() => {
+    if (foundToken) {
+      router.push(`/chat/join/${foundToken}`);
+      dispatch(setFoundToken(null));
+    }
+  }, [foundToken]);
 
   return (
     <MainLayout>
@@ -126,7 +135,7 @@ useEffect(() => {
                     className={s.tokenPage__elements}
                   >
                     <div>
-                      <StyledTextField 
+                      <StyledTextField
                         id="Token"
                         label="Token"
                         variant="outlined"
@@ -139,24 +148,27 @@ useEffect(() => {
                           minLength: {
                             value: 5,
                             message: "Minimum 5 characters",
-                          }
+                          },
                         })}
                       />
 
                       <Button
-                      type='submit'
+                        type="submit"
                         variant="contained"
                         sx={{ marginTop: "20px", width: "100%" }}
                         disabled={isFindPending}
                       >
-                        {isFindPending ? <CircularProgress size={30} sx={{ color: "#fff" }} /> : 'ENTER'}
+                        {isFindPending ? (
+                          <CircularProgress size={30} sx={{ color: "#fff" }} />
+                        ) : (
+                          "ENTER"
+                        )}
                       </Button>
                     </div>
                   </form>
                   {error && (
                     <Alert
                       severity="error"
-                      color="primary"
                       variant="filled"
                       sx={{
                         backgroundColor: "rgb(211, 47, 47)",
@@ -172,33 +184,39 @@ useEffect(() => {
               <section>
                 <Button
                   variant="contained"
-                  color='third'
-                  sx={{ marginTop: "30px", marginBottom: '25px', width: "100%", lineHeight: '40px' }}
+                  color="secondary"
+                  sx={{
+                    marginTop: "30px",
+                    marginBottom: "25px",
+                    width: "100%",
+                    lineHeight: "40px",
+                  }}
                   disabled={isGetPending}
                   onClick={() => {
                     if (!token) {
-                      dispatch(getToken())
+                      dispatch(getToken());
                     }
                   }}
                 >
-                  {isGetPending && <CircularProgress size={30} sx={{ color: "#fff" }} />}
-                  {token && 'YOUR TOKEN IS:'}
-                  {!isGetPending && !token && 'GET TOKEN'}
+                  {isGetPending && (
+                    <CircularProgress size={30} sx={{ color: "#fff" }} />
+                  )}
+                  {token && "YOUR TOKEN IS:"}
+                  {!isGetPending && !token && "GET TOKEN"}
                 </Button>
                 {token && (
                   <div>
                     <Alert
                       severity="success"
-                      color="primary"
                       variant="filled"
-                      onClick={() => { 
-                        setCopy(true)
-                        navigator.clipboard.writeText(token) 
+                      onClick={() => {
+                        setCopy(true);
+                        navigator.clipboard.writeText(token);
                       }}
                       sx={{
                         backgroundColor: "#4E9F3D",
                         color: "#fff",
-                        cursor: 'pointer'
+                        cursor: "pointer",
                       }}
                       onMouseEnter={handlePopoverOpen}
                       onMouseLeave={handlePopoverClose}
@@ -208,23 +226,24 @@ useEffect(() => {
                     <Popover
                       id="mouse-over-popover"
                       sx={{
-                        pointerEvents: 'none',
+                        pointerEvents: "none",
                       }}
                       open={open}
                       anchorEl={anchorEl}
                       anchorOrigin={{
-                        vertical: 'center',
-                        horizontal: 'center',
+                        vertical: "center",
+                        horizontal: "center",
                       }}
                       transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'left',
+                        vertical: "top",
+                        horizontal: "left",
                       }}
                       onClose={handlePopoverClose}
                       disableRestoreFocus
                     >
-                      
-                      <Typography sx={{ p: 1 }}>{!isCopied ? 'Click to copy' : 'Copied!'}</Typography>
+                      <Typography sx={{ p: 1 }}>
+                        {!isCopied ? "Click to copy" : "Copied!"}
+                      </Typography>
                     </Popover>
                   </div>
                 )}
@@ -237,20 +256,16 @@ useEffect(() => {
   );
 }
 
-export default function InititalTokenPage(props) {
-  const isAuthed = useSelector((state) => state.sign.isAuthed);
-  const isAuthFulfilled = useSelector(state => state.sign.isAuthFulfilled)
-  const router = useRouter()
+export default function InititalTokenPage() {
+  const isAuthed = useAppSelector((state) => state.sign.isAuthed);
+  const isAuthFulfilled = useAppSelector((state) => state.sign.isAuthFulfilled);
+  const router = useRouter();
 
   useEffect(() => {
     if (!isAuthed && isAuthFulfilled) {
-
-      router.push('/signup')
-
+      router.push("/signup");
     }
-  }, [isAuthFulfilled])
+  }, [isAuthFulfilled]);
 
-  return (
-    <TokenPage {...props} />
-  )
+  return <TokenPage />;
 }

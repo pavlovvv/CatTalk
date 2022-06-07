@@ -1,26 +1,25 @@
-import { useState } from "react";
-import s from "../../styles/sign.module.css";
-import { TextField, Button } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import Input from "@mui/material/Input";
-import InputLabel from "@mui/material/InputLabel";
-import InputAdornment from "@mui/material/InputAdornment";
-import FormControl from "@mui/material/FormControl";
+import DoneIcon from "@mui/icons-material/Done";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { createTheme, ThemeProvider, useMediaQuery } from "@mui/material";
+import { Alert, Button, CircularProgress, createTheme, FormHelperText, TextField, ThemeProvider, Typography, useMediaQuery } from "@mui/material";
+import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton";
+import Input from "@mui/material/Input";
+import InputAdornment from "@mui/material/InputAdornment";
+import InputLabel from "@mui/material/InputLabel";
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
-import DoneIcon from "@mui/icons-material/Done";
-import { useRef } from "react";
-import { useForm } from "react-hook-form";
-import { FormHelperText, Alert } from "@mui/material";
-import { Typography } from "@mui/material";
 import Link from "next/link";
-import { signUp } from "../../redux/signSlice";
-import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
-import { CircularProgress } from "@mui/material";
+import { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { signUp } from "../../redux/signSlice";
+import s from "../../styles/sign.module.css";
+import { useAppDispatch, useAppSelector } from "../../typescript/hook";
+import {
+  IInputPasswordValues,
+  ISignUpSubmit
+} from "../../typescript/interfaces/data";
 
 const StyledTextField = styled(TextField)({
   "& label": {
@@ -88,26 +87,35 @@ const StyledInput = styled(Input)({
   },
 });
 
-export default function Signup(props) {
+declare module "@mui/material/styles" {
+  interface Theme {
+    status: {
+      danger: string;
+    };
+  }
+  interface ThemeOptions {
+    status?: {
+      danger?: string;
+    };
+  }
+}
 
-  const dispatch = useDispatch()
+export default function Signup() {
+  const dispatch = useAppDispatch();
 
-  const error = useSelector(state => state.sign.error)
-  const isRegConfirmed = useSelector(state => state.sign.isRegConfirmed)
-  const isAuthed = useSelector(state => state.sign.isAuthed);
-  const isPending = useSelector(state => state.sign.isPending);
+  const error = useAppSelector((state) => state.sign.error);
+  const isRegConfirmed = useAppSelector((state) => state.sign.isRegConfirmed);
+  const isAuthed = useAppSelector((state) => state.sign.isAuthed);
+  const isPending = useAppSelector((state) => state.sign.isPending);
 
-  const router = useRouter()
+  const router = useRouter();
 
   if (isAuthed) {
-    router.push('/')
+    router.push("/");
   }
 
-  const [values, setValues] = useState({
-    amount: "",
+  const [values, setValues] = useState<IInputPasswordValues>({
     password: "",
-    weight: "",
-    weightRange: "",
     showPassword: false,
   });
 
@@ -117,24 +125,28 @@ export default function Signup(props) {
     formState: { errors, isValid },
     handleSubmit,
     reset,
-    setValue
+    setValue,
   } = useForm({
     mode: "onBlur",
   });
 
-  const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
-    setValue(prop, event.target.value)
-  };
+  const handleChange =
+    (prop: keyof IInputPasswordValues) =>
+    (event: React.ChangeEvent<HTMLInputElement>): void => {
+      setValues({ ...values, [prop]: event.target.value });
+      setValue(prop, event.target.value);
+    };
 
-  const handleClickShowPassword = () => {
+  const handleClickShowPassword = (): void => {
     setValues({
       ...values,
       showPassword: !values.showPassword,
     });
   };
 
-  const handleMouseDownPassword = (event) => {
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ): void => {
     event.preventDefault();
   };
 
@@ -145,14 +157,14 @@ export default function Signup(props) {
       },
       error: {
         main: "#FF5959",
-      }
+      },
     },
   });
 
   const mw600px = useMediaQuery("(max-width:600px)");
 
-  const [isMakenHidden, setMakenHidden] = useState(false);
-  const [isHidden, setHide] = useState(false);
+  const [isMakenHidden, setMakenHidden] = useState<boolean>(false);
+  const [isHidden, setHide] = useState<boolean>(false);
 
   const moveLeft = {
     visible: {
@@ -178,25 +190,49 @@ export default function Signup(props) {
     },
   };
 
+  const standStill = {
+    visible: {
+      x: 0,
+      opacity: 1,
+    },
+
+    hidden: {
+      x: 0,
+      opacity: 1,
+    },
+  };
+
   const onContinue = () => {
-      setHide(true);
+    setHide(true);
 
-      setTimeout(() => {
-        setMakenHidden(true);
-      }, 1000);
-
-    
+    setTimeout(() => {
+      setMakenHidden(true);
+    }, 1000);
   };
 
-  const onSubmit = ({email, password, firstName, lastName, username}) => {
-    dispatch(signUp({email: email.replace(/\s+/g, '').toLowerCase(), 
-      password, 
-      firstName: firstName.charAt(0).toUpperCase() + firstName.slice(1).replace(/\s+/g, '').toLowerCase(), 
-      lastName: lastName.charAt(0).toUpperCase() + lastName.slice(1).replace(/\s+/g, '').toLowerCase(), 
-      username: username.replace(/\s+/g, '').toLowerCase()}))
+  const onSubmit = ({
+    email,
+    password,
+    firstName,
+    lastName,
+    username,
+  }: ISignUpSubmit): void => {
+    dispatch(
+      signUp({
+        email: email.replace(/\s+/g, "").toLowerCase(),
+        password,
+        firstName:
+          firstName.charAt(0).toUpperCase() +
+          firstName.slice(1).replace(/\s+/g, "").toLowerCase(),
+        lastName:
+          lastName.charAt(0).toUpperCase() +
+          lastName.slice(1).replace(/\s+/g, "").toLowerCase(),
+        username: username.replace(/\s+/g, "").toLowerCase(),
+      })
+    );
   };
 
-  const password = useRef({});
+  const password = useRef<any>({});
   password.current = watch("password", "");
 
   return (
@@ -231,8 +267,7 @@ export default function Signup(props) {
                   <motion.div
                     initial="visible"
                     animate="hidden"
-                    variants={isHidden && moveLeft}
-                    viewport={{ amount: 0.9555 }}
+                    variants={isHidden ? moveLeft : standStill}
                   >
                     <StyledTextField
                       id="email"
@@ -267,8 +302,7 @@ export default function Signup(props) {
                   <motion.div
                     initial="visible"
                     animate="hidden"
-                    variants={isHidden && moveRight}
-                    viewport={{ amount: 0.9555 }}
+                    variants={isHidden ? moveRight : standStill}
                   >
                     <FormControl
                       sx={mw600px ? { width: "100%" } : { width: "400px" }}
@@ -315,7 +349,7 @@ export default function Signup(props) {
                               aria-label="toggle password visibility"
                               onClick={handleClickShowPassword}
                               onMouseDown={handleMouseDownPassword}
-                              sx={{color: '#fff'}}
+                              sx={{ color: "#fff" }}
                             >
                               {values.showPassword ? (
                                 <VisibilityOff />
@@ -332,13 +366,21 @@ export default function Signup(props) {
                     </FormControl>
                   </motion.div>
 
-                  <Typography variant="body1" sx={{ fontSize: '14px', display: 'flex' }} component={'span'}>
+                  <Typography
+                    variant="body1"
+                    sx={{ fontSize: "14px", display: "flex" }}
+                    component={"span"}
+                  >
                     Already a user? &nbsp;
                     <Link href="/login" passHref>
                       <Typography
                         variant="body1"
-                        sx={{ textDecoration: "underline" , fontSize: '14px', cursor: 'pointer'}}
-                        component={'span'}
+                        sx={{
+                          textDecoration: "underline",
+                          fontSize: "14px",
+                          cursor: "pointer",
+                        }}
+                        component={"span"}
                       >
                         Login
                       </Typography>
@@ -346,20 +388,31 @@ export default function Signup(props) {
                   </Typography>
 
                   <Button
-                  type='submit'
+                    type="submit"
                     variant="contained"
                     sx={{ marginTop: "15px", width: "100%" }}
                   >
                     NEXT
                   </Button>
                 </form>
-                {isRegConfirmed && <Alert severity="success" color="primary" variant="filled" 
-                sx={{backgroundColor:'#4E9F3D', color:'#fff'}}>
-                  Registration confirmed
-                  </Alert>}
-                {error && <Alert severity="error" color="primary" variant="filled" sx={{backgroundColor: "rgb(211, 47, 47)", color: "#fff"}}> 
-                {error} 
-                </Alert>}
+                {isRegConfirmed && (
+                  <Alert
+                    severity="success"
+                    variant="filled"
+                    sx={{ backgroundColor: "#4E9F3D", color: "#fff" }}
+                  >
+                    Registration confirmed
+                  </Alert>
+                )}
+                {error && (
+                  <Alert
+                    severity="error"
+                    variant="filled"
+                    sx={{ backgroundColor: "rgb(211, 47, 47)", color: "#fff" }}
+                  >
+                    {error}
+                  </Alert>
+                )}
               </div>
             </div>
           ) : (
@@ -398,7 +451,6 @@ export default function Signup(props) {
                     initial="hidden"
                     animate="visible"
                     variants={moveLeft}
-                    viewport={{ amount: 0.9555 }}
                   >
                     <StyledTextField
                       id="name"
@@ -435,7 +487,6 @@ export default function Signup(props) {
                     initial="hidden"
                     animate="visible"
                     variants={moveRight}
-                    viewport={{ amount: 0.9555 }}
                   >
                     <StyledTextField
                       id="surname"
@@ -448,9 +499,7 @@ export default function Signup(props) {
                       }
                       required
                       error={!!errors.lastName}
-                      helperText={
-                        errors.lastName && errors.lastName.message
-                      }
+                      helperText={errors.lastName && errors.lastName.message}
                       {...register("lastName", {
                         required: "Fieled must be filled",
                         minLength: {
@@ -474,7 +523,6 @@ export default function Signup(props) {
                     initial="hidden"
                     animate="visible"
                     variants={moveLeft}
-                    viewport={{ amount: 0.9555 }}
                   >
                     <StyledTextField
                       id="username"
@@ -513,11 +561,13 @@ export default function Signup(props) {
                     sx={{ marginTop: "30px", width: "100%" }}
                     disabled={isPending}
                   >
-                    {isPending ? <CircularProgress size={30} sx={{color: "#fff"}}/> : 'SIGN UP'}
+                    {isPending ? (
+                      <CircularProgress size={30} sx={{ color: "#fff" }} />
+                    ) : (
+                      "SIGN UP"
+                    )}
                   </Button>
                 </form>
-
-
               </div>
             </div>
           )}
