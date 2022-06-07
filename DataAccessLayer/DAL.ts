@@ -1,4 +1,4 @@
-import * as axios from 'axios'
+import axios from "axios"
 
 const instance = axios.create({
     withCredentials: true,
@@ -13,12 +13,12 @@ const instance = axios.create({
 
 export const API = {
     signAPI: {
-        signUp: (email, password, name, surname, username) => {
+        signUp: (email: string, password: string, name: string, surname: string, username: string) => {
             return instance.post(`auth/signup`, { email, password, name, surname, username })
                 .then(response => response)
         },
 
-        auth: (email, password) => {
+        auth: (email: string, password: string) => {
             return instance.post(`auth/login`, { email, password })
                 .then(response => response)
         },
@@ -33,7 +33,7 @@ export const API = {
                 .then(response => response)
         },
 
-        updateOwnInfo: (name, surname, username, age, location) => {
+        updateOwnInfo: (name: string, surname: string, username: string, age: number | null, location: any) => {
             return instance.put(`auth/updateMyOwnInfo`, { name, surname, username, age, location })
                 .then(response => response)
         }
@@ -45,19 +45,19 @@ export const API = {
                 .then(response => response)
         },
 
-        findToken: (token) => {
+        findToken: (token: string | string[] | null) => {
             return instance.post(`token/find`, { token })
                 .then(response => response)
         },
 
-        getConnectedUsers: (token) => {
+        getConnectedUsers: (token: string | string[] | null) => {
             return instance.post(`token/getConnectedUsers`, { token })
                 .then(response => response)
         }
     },
 
     chatAPI: {
-        join: (token) => {
+        join: (token: string | string[]) => {
             return instance.post(`chat/join`, { token })
                 .then(response => response)
         },
@@ -74,53 +74,52 @@ export const API = {
     },
 
     usersAPI: {
-        getUsers: (page = 0) => {
+        getUsers: (page: number = 0) => {
             return instance.get(`users/get?page=${page}`)
                 .then(response => response)
         },
 
-        searchUsers: (searchText) => {
+        searchUsers: (searchText: string | null) => {
             return instance.post(`users/search`, {searchText})
                 .then(response => response)
         },
 
-        getByMostChats: (page = 0) => {
+        getByMostChats: (page: number = 0) => {
             return instance.get(`users/mostChats?page=${page}`)
                 .then(response => response)
         },
 
-        getByMostSentMessages: (page = 0) => {
+        getByMostSentMessages: (page: number = 0) => {
             return instance.get(`users/mostSentMessages?page=${page}`)
                 .then(response => response)
         },
 
-        getByMostEnteredCharacters: (page = 0) => {
+        getByMostEnteredCharacters: (page: number = 0) => {
             return instance.get(`users/mostCharactersEntered?page=${page}`)
                 .then(response => response)
         },
 
-        addFriend: (id, name, surname, username, avatar) => {
+        addFriend: (id: number, name: string | undefined, surname: string | undefined, username: string | undefined, avatar: string | null) => {
             return instance.post(`users/addFriend`, {id, name, surname, username, avatar})
                 .then(response => response)
         },
 
-        refuseOwnFriendRequest: (id) => {
+        refuseOwnFriendRequest: (id: number) => {
             return instance.post(`users/refuseOwnFriendRequest`, {id})
                 .then(response => response)
         },
 
-        refuseFriendRequest: (id) => {
+        refuseFriendRequest: (id: number) => {
             return instance.post(`users/refuseFriendRequest`, {id})
                 .then(response => response)
         },
 
-        confirmFriend: (id, name, surname, username, avatar) => {
-            debugger
+        confirmFriend: (id: number, name: string | undefined, surname: string | undefined, username: string | undefined, avatar: string | null) => {
             return instance.post(`users/confirmFriend`, {id, name, surname, username, avatar})
                 .then(response => response)
         },
 
-        deleteFriend: (id) => {
+        deleteFriend: (id: number) => {
             return instance.delete(`users/deleteFriend/${id}`)
                 .then(response => response)
         },
@@ -129,17 +128,17 @@ export const API = {
 
     settingsAPI: {
 
-        updateSecurityData: (email, password) => {
+        updateSecurityData: (email: string, password: string | null) => {
             return instance.put(`auth/updateSecurityData`, { email, password })
                 .then(response => response)
         },
 
-        updatePersonalData: (instagramLink, telegramUsername, discordUsername) => {
+        updatePersonalData: (instagramLink: string | null, telegramUsername: string | null, discordUsername: string | null) => {
             return instance.put(`auth/updatePersonalData`, { instagramLink, telegramUsername, discordUsername })
                 .then(response => response)
         },
 
-        updateAvatar: (file) => {
+        updateAvatar: (file: File) => {
             const formData = new FormData()
             formData.append('avatar', file)
             return axios.put(`https://cattalkapi.herokuapp.com/auth/updateAvatar`, formData, {

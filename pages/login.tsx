@@ -1,4 +1,4 @@
-import MainLayout from "../components/MainLayout.jsx";
+import MainLayout from "../components/MainLayout";
 import s from "../styles/sign.module.css";
 import { TextField, Button, Alert } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
@@ -14,10 +14,12 @@ import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { FormHelperText } from "@mui/material";
 import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { auth } from "../redux/signSlice";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useAppSelector, useAppDispatch } from "../typescript/hook";
+import { IInputPasswordValues, ILoginSubmit } from "../typescript/interfaces/data";
+
 
 const StyledTextField = styled(TextField)({
   "& label": {
@@ -85,13 +87,23 @@ const StyledInput = styled(Input)({
   },
 });
 
-function Login(props) {
+declare module "@mui/material/styles" {
+  interface Theme {
+    status: {
+      danger: string;
+    };
+  }
+  interface ThemeOptions {
+    status?: {
+      danger?: string;
+    };
+  }
+}
 
-  const [values, setValues] = useState({
-    amount: "",
+const Login: React.FC = () => {
+
+  const [values, setValues] = useState<IInputPasswordValues>({
     password: "",
-    weight: "",
-    weightRange: "",
     showPassword: false,
   });
 
@@ -106,19 +118,22 @@ function Login(props) {
     mode: "onBlur",
   });
 
-  const handleChange = (prop) => (event) => {
+  const handleChange = (prop: keyof IInputPasswordValues) =>
+  (event: React.ChangeEvent<HTMLInputElement>): void => {
     setValues({ ...values, [prop]: event.target.value });
     setValue(prop, event.target.value)
   };
 
-  const handleClickShowPassword = () => {
+  const handleClickShowPassword = (): void => {
     setValues({
       ...values,
       showPassword: !values.showPassword,
     });
   };
 
-  const handleMouseDownPassword = (event) => {
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ): void => {
     event.preventDefault();
   };
 
@@ -135,18 +150,18 @@ function Login(props) {
 
   const mw600px = useMediaQuery("(max-width:600px)");
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const logInError = useSelector((state) => state.sign.logInError);
+  const logInError = useAppSelector((state) => state.sign.logInError);
 
-  const onSubmit = ({ email, password }) => {
+  const onSubmit = ({ email, password }: ILoginSubmit): void => {
     dispatch(auth({ email: email.replace(/\s+/g, ''), password }));
   };
 
-  const password = useRef({});
+  const password = useRef<any>({});
   password.current = watch("password", "");
 
-  const isPending = useSelector((state) => state.sign.isPending);
+  const isPending = useAppSelector((state) => state.sign.isPending);
 
   return (
     <MainLayout>
@@ -280,7 +295,6 @@ function Login(props) {
                   {logInError && (
                     <Alert
                       severity="error"
-                      color="primary"
                       variant="filled"
                       sx={{
                         backgroundColor: "rgb(211, 47, 47)",
@@ -302,9 +316,9 @@ function Login(props) {
 
 
 
-export default function Log(props) {
-  const key = useSelector((state) => state.sign.key);
-  const isAuthed = useSelector((state) => state.sign.isAuthed);
+export default function InitialLogin() {
+  const key = useAppSelector((state) => state.sign.key);
+  const isAuthed = useAppSelector((state) => state.sign.isAuthed);
 
   const router = useRouter()
 
@@ -313,6 +327,6 @@ export default function Log(props) {
   }
 
   return (
-    <Login {...props} key={key} />
+    <Login key={key} />
   )
 }
