@@ -145,7 +145,7 @@ export interface ITokenSubmit {
 }
 
 export interface IChatProgressProps {
-  value: number | null
+  value: number
   filename?: string | null
 }
 

@@ -64,21 +64,13 @@ declare module "@mui/material/styles" {
   }
 }
 
-declare module "@mui/material/styles/createPalette" {
-  export interface PaletteOptions {
-    third?: {
-      main: string;
-    };
-  }
-}
-
 function TokenPage() {
   const theme = createTheme({
     palette: {
       primary: {
         main: "#fff",
       },
-      third: {
+      secondary: {
         main: "#000000",
       },
       error: {
@@ -192,7 +184,7 @@ function TokenPage() {
               <section>
                 <Button
                   variant="contained"
-                  color="third"
+                  color="secondary"
                   sx={{
                     marginTop: "30px",
                     marginBottom: "25px",

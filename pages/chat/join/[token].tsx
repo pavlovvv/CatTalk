@@ -29,6 +29,7 @@ import {
   IChatSnackbar, IChatUploadedFile, ISocketOnMessage,
   IStringAvatar
 } from "../../../typescript/interfaces/data";
+import { makeStyles } from "@mui/styles";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -75,19 +76,14 @@ declare module "@mui/material/styles" {
   }
 }
 
-declare module "@mui/material/styles/createPalette" {
-  export interface PaletteOptions {
-    orange?: {
-      main: string;
-    };
-    purple?: {
-      main: string;
-    };
-    white?: {
-      main: string;
-    };
-  }
-}
+const useStyles = makeStyles({
+  purple: {
+    backgroundColor: '#8479E1',
+    '&:hover': {
+      backgroundColor: "#9772FB",
+   },
+  },
+});
 
 const SlideTransition = (props: any) => {
   return <Slide {...props} direction="up" />;
@@ -96,11 +92,11 @@ const SlideTransition = (props: any) => {
 const LinearProgressWithLabel = (props: IChatProgressProps) => {
   const theme = createTheme({
     palette: {
+      primary: {
+        main: "#EBD671",
+      },
       secondary: {
         main: "#fff",
-      },
-      orange: {
-        main: "#EBD671",
       },
     },
   });
@@ -154,7 +150,7 @@ const LinearProgressWithLabel = (props: IChatProgressProps) => {
         {!mw599px ? (
           <>
             <Box sx={{ width: "300px", mr: 1 }}>
-              <LinearProgress variant="determinate" color="orange" {...props} />
+              <LinearProgress variant="determinate" color="primary" {...props} />
             </Box>
             <Box sx={{ minWidth: 35 }}>
               {props.value && <Typography variant="body2" sx={{ color: "#fff" }}>{`${Math.round(
@@ -188,8 +184,8 @@ function Chat() {
   const [isPending, setPending] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [fileUploadingProgress, setFileUploadingProgress] = useState<
-    number | null
-  >(null);
+    number
+  >(0);
   const [snackbarState, setSnackbarState] = useState<IChatSnackbar>({
     snackbarOpen: false,
     Transition: Fade,
@@ -337,17 +333,16 @@ function Chat() {
 
   const theme = createTheme({
     palette: {
+      primary: {
+        main: "#fff",
+      },      
       secondary: {
         main: "#4B7BE5",
-      },
-      purple: {
-        main: "#8479E1",
-      },
-      white: {
-        main: "#fff",
-      },
+      }
     },
   });
+
+  const classes = useStyles()
 
   const mw999px = useMediaQuery("(max-width:999px)");
   const mw499px = useMediaQuery("(max-width:499px)");
@@ -535,12 +530,12 @@ function Chat() {
             ...snackbarState,
             snackbarOpen: false,
           });
-          setFileUploadingProgress(null);
+          setFileUploadingProgress(0);
           setLoadingOver(false);
         }, 4000);
       })
       .catch((err) => {
-        setFileUploadingProgress(null);
+        setFileUploadingProgress(0);
         setUploadingError(true);
         setTimeout(() => {
           setUploadingError(false);
@@ -1183,7 +1178,7 @@ function Chat() {
               <div style={{ display: "flex" }}>
                 <Button
                   variant="contained"
-                  color="purple"
+                  className={classes.purple}
                   sx={{ borderRadius: 0 }}
                   component="label"
                   onClick={(e: any) => {
@@ -1219,7 +1214,7 @@ function Chat() {
                 >
                   <div
                     className={s.bottom__dragArea}
-                    style={drag ? { border: "2px dashed #000000" } : null}
+                    style={drag ? { border: "2px dashed #000000" } : {}}
                   >
                     <div className={s.bottom__dragAreaInfo}>
                       <div>
@@ -1249,7 +1244,7 @@ function Chat() {
                         <span>OR</span>
                         <Button
                           variant="contained"
-                          color="white"
+                          color="primary"
                           component="label"
                           sx={{ color: "#000000" }}
                         >
@@ -1259,7 +1254,7 @@ function Chat() {
                     ) : (
                       <Button
                         variant="contained"
-                        color="white"
+                        color="primary"
                         component="label"
                         sx={{ color: "#000000", marginTop: "30px" }}
                       >
@@ -1302,7 +1297,7 @@ function Chat() {
               <Link href="#last" passHref>
                 <Button
                   variant="contained"
-                  color="purple"
+                  className={classes.purple}
                   sx={{ borderRadius: 0 }}
                   onClick={(e) => {
                     if (value.replace(/\s+/g, "") !== "") {

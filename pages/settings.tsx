@@ -105,12 +105,12 @@ const Settings: React.FC = () => {
 
   const theme = createTheme({
     palette: {
+      primary: {
+        main: "#fff",
+      },
       secondary: {
         main: "#fff",
-      },
-      third: {
-        main: "#fff",
-      },
+      }
     },
   });
 
@@ -170,7 +170,7 @@ const Settings: React.FC = () => {
                           variant="outlined"
                           required
                           error={!!errors.email}
-                          color="third"
+                          color="primary"
                           defaultValue={authData.info[3]?.email}
                           sx={{
                             input: { color: "#fff" },
@@ -203,7 +203,7 @@ const Settings: React.FC = () => {
                           label="New password"
                           variant="outlined"
                           error={!!errors.password}
-                          color="third"
+                          color="primary"
                           sx={{ input: { color: "#fff" }, width: "100%" }}
                           helperText={
                             errors.password && errors.password.message
@@ -373,7 +373,7 @@ const Settings: React.FC = () => {
                           label="https://www.instagram.com/"
                           variant="outlined"
                           error={!!errors.instagramLink}
-                          color="third"
+                          color="primary"
                           defaultValue={authData.info[8]?.instagramLink}
                           sx={
                             !mw599px
@@ -417,7 +417,7 @@ const Settings: React.FC = () => {
                           label="@"
                           variant="outlined"
                           error={!!errors.telegramUsername}
-                          color="third"
+                          color="primary"
                           defaultValue={authData.info[9]?.telegramUsername}
                           sx={
                             !mw599px
@@ -464,7 +464,7 @@ const Settings: React.FC = () => {
                           label="name#0000"
                           variant="outlined"
                           error={!!errors.discordUsername}
-                          color="third"
+                          color="primary"
                           defaultValue={authData.info[10]?.discordUsername}
                           sx={
                             !mw599px

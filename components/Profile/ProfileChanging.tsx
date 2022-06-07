@@ -46,13 +46,6 @@ const StyledTextField = styled(TextField)({
   },
 });
 
-declare module "@mui/material/styles/createPalette" {
-  export interface PaletteOptions {
-    third?: {
-      main: string;
-    };
-  }
-}
 
 export default function ProfileChanging(props: IProfileChangingProps) {
   const dispatch = useAppDispatch();
@@ -107,15 +100,15 @@ export default function ProfileChanging(props: IProfileChangingProps) {
   };
   const theme = createTheme({
     palette: {
+      primary: {
+        main: "#E9D5DA",
+      },
       secondary: {
         main: "#333C83",
       },
       error: {
         main: "#FF4949",
-      },
-      third: {
-        main: "#E9D5DA",
-      },
+      }
     },
   });
 
@@ -139,7 +132,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   label="Name"
                   variant="outlined"
                   required
-                  color="third"
+                  color="primary"
                   defaultValue={props.info[0].name}
                   sx={
                     mw441px
@@ -185,7 +178,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   variant="outlined"
                   required
                   error={!!errors.surname}
-                  color="third"
+                  color="primary"
                   defaultValue={props.info[1].surname}
                   sx={
                     mw441px
@@ -228,7 +221,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   variant="outlined"
                   required
                   error={!!errors.username}
-                  color="third"
+                  color="primary"
                   defaultValue={props.info[2].username}
                   sx={
                     mw441px
@@ -295,7 +288,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   label="Age"
                   variant="outlined"
                   error={!!errors.age}
-                  color="third"
+                  color="primary"
                   defaultValue={props.info[5].age}
                   sx={
                     mw441px
@@ -331,7 +324,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   label="Location"
                   variant="outlined"
                   error={!!errors.location}
-                  color="third"
+                  color="primary"
                   defaultValue={props.info[6].location}
                   sx={
                     mw441px
