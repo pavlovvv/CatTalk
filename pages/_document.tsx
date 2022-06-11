@@ -34,8 +34,10 @@ export default class MyDocument extends Document {
           href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap"
           rel="stylesheet"
         />
-
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap" rel="stylesheet" />
       </Head>
+      {/* <script src="https://accounts.google.com/gsi/client">  
+</script> */}
       <body>
         <Main />
         <NextScript />

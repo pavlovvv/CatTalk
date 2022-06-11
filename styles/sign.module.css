@@ -1,6 +1,6 @@
 .loginpage {
     width: 100%;
-    height: 95vh;
+    min-height: 95vh;
     background: linear-gradient(
       90deg,
       rgba(2, 0, 36, 1) 0%,
@@ -30,10 +30,11 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 80vh;
+    min-height: 80vh;
   }
 
 .container {
+  margin: 80px 0;
   padding: 30px 50px;
   background-color: #333C83;
   color: #fff;
@@ -120,4 +121,33 @@
 .secondStage__hr {
   background-color: #fff;
   opacity: 100%
+}
+
+.googleContinue {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #202124;
+  transition-duration: 0.2s;
+  height: 60px;
+  margin-top: 20px;
+}
+
+.googleContinue:hover {
+  background-color: #535654;
+}
+
+.sign__continueWithGoogle {
+  text-align: center;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -30px;
+}
+
+.sign__continueWithGoogleIcon {
+  display: flex;
+  align-items: center;
+  min-width: 50px;
 }

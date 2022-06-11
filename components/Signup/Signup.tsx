@@ -1,23 +1,37 @@
 import DoneIcon from "@mui/icons-material/Done";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { Alert, Button, CircularProgress, createTheme, FormHelperText, TextField, ThemeProvider, Typography, useMediaQuery } from "@mui/material";
+import {
+  Alert,
+  Button,
+  CircularProgress,
+  createTheme,
+  FormHelperText,
+  TextField,
+  ThemeProvider,
+  Typography,
+  useMediaQuery
+} from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import IconButton from "@mui/material/IconButton";
 import Input from "@mui/material/Input";
 import InputAdornment from "@mui/material/InputAdornment";
 import InputLabel from "@mui/material/InputLabel";
 import { styled } from "@mui/material/styles";
+import cyrillicToTranslit from "cyrillic-to-translit-js";
 import { motion } from "framer-motion";
+import jwtDecode from "jwt-decode";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useRef, useState } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { signUp } from "../../redux/signSlice";
+import anonymousIcon from "../../images/anonymous-icon.png";
+import { continueWithGoogle, signAsGuest, signUp } from "../../redux/signSlice";
 import s from "../../styles/sign.module.css";
 import { useAppDispatch, useAppSelector } from "../../typescript/hook";
 import {
-  IInputPasswordValues,
+  IGoogleUserData, IInputPasswordValues,
   ISignUpSubmit
 } from "../../typescript/interfaces/data";
 
@@ -100,6 +114,8 @@ declare module "@mui/material/styles" {
   }
 }
 
+declare const window: any;
+
 export default function Signup() {
   const dispatch = useAppDispatch();
 
@@ -165,6 +181,7 @@ export default function Signup() {
 
   const [isMakenHidden, setMakenHidden] = useState<boolean>(false);
   const [isHidden, setHide] = useState<boolean>(false);
+  const [isGuestHidden, setGuestHide] = useState<boolean>(true);
 
   const moveLeft = {
     visible: {
@@ -234,6 +251,105 @@ export default function Signup() {
 
   const password = useRef<any>({});
   password.current = watch("password", "");
+
+  const guestPending = useAppSelector((state) => state.sign.guestPending);
+
+  const StartAnonymousIcon = (): ReactElement => {
+    return (
+      <Image
+        src={"/" + anonymousIcon.src}
+        alt="Anonymous_icon"
+        width="40px"
+        height="40px"
+      />
+    );
+  };
+
+  const moveBottom = {
+    visible: {
+      y: 0,
+      opacity: 1,
+    },
+
+    hidden: {
+      y: -100,
+      opacity: 0,
+    },
+  };
+
+  useEffect(() => {
+    /* global google */
+
+    window.google.accounts.id.initialize({
+      client_id:
+        "1001738861489-2ruued10d8gdg70jd9k73abfh0gll8il.apps.googleusercontent.com",
+      callback: (response: any) => {
+        const userData: IGoogleUserData = jwtDecode(response.credential);
+        const sentUserData: IGoogleUserData = {
+          email: null,
+          given_name: null,
+          family_name: null,
+          picture: null,
+          name: null,
+        };
+
+        sentUserData.email = userData.email;
+        sentUserData.picture = userData.picture;
+
+        if (userData.name) {
+          //ts
+          sentUserData.name = cyrillicToTranslit().transform(
+            userData.name,
+            "_"
+          );
+        }
+
+        if (userData.family_name && userData.given_name) {
+          sentUserData.family_name = cyrillicToTranslit().transform(
+            userData.family_name,
+            "_"
+          );
+          sentUserData.given_name = cyrillicToTranslit().transform(
+            userData.given_name,
+            "_"
+          );
+        } else {
+          if (userData.given_name) {
+            sentUserData.family_name = cyrillicToTranslit().transform(
+              userData.given_name,
+              "_"
+            );
+            sentUserData.given_name = cyrillicToTranslit().transform(
+              userData.given_name,
+              "_"
+            );
+          }
+        }
+
+        dispatch(
+          continueWithGoogle({
+            email: sentUserData.email,
+            name: sentUserData.given_name,
+            surname: sentUserData.family_name,
+            username: sentUserData.name,
+          })
+        );
+      },
+    });
+
+    window.google.accounts.id.renderButton(
+      document.getElementById("googleContinue"),
+      {
+        theme: "filled_black",
+        size: "large",
+        text: "continue_with",
+        logo_alignment: "left",
+        locale: "en",
+        type: "standard",
+        width: "100",
+      }
+    );
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -412,6 +528,92 @@ export default function Signup() {
                   >
                     {error}
                   </Alert>
+                )}
+                <div id="googleContinue" className={s.googleContinue}></div>
+                <Button
+                  variant="contained"
+                  sx={{
+                    width: "100%",
+                    textTransform: "none",
+                    fontWeight: "500",
+                    fontFamily: "Open Sans",
+                    fontSize: "14px",
+                    letterSpacing: "0.25px",
+                    height: "60px",
+                    backgroundColor: "#202124",
+                    color: "#fff",
+                    "&:hover": {
+                      backgroundColor: "#535654",
+                    },
+                  }}
+                  onClick={() => {
+                    setGuestHide(false);
+                  }}
+                >
+                  <div className={s.sign__continueWithGoogle}>
+                    <div className={s.sign__continueWithGoogleIcon}>
+                      <StartAnonymousIcon />
+                    </div>{" "}
+                    Continue as guest
+                  </div>
+                </Button>
+                {!isGuestHidden && (
+                  <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    variants={moveBottom}
+                  >
+                    <Alert
+                      severity="warning"
+                      variant="filled"
+                      sx={{
+                        backgroundColor: "rgb(245, 124, 0)",
+                        color: "#fff",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          columnGap: "20px",
+                        }}
+                      >
+                        All guests delete every day at 3:30 AM
+                        <Button
+                          variant="contained"
+                          sx={{
+                            lineHeight: "20px",
+                            backgroundColor: "#333C83",
+                            color: "#fff",
+                            "&:hover": {
+                              backgroundColor: "#333C83",
+                            },
+                          }}
+                          onClick={() => {
+                            dispatch(signAsGuest());
+                          }}
+                          disabled={guestPending}
+                        >
+                          {guestPending ? (
+                            <>
+                              <CircularProgress
+                                size={20}
+                                sx={{ color: "#fff" }}
+                              />{" "}
+                              <span
+                                style={{ marginLeft: "10px", color: "#fff" }}
+                              >
+                                got it
+                              </span>
+                            </>
+                          ) : (
+                            "got it"
+                          )}
+                        </Button>
+                      </div>
+                    </Alert>
+                  </motion.div>
                 )}
               </div>
             </div>

@@ -67,8 +67,8 @@ const Home: React.FC = ({ children }: IHomeProps) => {
               />
             </>
           )}
+                  <script src="https://accounts.google.com/gsi/client" async defer /> 
         </Head>
-
         <header className={styles.header}>
           <Header />
         </header>
