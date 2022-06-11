@@ -92,7 +92,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
           surname.charAt(0).toUpperCase() +
           surname.slice(1).replace(/\s+/g, "").toLowerCase(),
         username: username.replace(/\s+/g, "").toLowerCase(),
-        age: age !== null && age >= 0 ? age : null,
+        age: age as number || null,
         location: location.length == 0 ? null : location,
       })
     );

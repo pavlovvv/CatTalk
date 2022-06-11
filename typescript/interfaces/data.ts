@@ -92,7 +92,7 @@ export interface IProfileChangingSubmit {
   name: string
   surname: string
   username: string
-  age: number | null
+  age: number | string
   location: any 
 }
 
@@ -192,3 +192,12 @@ export interface IChatUploadedFile {
   Location: string
   key: string
 }
+
+export interface IGoogleUserData {
+  email: string | null
+  given_name: string | null
+  family_name?: string | null
+  picture: string | null
+  name: string | null
+}
+

@@ -162,7 +162,7 @@ const Settings: React.FC = () => {
                     onSubmit={handleSubmit(onSecuritySubmit)}
                     className={s.settingsPanel__securityElements}
                   >
-                    <div className={s.settingsPanel__securityElement}>
+                    <div className={s.settingsPanel__securityElement} style={authData.type === 'defaultUser' ? {} : {display: 'none'}}>
                       <div>
                         <StyledTextField
                           id="email"

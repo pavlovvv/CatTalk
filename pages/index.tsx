@@ -64,7 +64,7 @@ export default function Home() {
               A service for one-time conversations.
             </h2>
             <h2 className={style.welcome__text}>
-              Let`s take a look inside and &nbsp;
+              Let`s get into it and &nbsp;
               {!isAuthed ? (
                 <Button
                   variant="contained"

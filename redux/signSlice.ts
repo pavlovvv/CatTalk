@@ -27,7 +27,8 @@ export const signUp = createAsyncThunk<
         password,
         firstName,
         lastName,
-        username
+        username,
+        "defaultUser"
       );
 
       dispatch(setPending(false));
@@ -144,9 +145,82 @@ export const updateOwnInfo = createAsyncThunk<
   }
 );
 
+
+export const signAsGuest = createAsyncThunk<
+  object,
+  undefined,
+  { dispatch: AppDispatch }
+>(
+  "sign/signAsGuest",
+  async function (
+    _,
+    { dispatch }
+  ) {
+    try {
+      const randomNumber: number = Math.floor(Math.random() * 99999)
+      const randomPassword: string = Math.floor(Math.random() * 9999).toString()
+
+      dispatch(setGuestPending(true))
+
+      const response = await API.signAPI.signUp(
+        'Guest' + randomNumber,
+        randomPassword,
+        'Guest',
+        'Guest',
+        'g' + randomNumber,
+        'Guest'
+      );
+
+      dispatch(setGuestPending(false))
+
+      const response2 = await API.signAPI.auth('Guest' + randomNumber, randomPassword);
+
+      const data = await response2.data;
+
+      dispatch(setUsername(data.username));
+
+    } catch (error) {
+      dispatch(setGuestPending(false))
+
+      dispatch(setError("Some error occured. Try again later"));
+    }
+  }
+);
+
+
+export interface IContinueWithGoogle {
+  email: string | null
+  name: string | null
+  surname: string | null | undefined
+  username: string | null
+}
+
+export const continueWithGoogle = createAsyncThunk<
+  void,
+  IContinueWithGoogle,
+  { dispatch: AppDispatch }
+>(
+  "sign/continueWithGoogle",
+  async function (
+    {email, name, surname, username},
+    { dispatch }
+  ) {
+    try {
+      if(surname) {
+        const response = await API.signAPI.continueWithGoogle(email, name, surname, username);
+        dispatch(getOwnInfo());
+      }
+    } catch (error) {
+
+      dispatch(setError("Some error occured. Try again later"));
+    }
+  }
+);
+
 interface ISetUser {
     info: object[];
     stats: object[];
+    type: string
     friends: {
       confirmedFriends: object[];
       pendingFriends: object[];
@@ -162,6 +236,7 @@ interface ISignState {
   userData: {
     info: Array<any>;
     stats: object[];
+    type: null | string
     friends: {
       confirmedFriends: object[];
       pendingFriends: object[];
@@ -187,6 +262,7 @@ interface ISignState {
   isAuthFulfilled: boolean;
   isDynamicPage: boolean;
   isPending: boolean;
+  guestPending: boolean;
   isProfileDone: boolean;
 }
 
@@ -194,6 +270,7 @@ const initialState: ISignState = {
   userData: {
     info: [],
     stats: [],
+    type: null,
     friends: {
       confirmedFriends: [],
       pendingFriends: [],
@@ -219,6 +296,7 @@ const initialState: ISignState = {
   isAuthFulfilled: false,
   isDynamicPage: false,
   isPending: false,
+  guestPending: false,
   isProfileDone: false,
 };
 
@@ -267,6 +345,7 @@ const signSlice = createSlice({
       );
       state.userData.friends = action.payload.friends;
       state.userData.limits = action.payload.limits;
+      state.userData.type = action.payload.type;
       state.isAuthed = true;
       state.isAuthFulfilled = true;
     },
@@ -300,6 +379,10 @@ const signSlice = createSlice({
       state.isPending = action.payload;
     },
 
+    setGuestPending(state, action: PayloadAction<boolean>) {
+      state.guestPending = action.payload;
+    },
+
     setProfileDone(state, action: PayloadAction<boolean>) {
       state.isProfileDone = action.payload;
     },
@@ -322,6 +405,7 @@ export const {
   setUser,
   setDynamicPage,
   setPending,
+  setGuestPending,
   setAuthFulfilled,
   setAuth,
   setProfileUpdatingConfirmed,

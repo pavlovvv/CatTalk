@@ -13,8 +13,8 @@ const instance = axios.create({
 
 export const API = {
     signAPI: {
-        signUp: (email: string, password: string, name: string, surname: string, username: string) => {
-            return instance.post(`auth/signup`, { email, password, name, surname, username })
+        signUp: (email: string, password: string, name: string, surname: string, username: string, type: string) => {
+            return instance.post(`auth/signup`, { email, password, name, surname, username, type })
                 .then(response => response)
         },
 
@@ -35,6 +35,11 @@ export const API = {
 
         updateOwnInfo: (name: string, surname: string, username: string, age: number | null, location: any) => {
             return instance.put(`auth/updateMyOwnInfo`, { name, surname, username, age, location })
+                .then(response => response)
+        },
+
+        continueWithGoogle: (email: string | null, name: string | null, surname: string | null, username: string | null) => {
+            return instance.post(`auth/continueWithGoogle`, {email, name, surname, username})
                 .then(response => response)
         }
     },

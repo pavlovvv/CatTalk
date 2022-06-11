@@ -3,38 +3,34 @@ import Image from "next/image";
 import MainLayout from "../components/MainLayout";
 import catTalkIcon from "../images/catlogo1.png";
 import fileUpload from "../images/fileUpload.png";
-import typescriptIcon from '../images/typescript-icon.png'
+import typescriptIcon from "../images/typescript-icon.png";
 import s from "../styles/news.module.css";
-import { useMediaQuery } from "@mui/material";
-
+import googleIcon from "../images/google-icon.png";
 
 export default function News() {
+  var moveLeft = {
+    visible: {
+      x: 0,
+      opacity: 1,
+    },
 
-    var moveLeft = {
-      visible: {
-        x: 0,
-        opacity: 1,
-      },
-  
-      hidden: {
-        x: 250,
-        opacity: 0,
-      },
-    };
-  
-    var moveRight = {
-      visible: {
-        x: 0,
-        opacity: 1,
-      },
-  
-      hidden: {
-        x: -250,
-        opacity: 0,
-      },
-    };
+    hidden: {
+      x: 250,
+      opacity: 0,
+    },
+  };
 
+  var moveRight = {
+    visible: {
+      x: 0,
+      opacity: 1,
+    },
 
+    hidden: {
+      x: -250,
+      opacity: 0,
+    },
+  };
 
   return (
     <MainLayout>
@@ -44,8 +40,39 @@ export default function News() {
             <motion.section
               initial="hidden"
               whileInView="visible"
+              variants={moveLeft}
+              viewport={{ amount: 0.009, once: true }}
+            >
+              <div className={s.title}>Update 1.3</div>
+              <div className={s.newsPage__panelInner}>
+                <div className={s.newsPage__panelInfo}>
+                  <div className={s.newsPage__panelImage}>
+                    <Image
+                      width="70px"
+                      height="70px"
+                      src={googleIcon.src}
+                      alt="GoogleIcon"
+                    />
+                  </div>
+                  <div className={s.newsPage__panelText}>
+                    Now you can login using Google account or as guest.
+                    <br />
+                    All guests delete every day at 3:30 AM by Moscow time.
+                  </div>
+                </div>
+                <div
+                  className={s.newsPage__panelDate}
+                  style={{ alignSelf: "flex-start" }}
+                >
+                  11/06/2022
+                </div>
+              </div>
+            </motion.section>
+            <motion.section
+              initial="hidden"
+              whileInView="visible"
               variants={moveRight}
-              viewport={{ amount: 0.009, once: true}}
+              viewport={{ amount: 0.009, once: true }}
             >
               <div className={s.title}>Update 1.2</div>
               <div className={s.newsPage__panelInner}>
@@ -71,7 +98,7 @@ export default function News() {
               initial="hidden"
               whileInView="visible"
               variants={moveLeft}
-              viewport={{ amount: 0.009, once: true}}
+              viewport={{ amount: 0.009, once: true }}
             >
               <div className={s.title}>Update 1.1</div>
               <div className={s.newsPage__panelInner}>
@@ -112,7 +139,7 @@ export default function News() {
               variants={moveRight}
               initial="hidden"
               whileInView="visible"
-              viewport={{ amount: 0.009, once: true}}
+              viewport={{ amount: 0.009, once: true }}
             >
               <div className={s.title}>Release 1.0</div>
               <div className={s.newsPage__panelInner}>
