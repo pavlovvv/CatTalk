@@ -208,7 +208,7 @@ export const continueWithGoogle = createAsyncThunk<
     try {
       if(surname) {
         const response = await API.signAPI.continueWithGoogle(email, name, surname, username);
-        dispatch(getOwnInfo());
+        dispatch(setAuth(true));
       }
     } catch (error) {
 

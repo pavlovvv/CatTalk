@@ -289,20 +289,11 @@ export default function Signup() {
           email: null,
           given_name: null,
           family_name: null,
-          picture: null,
-          name: null,
+          picture: null
         };
 
         sentUserData.email = userData.email;
         sentUserData.picture = userData.picture;
-
-        if (userData.name) {
-          //ts
-          sentUserData.name = cyrillicToTranslit().transform(
-            userData.name,
-            "_"
-          );
-        }
 
         if (userData.family_name && userData.given_name) {
           sentUserData.family_name = cyrillicToTranslit().transform(
@@ -326,12 +317,20 @@ export default function Signup() {
           }
         }
 
+        const emailName: string[] | undefined = sentUserData.email?.split("@");
+        
         dispatch(
           continueWithGoogle({
-            email: sentUserData.email,
-            name: sentUserData.given_name,
-            surname: sentUserData.family_name,
-            username: sentUserData.name,
+            email: sentUserData.email ? sentUserData.email.toLowerCase() : null,
+            name: sentUserData.given_name
+              ? sentUserData.given_name.charAt(0).toUpperCase() +
+                sentUserData.given_name.slice(1).toLowerCase()
+              : null,
+            surname: sentUserData.family_name
+              ? sentUserData.family_name.charAt(0).toUpperCase() +
+                sentUserData.family_name.slice(1).toLowerCase()
+              : null,
+            username: emailName ? emailName[0].toLowerCase() : null,
           })
         );
       },

@@ -198,6 +198,5 @@ export interface IGoogleUserData {
   given_name: string | null
   family_name?: string | null
   picture: string | null
-  name: string | null
 }
 
