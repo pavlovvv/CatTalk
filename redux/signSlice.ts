@@ -177,7 +177,7 @@ export const signAsGuest = createAsyncThunk<
 
       const data = await response2.data;
 
-      dispatch(setUsername(data.username));
+      dispatch(setAuth(true));
 
     } catch (error) {
       dispatch(setGuestPending(false))

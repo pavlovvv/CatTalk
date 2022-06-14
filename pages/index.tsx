@@ -96,6 +96,6 @@ const Home: React.FC = () => {
 
 export default function InitialHome() {
   const uniKey = useAppSelector((state) => state.sign.uniKey);
-  
+
   return <Home key={uniKey}/>
 }
