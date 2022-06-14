@@ -1,22 +1,22 @@
 import AbcIcon from "@mui/icons-material/Abc";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import {
-    default as KeyboardArrowDown,
-    default as KeyboardArrowDownIcon
+  default as KeyboardArrowDown,
+  default as KeyboardArrowDownIcon,
 } from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import NumbersIcon from "@mui/icons-material/Numbers";
 import SearchIcon from "@mui/icons-material/Search";
 import SendIcon from "@mui/icons-material/Send";
 import {
-    Avatar,
-    Box,
-    CircularProgress,
-    createTheme,
-    Pagination,
-    TableContainer,
-    ThemeProvider,
-    useMediaQuery
+  Avatar,
+  Box,
+  CircularProgress,
+  createTheme,
+  Pagination,
+  TableContainer,
+  ThemeProvider,
+  useMediaQuery,
 } from "@mui/material";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -36,20 +36,22 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import MainLayout from "../components/MainLayout";
 import {
-    getUsers,
-    searchUsers,
-    sortByMostChats,
-    sortByMostEnteredCharacters,
-    sortByMostSentMessages
+  getUsers,
+  searchUsers,
+  sortByMostChats,
+  sortByMostEnteredCharacters,
+  sortByMostSentMessages,
 } from "../redux/usersSlice";
 import s from "../styles/leaderboard.module.css";
 import { useAppDispatch, useAppSelector } from "../typescript/hook";
 import {
-    IFilteredUser,
-    ILeaderBoardCreateUserData,
-    ILeaderboardData, ILeaderboardRow,
-    IStringAvatar
+  IFilteredUser,
+  ILeaderBoardCreateUserData,
+  ILeaderboardData,
+  ILeaderboardRow,
+  IStringAvatar,
 } from "../typescript/interfaces/data";
+import { useRouter } from "next/router";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -223,6 +225,7 @@ declare module "@mui/material/styles" {
 
 export default function Leaderboard() {
   const dispatch = useAppDispatch();
+  const router: any = useRouter();
 
   const usersData = useAppSelector((state) => state.users.usersData);
   const sort = useAppSelector((state) => state.users.sortBy);
@@ -270,8 +273,55 @@ export default function Leaderboard() {
   const filteredUsers = useAppSelector((state) => state.users.filteredUsers);
 
   useEffect(() => {
-    if (usersData.length === 0 && isAuthFulfilled) {
-      dispatch(getUsers({ page: page - 1 }));
+    if (router.query.search) {
+      dispatch(searchUsers({ searchText: router.query.search }));
+    }
+  }, [router]);
+
+  useEffect(() => {
+    if (usersData.length === 0 && !router.query.search && isAuthFulfilled) {
+      if (router.query.filter) {
+        switch (router.query.filter) {
+          case "ID":
+            dispatch(
+              getUsers({
+                page: router.query.page ? router.query.page - 1 : page - 1,
+              })
+            );
+            break;
+
+          case "chats":
+            dispatch(
+              sortByMostChats({
+                page: router.query.page ? router.query.page - 1 : page - 1,
+              })
+            );
+            break;
+
+          case "sent-messages":
+            dispatch(
+              sortByMostSentMessages({
+                page: router.query.page ? router.query.page - 1 : page - 1,
+              })
+            );
+            break;
+
+          case "entered-characters":
+            sortByMostEnteredCharacters({
+              page: router.query.page ? router.query.page - 1 : page - 1,
+            });
+            break;
+
+          default:
+            break;
+        }
+      } else {
+        dispatch(
+          getUsers({
+            page: router.query.page ? router.query.page - 1 : page - 1,
+          })
+        );
+      }
     }
 
     if (filteredUsers.length !== 0 || handlerSearchText.length !== 0) {
@@ -343,7 +393,10 @@ export default function Leaderboard() {
     setRows([]);
     setSort("Search");
     setSearchText(lowerCase);
-
+    router.push({
+      pathname: "/leaderboard",
+      query: { search: lowerCase },
+    });
     dispatch(searchUsers({ searchText: lowerCase }));
 
     if (lowerCase.length === 0) {
@@ -375,28 +428,48 @@ export default function Leaderboard() {
                 <section className={s.panel__pagination}>
                   <Pagination
                     count={Math.ceil(totalUsersCount / 5)}
-                    page={page}
+                    page={
+                      router.query.page
+                        ? Number(router.query.page)
+                        : Number(page)
+                    }
                     showFirstButton
                     showLastButton
-                    disabled={sortBy === "Search"}
+                    disabled={!!router.query.search}
                     onChange={(e, num) => {
                       switch (sortBy) {
                         case "ID":
+                          router.push({
+                            pathname: "/leaderboard",
+                            query: { page: num, filter: "ID" },
+                          });
                           dispatch(getUsers({ page: num - 1 }));
                           setPage(num);
                           break;
 
                         case "Chats":
+                          router.push({
+                            pathname: "/leaderboard",
+                            query: { page: num, filter: "chats" },
+                          });
                           dispatch(sortByMostChats({ page: num - 1 }));
                           setPage(num);
                           break;
 
                         case "Sent messages":
+                          router.push({
+                            pathname: "/leaderboard",
+                            query: { page: num, filter: "sent-messages" },
+                          });
                           dispatch(sortByMostSentMessages({ page: num - 1 }));
                           setPage(num);
                           break;
 
                         case "Entered characters":
+                          router.push({
+                            pathname: "/leaderboard",
+                            query: { page: num, filter: "entered-characters" },
+                          });
                           dispatch(
                             sortByMostEnteredCharacters({ page: num - 1 })
                           );
@@ -416,6 +489,7 @@ export default function Leaderboard() {
                       </SearchIconWrapper>
                       <StyledInputBase
                         placeholder="Search..."
+                        value={router.query.search}
                         sx={
                           !mw715px
                             ? { height: "60px", width: "400px" }
@@ -461,6 +535,7 @@ export default function Leaderboard() {
                     {open &&
                       data.map((item: ILeaderboardData) => (
                         <ListItemButton
+                          disabled={!!router.query.search}
                           key={item.label}
                           sx={
                             item.label !== sortBy
@@ -479,16 +554,28 @@ export default function Leaderboard() {
                           onClick={() => {
                             switch (item.label) {
                               case "ID":
+                                router.push({
+                                  pathname: "/leaderboard",
+                                  query: { page, filter: "ID" },
+                                });
                                 dispatch(getUsers({ page: page - 1 }));
                                 setSort("ID");
                                 break;
 
                               case "Chats":
+                                router.push({
+                                  pathname: "/leaderboard",
+                                  query: { page, filter: "chats" },
+                                });
                                 dispatch(sortByMostChats({ page: page - 1 }));
                                 setSort("Chats");
                                 break;
 
                               case "Sent messages":
+                                router.push({
+                                  pathname: "/leaderboard",
+                                  query: { page, filter: "sent-messages" },
+                                });
                                 dispatch(
                                   sortByMostSentMessages({ page: page - 1 })
                                 );
@@ -496,6 +583,10 @@ export default function Leaderboard() {
                                 break;
 
                               case "Entered characters":
+                                router.push({
+                                  pathname: "/leaderboard",
+                                  query: { page, filter: "entered-characters" },
+                                });
                                 dispatch(
                                   sortByMostEnteredCharacters({
                                     page: page - 1,

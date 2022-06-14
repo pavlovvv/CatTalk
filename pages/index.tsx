@@ -7,7 +7,7 @@ import Signup from "../components/Signup/Signup";
 import { useAppSelector } from "../typescript/hook";
 import style from "./index.module.css";
 
-export default function Home() {
+const Home: React.FC = () => {
   const [isSign, setSign] = useState<boolean>(false);
 
   const [isHidden, setHide] = useState<boolean>(false);
@@ -64,7 +64,7 @@ export default function Home() {
               A service for one-time conversations.
             </h2>
             <h2 className={style.welcome__text}>
-              Let`s get it started and &nbsp;
+              Let`s into it and &nbsp;
               {!isAuthed ? (
                 <Button
                   variant="contained"
@@ -92,4 +92,10 @@ export default function Home() {
       </div>
     </MainLayout>
   );
+}
+
+export default function InitialHome() {
+  const uniKey = useAppSelector((state) => state.sign.uniKey);
+
+  return <Home key={uniKey}/>
 }

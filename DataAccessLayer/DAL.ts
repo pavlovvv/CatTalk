@@ -85,7 +85,7 @@ export const API = {
         },
 
         searchUsers: (searchText: string | null) => {
-            return instance.post(`users/search`, {searchText})
+            return instance.get(`users/search?searchText=${searchText}`)
                 .then(response => response)
         },
 

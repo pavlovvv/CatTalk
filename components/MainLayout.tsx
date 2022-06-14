@@ -29,7 +29,7 @@ const Home: React.FC = ({ children }: IHomeProps) => {
   useEffect(() => {
     if (!isDone.current) {
       dispatch(getOwnInfo());
-      isDone.current = true;
+      isDone.current = true
     }
   }, []);
 
