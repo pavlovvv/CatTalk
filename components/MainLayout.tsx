@@ -1,3 +1,4 @@
+import React from 'react'
 import { CircularProgress, useMediaQuery } from "@mui/material";
 import Head from "next/head";
 import Image from "next/image";
@@ -10,13 +11,16 @@ import Header from "./Header/Header";
 import awss3Icon from "/images/awss3.svg";
 import emailIcon from "/images/email_icon.png";
 import expressIcon from "/images/express-icon.png";
-import instagramIcon from "/images/Instagram_icon.webp";
+import instagramIcon from "/images/Instagram_icon.png";
 import nextIcon from "/images/next_icon.png";
-import nodeIcon from "/images/node-js-icon.webp";
+import nodeIcon from "/images/node-js-icon.png";
 import reactIcon from "/images/react-icon.png";
-import reduxIcon from "/images/redux-icon.webp";
-import telegramIcon from "/images/Telegram_icon.webp";
+import reduxIcon from "/images/redux-icon.png";
+import telegramIcon from "/images/Telegram_icon.png";
 import viberIcon from "/images/viber_icon.png";
+import jsIcon from '/images/js-icon.png'
+import tsIcon from '/images/typescript-icon.png'
+import githubIcon from '/images/github-icon.png'
 
 const Home: React.FC = ({ children }: IHomeProps) => {
   const isAuthFulfilled = useAppSelector((state) => state.sign.isAuthFulfilled);
@@ -80,7 +84,7 @@ const Home: React.FC = ({ children }: IHomeProps) => {
                 <section className={styles.leftone}>
                   <h3 className={styles.footertitle}>By Alexey Pavlov</h3>
                   <ul className={styles.footertitle__items}>
-                    <li className={styles.footertitle__item}>
+                  <li className={styles.footertitle__item}>
                       <Image
                         src={"/" + emailIcon.src}
                         alt="email"
@@ -89,6 +93,17 @@ const Home: React.FC = ({ children }: IHomeProps) => {
                         height={!mw599px ? "30px" : "25px"}
                       />
                       uapavlof@gmail.com
+                    </li>
+                    <li className={styles.footertitle__item}>
+                      <Image
+                        src={"/" + githubIcon.src}
+                        alt="github"
+                        style={{borderRadius: '50%'}}
+                        className={styles.footertitle__img}
+                        width={!mw599px ? "30px" : "25px"}
+                        height={!mw599px ? "30px" : "25px"}
+                      />
+                      @pavlovvv
                     </li>
                     <li className={styles.footertitle__item}>
                       <Image
@@ -126,6 +141,26 @@ const Home: React.FC = ({ children }: IHomeProps) => {
                 <section className={styles.rightone}>
                   <h3 className={styles.footertitle}>Made with</h3>
                   <ul className={styles.footertitle__items}>
+                  <li className={styles.footertitle__item}>
+                      <Image
+                        src={"/" + jsIcon.src}
+                        alt="js"
+                        className={
+                          styles.footertitle__img +
+                          " " +
+                          styles.footertitle__reactIcon
+                        }
+                        width="30px"
+                        height="30px"
+                      />
+                      <Image
+                        src={"/" + tsIcon.src}
+                        alt="ts"
+                        className={styles.footertitle__img}
+                        width="30px"
+                        height="30px"
+                      />
+                    </li>                    
                     <li className={styles.footertitle__item}>
                       <Image
                         src={"/" + reactIcon.src}

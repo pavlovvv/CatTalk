@@ -64,7 +64,7 @@ const Home: React.FC = () => {
               A service for one-time conversations.
             </h2>
             <h2 className={style.welcome__text}>
-              Let`s into it and &nbsp;
+              Let&apos;s get into it and &nbsp;
               {!isAuthed ? (
                 <Button
                   variant="contained"

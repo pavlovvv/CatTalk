@@ -4,9 +4,23 @@ import FileUploadIcon from "@mui/icons-material/FileUpload";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import Logout from "@mui/icons-material/Logout";
 import {
-  Alert, Avatar,
-  Badge, Box, Button, CircularProgress, createTheme, Fade, LinearProgress, Popover, Slide, Snackbar, styled, TextField, ThemeProvider, Typography,
-  useMediaQuery
+  Alert,
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  CircularProgress,
+  createTheme,
+  Fade,
+  LinearProgress,
+  Popover,
+  Slide,
+  Snackbar,
+  styled,
+  TextField,
+  ThemeProvider,
+  Typography,
+  useMediaQuery,
 } from "@mui/material";
 import axios from "axios";
 import { motion } from "framer-motion";
@@ -17,17 +31,23 @@ import { DragEvent, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import MainLayout from "../../../components/MainLayout";
 import {
-  enterCharacter, join,
-  sendChatMessage, setChatPage
+  enterCharacter,
+  join,
+  sendChatMessage,
+  setChatPage,
 } from "../../../redux/chatSlice";
 import { getOwnInfo, setDynamicPage } from "../../../redux/signSlice";
 import { getConnectedUsers } from "../../../redux/tokenSlice";
 import s from "../../../styles/chat.module.css";
 import { useAppDispatch, useAppSelector } from "../../../typescript/hook";
 import {
-  IChatAuthRef, IChatMessage, IChatProgressProps,
-  IChatSnackbar, IChatUploadedFile, ISocketOnMessage,
-  IStringAvatar
+  IChatAuthRef,
+  IChatMessage,
+  IChatProgressProps,
+  IChatSnackbar,
+  IChatUploadedFile,
+  ISocketOnMessage,
+  IStringAvatar,
 } from "../../../typescript/interfaces/data";
 import { makeStyles } from "@mui/styles";
 
@@ -78,10 +98,10 @@ declare module "@mui/material/styles" {
 
 const useStyles = makeStyles({
   purple: {
-    backgroundColor: '#8479E1',
-    '&:hover': {
+    backgroundColor: "#8479E1",
+    "&:hover": {
       backgroundColor: "#9772FB",
-   },
+    },
   },
 });
 
@@ -124,7 +144,7 @@ const LinearProgressWithLabel = (props: IChatProgressProps) => {
             component="div"
             sx={{ color: "#fff", padding: 1 }}
           >
-            {props.value && <>{`${Math.round(props.value)}%`}</>}      
+            {props.value && <>{`${Math.round(props.value)}%`}</>}
           </Typography>
         </Box>
       </Box>
@@ -150,12 +170,19 @@ const LinearProgressWithLabel = (props: IChatProgressProps) => {
         {!mw599px ? (
           <>
             <Box sx={{ width: "300px", mr: 1 }}>
-              <LinearProgress variant="determinate" color="primary" {...props} />
+              <LinearProgress
+                variant="determinate"
+                color="primary"
+                {...props}
+              />
             </Box>
             <Box sx={{ minWidth: 35 }}>
-              {props.value && <Typography variant="body2" sx={{ color: "#fff" }}>{`${Math.round(
-                props.value
-              )}%`}</Typography>}
+              {props.value && (
+                <Typography
+                  variant="body2"
+                  sx={{ color: "#fff" }}
+                >{`${Math.round(props.value)}%`}</Typography>
+              )}
             </Box>
           </>
         ) : (
@@ -168,7 +195,7 @@ const LinearProgressWithLabel = (props: IChatProgressProps) => {
   );
 };
 
-function Chat() {
+const Chat: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const authData = useAppSelector((state) => state.sign.userData);
@@ -183,9 +210,7 @@ function Chat() {
   const [connected, setConnected] = useState<boolean>(false);
   const [isPending, setPending] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [fileUploadingProgress, setFileUploadingProgress] = useState<
-    number
-  >(0);
+  const [fileUploadingProgress, setFileUploadingProgress] = useState<number>(0);
   const [snackbarState, setSnackbarState] = useState<IChatSnackbar>({
     snackbarOpen: false,
     Transition: Fade,
@@ -198,10 +223,9 @@ function Chat() {
 
   authRef.current = useAppSelector((state) => state.sign.userData);
 
-
   useEffect(() => {
-      dispatch(setChatPage(true));
-      dispatch(setDynamicPage(true));
+    dispatch(setChatPage(true));
+    dispatch(setDynamicPage(true));
 
     isLeft.current = false;
     window.addEventListener("beforeunload", (evt) => {
@@ -226,17 +250,16 @@ function Chat() {
     return function disconnection() {
       // if (count.current > 1) {
 
-        if (authRef.current) {
-          const message = {
-            event: "disconnection",
-            username: authRef.current.info[2]?.username,
-            userId: authRef.current.info[4]?.id,
-            id: Date.now(),
-          };
-          socket.current?.send(JSON.stringify(message));
-          socket.current?.close();
-    
-        }
+      if (authRef.current) {
+        const message = {
+          event: "disconnection",
+          username: authRef.current.info[2]?.username,
+          userId: authRef.current.info[4]?.id,
+          id: Date.now(),
+        };
+        socket.current?.send(JSON.stringify(message));
+        socket.current?.close();
+      }
 
       dispatch(setChatPage(false));
     };
@@ -245,9 +268,9 @@ function Chat() {
   }, []);
 
   function connect() {
-    let token: string | string[] = '';
-    if(router.query.token) {
-      token = router.query.token
+    let token: string | string[] = "";
+    if (router.query.token) {
+      token = router.query.token;
     }
     isLeft.current = false;
     socket.current = new WebSocket(`wss://${token}.glitch.me/`);
@@ -335,14 +358,14 @@ function Chat() {
     palette: {
       primary: {
         main: "#fff",
-      },      
+      },
       secondary: {
         main: "#4B7BE5",
-      }
+      },
     },
   });
 
-  const classes = useStyles()
+  const classes = useStyles();
 
   const mw999px = useMediaQuery("(max-width:999px)");
   const mw499px = useMediaQuery("(max-width:499px)");
@@ -618,7 +641,7 @@ function Chat() {
                           {msg.event === "connection" && (
                             <div className={s.messages__connection}>
                               <div className={s.connectionContainer}>
-                                A user &quot;
+                                &quot;
                                 <Link href={`/profile/${msg.userId}`} passHref>
                                   <a target="_blank" rel="noopener noreferrer">
                                     <span
@@ -635,7 +658,7 @@ function Chat() {
                           {msg.event === "disconnection" && (
                             <div className={s.messages__connection}>
                               <div className={s.connectionContainer}>
-                                A user &quot;
+                                &quot;
                                 <Link href={`/profile/${msg.userId}`} passHref>
                                   <a target="_blank" rel="noopener noreferrer">
                                     <span
@@ -727,13 +750,15 @@ function Chat() {
                                       rel="noopener noreferrer"
                                     >
                                       {msg.avatar ? (
-                                        <Image
-                                          width="70px"
-                                          height="70px"
-                                          className={s.userAvatar}
-                                          src={authData.info[7].avatar}
-                                          alt="content__img"
-                                        />
+                                        <div style={{ minWidth: "70px" }}>
+                                          <Image
+                                            width="70px"
+                                            height="70px"
+                                            className={s.userAvatar}
+                                            src={authData.info[7].avatar}
+                                            alt="content__img"
+                                          />
+                                        </div>
                                       ) : (
                                         <Avatar
                                           {...stringAvatar(
@@ -780,13 +805,15 @@ function Chat() {
                                         variant="dot"
                                       >
                                         {msg.avatar ? (
-                                          <Image
-                                            width="70px"
-                                            height="70px"
-                                            className={s.userAvatar}
-                                            src={msg.avatar}
-                                            alt="content__img"
-                                          />
+                                          <div style={{ minWidth: "70px" }}>
+                                            <Image
+                                              width="70px"
+                                              height="70px"
+                                              className={s.userAvatar}
+                                              src={msg.avatar}
+                                              alt="content__img"
+                                            />
+                                          </div>
                                         ) : (
                                           <Avatar
                                             {...stringAvatar(
@@ -881,7 +908,7 @@ function Chat() {
                         {msg.event === "connection" && (
                           <div className={s.messages__connection}>
                             <div className={s.connectionContainer}>
-                              A user &quot;
+                              &quot;
                               <Link href={`/profile/${msg.userId}`} passHref>
                                 <a target="_blank" rel="noopener noreferrer">
                                   <span
@@ -898,7 +925,7 @@ function Chat() {
                         {msg.event === "disconnection" && (
                           <div className={s.messages__connection}>
                             <div className={s.connectionContainer}>
-                              A user &quot;
+                              &quot;
                               <Link href={`/profile/${msg.userId}`} passHref>
                                 <a target="_blank" rel="noopener noreferrer">
                                   <span
@@ -974,13 +1001,15 @@ function Chat() {
                                 <Link href={`/profile/${msg.userId}`} passHref>
                                   <a target="_blank" rel="noopener noreferrer">
                                     {msg.avatar ? (
-                                      <Image
-                                        width="70px"
-                                        height="70px"
-                                        className={s.userAvatar}
-                                        src={authData.info[7].avatar}
-                                        alt="content__img"
-                                      />
+                                      <div style={{ minWidth: "70px" }}>
+                                        <Image
+                                          width="70px"
+                                          height="70px"
+                                          className={s.userAvatar}
+                                          src={authData.info[7].avatar}
+                                          alt="content__img"
+                                        />
+                                      </div>
                                     ) : (
                                       <Avatar
                                         {...stringAvatar(
@@ -1021,13 +1050,15 @@ function Chat() {
                                       variant="dot"
                                     >
                                       {msg.avatar ? (
-                                        <Image
-                                          width="70px"
-                                          height="70px"
-                                          className={s.userAvatar}
-                                          src={msg.avatar}
-                                          alt="content__img"
-                                        />
+                                        <div style={{ minWidth: "70px" }}>
+                                          <Image
+                                            width="70px"
+                                            height="70px"
+                                            className={s.userAvatar}
+                                            src={msg.avatar}
+                                            alt="content__img"
+                                          />
+                                        </div>
                                       ) : (
                                         <Avatar
                                           {...stringAvatar(
@@ -1224,7 +1255,12 @@ function Chat() {
                         <div>Current usage:</div>
                         <div>
                           <span>
-                            {authData.limits.freeSpaceTaken && <>{parseInt(authData.limits.freeSpaceTaken)}/1000 Mb</>}
+                            {authData.limits.freeSpaceTaken && (
+                              <>
+                                {parseInt(authData.limits.freeSpaceTaken)}/1000
+                                Mb
+                              </>
+                            )}
                           </span>{" "}
                           <span>{authData.limits.filesSent}/100 files</span>
                         </div>
@@ -1268,7 +1304,12 @@ function Chat() {
                 id="outlined-basic"
                 placeholder="Message"
                 variant="outlined"
-                sx={{ width: "100%", bgcolor: "#fff", borderRadius: "0px", height: 'auto' }}
+                sx={{
+                  width: "100%",
+                  bgcolor: "#fff",
+                  borderRadius: "0px",
+                  height: "auto",
+                }}
                 value={value}
                 multiline
                 maxRows={3}
@@ -1281,11 +1322,15 @@ function Chat() {
                   }
                 }}
                 onChange={(e) => {
-                    setValue(e.target.value);
-                    dispatch(enterCharacter());
+                  setValue(e.target.value);
+                  dispatch(enterCharacter());
                 }}
                 onKeyDown={(e) => {
-                  if (e.keyCode === 13 && !e.shiftKey && value.replace(/\s+/g, "") !== '') {
+                  if (
+                    e.keyCode === 13 &&
+                    !e.shiftKey &&
+                    value.replace(/\s+/g, "") !== ""
+                  ) {
                     e.preventDefault();
                     sendMessage();
                     dispatch(sendChatMessage());
@@ -1315,7 +1360,7 @@ function Chat() {
       </ThemeProvider>
     </MainLayout>
   );
-}
+};
 
 const Chat2: React.FC = () => {
   const isAuthed = useAppSelector((state) => state.sign.isAuthed);

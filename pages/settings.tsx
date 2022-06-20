@@ -3,12 +3,12 @@ import NoAccountsIcon from "@mui/icons-material/NoAccounts";
 import { Alert, Button, CircularProgress, createTheme, TextField, ThemeProvider, useMediaQuery } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import MainLayout from "../components/MainLayout";
-import discordIcon from "../images/discord-icon.svg";
-import instagramIcon from "../images/Instagram_icon.webp";
-import telegramIcon from "../images/Telegram_icon.webp";
+import discordIcon from "/images/discord-icon.svg";
+import instagramIcon from "/images/Instagram_icon.png";
+import telegramIcon from "/images/Telegram_icon.png";
 import {
   deleteAvatar, updateAvatar, updatePersonalData, updateSecurityData
 } from "../redux/settingsSlice";
@@ -550,5 +550,5 @@ export default function InitialSettings() {
   }, [isAuthFulfilled, isAuthed]);
 
 
-  return <Settings />;
+  return <Settings key={!isAuthed ? 0 : 1}/>;
 }

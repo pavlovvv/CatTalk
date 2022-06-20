@@ -1,10 +1,8 @@
 import AbcIcon from "@mui/icons-material/Abc";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import {
-  default as KeyboardArrowDown,
-  default as KeyboardArrowDownIcon,
+  default as KeyboardArrowDown
 } from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import NumbersIcon from "@mui/icons-material/Numbers";
 import SearchIcon from "@mui/icons-material/Search";
 import SendIcon from "@mui/icons-material/Send";
@@ -16,10 +14,8 @@ import {
   Pagination,
   TableContainer,
   ThemeProvider,
-  useMediaQuery,
+  useMediaQuery
 } from "@mui/material";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
 import InputBase from "@mui/material/InputBase";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -32,6 +28,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import MainLayout from "../components/MainLayout";
@@ -40,7 +37,7 @@ import {
   searchUsers,
   sortByMostChats,
   sortByMostEnteredCharacters,
-  sortByMostSentMessages,
+  sortByMostSentMessages
 } from "../redux/usersSlice";
 import s from "../styles/leaderboard.module.css";
 import { useAppDispatch, useAppSelector } from "../typescript/hook";
@@ -49,9 +46,9 @@ import {
   ILeaderBoardCreateUserData,
   ILeaderboardData,
   ILeaderboardRow,
-  IStringAvatar,
+  IStringAvatar
 } from "../typescript/interfaces/data";
-import { useRouter } from "next/router";
+import Row from "../components/Leaderboard/Row";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -92,123 +89,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const Row = (props: any) => {
-  const { row } = props;
-  const [open, setOpen] = useState<boolean>(false);
-
-  const stringAvatar = (name: string): IStringAvatar => {
-    return {
-      children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
-    };
-  };
-  return (
-    <>
-      <TableRow
-        sx={{
-          "& > *": { borderBottom: "unset" },
-          display: "flex",
-          justifyContent: "flex-start",
-        }}
-      >
-        <TableCell sx={{ marginBottom: 0 }}>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell
-          component="th"
-          scope="row"
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            columnGap: "20px",
-            fontFamily: "Quicksand",
-            width: "100%",
-          }}
-        >
-          <Link href={`/profile/${row.id}`} passHref>
-            <a target="_blank" rel="noopener noreferrer">
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginBottom: "-1px",
-                  columnGap: "20px",
-                  fontFamily: "Quicksand",
-                }}
-              >
-                {row.avatar_url ? (
-                  <Image
-                    width="40px"
-                    height="40px"
-                    style={{ borderRadius: "50%" }}
-                    src={row.avatar_url}
-                    alt="content__img"
-                  />
-                ) : (
-                  <Avatar
-                    {...stringAvatar(row.name + " " + row.surname)}
-                    sx={{
-                      bgcolor: "#fff",
-                      width: "40px",
-                      height: "40px",
-                      fontSize: "15px",
-                    }}
-                  />
-                )}
-                {row.username}
-              </Box>
-            </a>
-          </Link>
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 900 }}>Total chats</TableCell>
-                    <TableCell sx={{ fontWeight: 900 }}>
-                      Total messages sent
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 900 }}>
-                      Total entered characters
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontFamily: "Quicksand" }}
-                    >
-                      {row.stats.totalChats}
-                    </TableCell>
-                    <TableCell sx={{ fontFamily: "Quicksand" }}>
-                      {row.stats.totalMessagesSent}
-                    </TableCell>
-                    <TableCell sx={{ fontFamily: "Quicksand" }}>
-                      {row.stats.totalCharactersEntered}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </>
-  );
-};
 
 declare module "@mui/material/styles" {
   interface Theme {
@@ -422,7 +302,6 @@ export default function Leaderboard() {
       <ThemeProvider theme={theme}>
         <div className={s.leaderboardPage}>
           <div className={s.container}>
-            <div>&nbsp;</div>
             <div className={s.panel + " " + s.panel_body}>
               <div className={s.panel__inner}>
                 <section className={s.panel__pagination}>
@@ -741,7 +620,6 @@ export default function Leaderboard() {
                 </section>
               </div>
             </div>
-            <div>&nbsp;</div>
           </div>
         </div>
       </ThemeProvider>

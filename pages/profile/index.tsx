@@ -1,3 +1,4 @@
+import React from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {
   Alert,
@@ -10,9 +11,9 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import MainLayout from "../../components/MainLayout";
 import ProfileChanging from "../../components/Profile/ProfileChanging";
-import discordIcon from "../../images/discord-icon.svg";
-import instagramIcon from "../../images/Instagram_icon.webp";
-import telegramIcon from "../../images/Telegram_icon.webp";
+import discordIcon from "/images/discord-icon.svg";
+import instagramIcon from "/images/Instagram_icon.png";
+import telegramIcon from "/images/Telegram_icon.png";
 import s from "../../styles/profile.module.css";
 import { useAppSelector } from "../../typescript/hook";
 import {
