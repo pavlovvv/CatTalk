@@ -15,6 +15,7 @@ import React from "react";
 import { logOut } from "../../redux/signSlice";
 import { useAppDispatch, useAppSelector } from "../../typescript/hook";
 import style from "./NavDrawer.module.css";
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles({
   tr: {
@@ -45,9 +46,11 @@ interface INavDrawerProps {
 export default function NavDrawer(props: INavDrawerProps) {
   const classes = useStyles();
 
+  const router = useRouter()
+
   const navItems: string[] = [
     "Profile",
-    "Messages",
+    "Token",
     "Leaderboard",
     "News",
     "Settings",
@@ -156,7 +159,7 @@ export default function NavDrawer(props: INavDrawerProps) {
                     <Link href={linkItems[i]} key={i} passHref>
                       <li
                         className={style.navigation__item}
-                        style={{ cursor: "pointer" }}
+                        style={router.pathname.includes(linkItems[i]) ? { cursor: "pointer", color: '#47B5FF' } : {cursor: "pointer"}}
                       >
                         <Icon sx={{ marginRight: "8px" }} />
                         &nbsp; {item}

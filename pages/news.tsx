@@ -6,8 +6,12 @@ import fileUpload from "../images/fileUpload.png";
 import typescriptIcon from "../images/typescript-icon.png";
 import s from "../styles/news.module.css";
 import googleIcon from "../images/google-icon.png";
+import React from "react";
+import { useMediaQuery } from "@mui/material";
+import { INewsProps } from "../typescript/interfaces/data";
 
-export default function News() {
+const News: React.FC<INewsProps> = (props) => {
+
   var moveLeft = {
     visible: {
       x: 0,
@@ -15,7 +19,7 @@ export default function News() {
     },
 
     hidden: {
-      x: 250,
+      x: props.isMobile ? 250 : 600,
       opacity: 0,
     },
   };
@@ -27,7 +31,7 @@ export default function News() {
     },
 
     hidden: {
-      x: -250,
+      x: props.isMobile ? -250 : -600,
       opacity: 0,
     },
   };
@@ -41,7 +45,7 @@ export default function News() {
               initial="hidden"
               whileInView="visible"
               variants={moveLeft}
-              viewport={{ amount: 0.009, once: true }}
+              viewport={{ once: true }}
             >
               <div className={s.title}>Update 1.3</div>
               <div className={s.newsPage__panelInner}>
@@ -58,6 +62,8 @@ export default function News() {
                     Now you can login using Google account or as guest.
                     <br />
                     All guests delete every day at 3:30 AM by Moscow time.
+                    <br />
+                    Notice: guests can not have friends 
                   </div>
                 </div>
                 <div
@@ -72,7 +78,7 @@ export default function News() {
               initial="hidden"
               whileInView="visible"
               variants={moveRight}
-              viewport={{ amount: 0.009, once: true }}
+              viewport={{ once: true }}
             >
               <div className={s.title}>Update 1.2</div>
               <div className={s.newsPage__panelInner}>
@@ -98,7 +104,7 @@ export default function News() {
               initial="hidden"
               whileInView="visible"
               variants={moveLeft}
-              viewport={{ amount: 0.009, once: true }}
+              viewport={{ once: true }}
             >
               <div className={s.title}>Update 1.1</div>
               <div className={s.newsPage__panelInner}>
@@ -139,7 +145,7 @@ export default function News() {
               variants={moveRight}
               initial="hidden"
               whileInView="visible"
-              viewport={{ amount: 0.009, once: true }}
+              viewport={{ once: true }}
             >
               <div className={s.title}>Release 1.0</div>
               <div className={s.newsPage__panelInner}>
@@ -166,4 +172,10 @@ export default function News() {
       </div>
     </MainLayout>
   );
+}
+
+export default function InitialNews() {
+  const mw599px = useMediaQuery("(max-width:599px)");
+
+  return <News key={mw599px ? 0 : 1} isMobile={mw599px}/>
 }

@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { API } from "../DataAccessLayer/DAL";
 import { AppDispatch } from "./store";
+import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInAnonymously, } from "firebase/auth";
 
 export interface ISignUp {
   email: string;
@@ -31,6 +32,9 @@ export const signUp = createAsyncThunk<
         "defaultUser"
       );
 
+      const auth = getAuth();
+      const firebaseSignUp = await createUserWithEmailAndPassword(auth, email, password)
+      
       dispatch(setPending(false));
       dispatch(confirmReg());
     } catch (error) {
@@ -59,6 +63,9 @@ export const auth = createAsyncThunk<object, IAuth, { dispatch: AppDispatch }>(
     try {
       dispatch(setPending(true));
       const response = await API.signAPI.auth(email, password);
+
+      const auth = getAuth();
+      signInWithEmailAndPassword(auth, email, password).catch(console.log) //user could had been created without firebase
 
       dispatch(setPending(false));
       const data = await response.data;
@@ -174,6 +181,9 @@ export const signAsGuest = createAsyncThunk<
       dispatch(setGuestPending(false))
 
       const response2 = await API.signAPI.auth('Guest' + randomNumber, randomPassword);
+
+      const auth = getAuth();
+      const signAsGustByFirebase = await signInAnonymously(auth)
 
       const data = await response2.data;
 

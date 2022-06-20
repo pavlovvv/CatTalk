@@ -212,7 +212,7 @@ const Login: React.FC = () => {
 
     window.google.accounts.id.initialize({
       client_id:
-        "1001738861489-2ruued10d8gdg70jd9k73abfh0gll8il.apps.googleusercontent.com",
+      process.env.NEXT_PUBLIC_CAT_TALK_GOOGLE_ACCOUNTS_CLIENT_ID,
       callback: (response: any) => {
         const userData: IGoogleUserData = jwtDecode(response.credential);
         const sentUserData: IGoogleUserData = {

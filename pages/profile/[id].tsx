@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Alert,
   Avatar, Button, CircularProgress, createTheme, Popover, ThemeProvider, Typography
@@ -8,8 +9,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import MainLayout from "../../components/MainLayout";
 import discordIcon from "../../images/discord-icon.svg";
-import instagramIcon from "../../images/Instagram_icon.webp";
-import telegramIcon from "../../images/Telegram_icon.webp";
+import instagramIcon from "../../images/Instagram_icon.png";
+import telegramIcon from "../../images/Telegram_icon.png";
 import {
   addFriend, deleteFriend, refuseOwnFriendRequest
 } from "../../redux/usersSlice";
@@ -219,7 +220,7 @@ export default function Profile(props: IProfileProps) {
                             STATISTICS
                           </Button>
 
-                          {isAuthed && authData.info[4]?.id !== info[4]?.id && (
+                          {isAuthed && authData.info[4]?.id !== info[4]?.id && authData.type !== 'Guest' && (
                             <>
                               {isFriend?.length === 0 &&
                                 isFriendPending?.length === 0 && (
@@ -335,6 +336,15 @@ export default function Profile(props: IProfileProps) {
                               )}
                             </>
                           )}
+
+                    {authData.type === 'Guest' && (<Button
+                                  color="error"
+                                  variant="contained"
+                                  sx={{
+                                    backgroundColor: "rgb(211, 47, 47)",
+                                    color: "#fff",
+                                  }}
+                                >Guest can not have friends</Button>)}
                         </div>
 
                         {info.map((e: object, i: number) => {
@@ -818,7 +828,7 @@ export default function Profile(props: IProfileProps) {
                             width: "100%",
                           }}
                         >
-                          He/she has no friends
+                          (s)he has no friends
                         </Alert>
                       </div>
                     )}

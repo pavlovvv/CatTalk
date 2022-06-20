@@ -200,3 +200,11 @@ export interface IGoogleUserData {
   picture: string | null
 }
 
+export interface IRowProps {
+  row: ILeaderboardRow
+  idx: number
+}
+
+export interface INewsProps {
+  isMobile: boolean
+}
