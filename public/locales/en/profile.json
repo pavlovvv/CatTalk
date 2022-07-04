@@ -1,0 +1,15 @@
+{
+    "info": "Info",
+    "statistics": "Statistics",
+    "friends": "FRIENDS",
+    "total_chats": "Total chats",
+    "total_messages_sent": "Total messages sent",
+    "total_entered_characters": "Total entered characters",
+    "no_friends1": "You don't have any friends",
+    "no_friends2": "This user doesn't have any friends",
+    "updating_confirmed": "Updating confirmed",
+    "add_friend": "Add friend",
+    "request": "Request has been sent",
+    "delete_friend": "Delete friend",
+    "guests": "Guest can not have friends"
+}

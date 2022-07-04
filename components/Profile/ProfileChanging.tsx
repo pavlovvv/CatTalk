@@ -48,6 +48,7 @@ const StyledTextField = styled(TextField)({
 
 
 export default function ProfileChanging(props: IProfileChangingProps) {
+  const {t, ct} = props
   const dispatch = useAppDispatch();
   const isProfileUpdatingConfirmed = useAppSelector(
     (state) => state.sign.isProfileUpdatingConfirmed
@@ -119,7 +120,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
       <div>
         <div className={s.info__menu}>
           <Button variant="contained" color="secondary" sx={{ width: "100px" }}>
-            INFO
+            {t('info')}
           </Button>
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -148,19 +149,19 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   error={!!errors.name}
                   helperText={errors.name && errors.name.message}
                   {...register("name", {
-                    required: "Fieled must be filled",
+                    required: ct('filled'),
                     minLength: {
                       value: 2,
-                      message: "Minimum 2 characters",
+                      message: ct('min', {count: 2}),
                     },
                     maxLength: {
                       value: 15,
-                      message: "Maximum 15 characters",
+                      message: ct('max', {count: 15}),
                     },
                     pattern: {
                       value: /^[A-Za-zА-Яа-яЁё]+\s*$/,
                       message:
-                        "Use only letters of the Russian and Latin alphabets",
+                      ct('r_and_l'),
                     },
                   })}
                 />
@@ -191,19 +192,19 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   }
                   helperText={errors.surname && errors.surname.message}
                   {...register("surname", {
-                    required: "Fieled must be filled",
+                    required: ct('filled'),
                     minLength: {
                       value: 2,
-                      message: "Minimum 2 characters",
+                      message: ct('min', {count: 2}),
                     },
                     maxLength: {
                       value: 15,
-                      message: "Maximum 15 characters",
+                      message: ct('max', {count: 15}),
                     },
                     pattern: {
                       value: /^[A-Za-zА-Яа-яЁё]+\s*$/,
                       message:
-                        "Use only letters of the Russian and Latin alphabets",
+                      ct('r_and_l'),
                     },
                   })}
                 />
@@ -234,18 +235,18 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   }
                   helperText={errors.username && errors.username.message}
                   {...register("username", {
-                    required: "Fieled must be filled",
+                    required: ct('filled'),
                     minLength: {
                       value: 2,
-                      message: "Minimum 2 characters",
+                      message: ct('min', {count: 2}),
                     },
                     maxLength: {
                       value: 15,
-                      message: "Maximum 15 characters",
+                      message: ct('max', {count: 15}),
                     },
                     pattern: {
                       value: /^[\w](?!.*?\.{2})[\w.]{1,28}[\w]+\s*$/,
-                      message: "Use only letters of the Latin alphabet",
+                      message: ct('latin'),
                     },
                   })}
                 />
@@ -303,11 +304,11 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   {...register("age", {
                     maxLength: {
                       value: 2,
-                      message: "Maximum 2 characters",
+                      message: ct('max', {count: 2}),
                     },
                     pattern: {
                       value: /^[ 0-9]+$/,
-                      message: "Use only numbers",
+                      message: ct('numbers'),
                     },
                   })}
                 />
@@ -339,11 +340,11 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   {...register("location", {
                     minLength: {
                       value: 2,
-                      message: "Minimum 2 characters",
+                      message: ct('min', {count: 2}),
                     },
                     maxLength: {
                       value: 25,
-                      message: "Maximum 25 characters",
+                      message: ct('max', {count: 25}),
                     },
                   })}
                 />
@@ -361,7 +362,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                 {isPending ? (
                   <CircularProgress size={30} sx={{ color: "#fff" }} />
                 ) : (
-                  "CONFIRM"
+                  ct('confirm')
                 )}
               </Button>
               <Button
@@ -373,7 +374,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   props.setChanging(false);
                 }}
               >
-                Cancel
+                {ct('cancel')}
               </Button>
             </div>
             {profileError && (

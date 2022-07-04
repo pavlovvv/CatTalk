@@ -1,8 +1,6 @@
 import AbcIcon from "@mui/icons-material/Abc";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
-import {
-  default as KeyboardArrowDown
-} from "@mui/icons-material/KeyboardArrowDown";
+import { default as KeyboardArrowDown } from "@mui/icons-material/KeyboardArrowDown";
 import NumbersIcon from "@mui/icons-material/Numbers";
 import SearchIcon from "@mui/icons-material/Search";
 import SendIcon from "@mui/icons-material/Send";
@@ -14,7 +12,7 @@ import {
   Pagination,
   TableContainer,
   ThemeProvider,
-  useMediaQuery
+  useMediaQuery,
 } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -37,7 +35,7 @@ import {
   searchUsers,
   sortByMostChats,
   sortByMostEnteredCharacters,
-  sortByMostSentMessages
+  sortByMostSentMessages,
 } from "../redux/usersSlice";
 import s from "../styles/leaderboard.module.css";
 import { useAppDispatch, useAppSelector } from "../typescript/hook";
@@ -46,9 +44,20 @@ import {
   ILeaderBoardCreateUserData,
   ILeaderboardData,
   ILeaderboardRow,
-  IStringAvatar
+  IStringAvatar,
 } from "../typescript/interfaces/data";
 import Row from "../components/Leaderboard/Row";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { ILocale } from "../typescript/interfaces/data";
+import { useTranslation } from "next-i18next";
+
+export async function getStaticProps({ locale }: ILocale) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common", "leaderboard"])),
+    },
+  };
+}
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -89,7 +98,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-
 declare module "@mui/material/styles" {
   interface Theme {
     status: {
@@ -119,11 +127,13 @@ export default function Leaderboard() {
   const [sortBy, setSort] = useState<string | null>("ID");
   const [page, setPage] = useState<number>(1);
 
+  const { t } = useTranslation("leaderboard");
+
   const data: object[] = [
     { icon: <NumbersIcon />, label: "ID" },
-    { icon: <ChatBubbleIcon />, label: "Chats" },
-    { icon: <SendIcon />, label: "Sent messages" },
-    { icon: <AbcIcon />, label: "Entered characters" },
+    { icon: <ChatBubbleIcon />, label: t("chats") },
+    { icon: <SendIcon />, label: t("sent_messages") },
+    { icon: <AbcIcon />, label: t("entered_characters") },
   ];
 
   function createUsersData(
@@ -168,6 +178,7 @@ export default function Leaderboard() {
                 page: router.query.page ? router.query.page - 1 : page - 1,
               })
             );
+          setSort('ID')
             break;
 
           case "chats":
@@ -176,6 +187,7 @@ export default function Leaderboard() {
                 page: router.query.page ? router.query.page - 1 : page - 1,
               })
             );
+            setSort(t('chats'))
             break;
 
           case "sent-messages":
@@ -184,12 +196,14 @@ export default function Leaderboard() {
                 page: router.query.page ? router.query.page - 1 : page - 1,
               })
             );
+            setSort(t('sent_messages'))
             break;
 
           case "entered-characters":
-            sortByMostEnteredCharacters({
+            dispatch(sortByMostEnteredCharacters({
               page: router.query.page ? router.query.page - 1 : page - 1,
-            });
+            }))
+            setSort(t('entered_characters'))
             break;
 
           default:
@@ -238,7 +252,7 @@ export default function Leaderboard() {
         });
       }
     }
-  }, [usersData, isAuthFulfilled, filteredUsers]);
+  }, [usersData, isAuthFulfilled, filteredUsers, router.query.filter]);
 
   const mw767px = useMediaQuery("(max-width:767px)");
   const mw715px = useMediaQuery("(max-width:715px)");
@@ -327,6 +341,8 @@ export default function Leaderboard() {
                           break;
 
                         case "Chats":
+                        case "Чатам":
+                        case "Чатами":
                           router.push({
                             pathname: "/leaderboard",
                             query: { page: num, filter: "chats" },
@@ -336,6 +352,8 @@ export default function Leaderboard() {
                           break;
 
                         case "Sent messages":
+                        case "Сообщениям":
+                        case "Повідовмленням":
                           router.push({
                             pathname: "/leaderboard",
                             query: { page: num, filter: "sent-messages" },
@@ -345,6 +363,8 @@ export default function Leaderboard() {
                           break;
 
                         case "Entered characters":
+                        case "Символам":
+                        case "Символами":
                           router.push({
                             pathname: "/leaderboard",
                             query: { page: num, filter: "entered-characters" },
@@ -368,7 +388,7 @@ export default function Leaderboard() {
                       </SearchIconWrapper>
                       <StyledInputBase
                         placeholder="Search..."
-                        value={router.query.search}
+                        value={router.query.search || handlerSearchText}
                         sx={
                           !mw715px
                             ? { height: "60px", width: "400px" }
@@ -391,7 +411,7 @@ export default function Leaderboard() {
                       }}
                     >
                       <ListItemText
-                        primary="Sort by"
+                        primary={t("sort_by")}
                         primaryTypographyProps={{
                           fontSize: 15,
                           fontWeight: 900,
@@ -442,15 +462,19 @@ export default function Leaderboard() {
                                 break;
 
                               case "Chats":
+                              case "Чатам":
+                              case "Чатами":
                                 router.push({
                                   pathname: "/leaderboard",
                                   query: { page, filter: "chats" },
                                 });
                                 dispatch(sortByMostChats({ page: page - 1 }));
-                                setSort("Chats");
+                                setSort(t('chats'));
                                 break;
 
                               case "Sent messages":
+                              case "Сообщениям":
+                              case "Повідомленнями":
                                 router.push({
                                   pathname: "/leaderboard",
                                   query: { page, filter: "sent-messages" },
@@ -458,10 +482,12 @@ export default function Leaderboard() {
                                 dispatch(
                                   sortByMostSentMessages({ page: page - 1 })
                                 );
-                                setSort("Sent messages");
+                                setSort(t('sent_messages'));
                                 break;
 
                               case "Entered characters":
+                              case "Символам":
+                              case "Символами":
                                 router.push({
                                   pathname: "/leaderboard",
                                   query: { page, filter: "entered-characters" },
@@ -471,7 +497,7 @@ export default function Leaderboard() {
                                     page: page - 1,
                                   })
                                 );
-                                setSort("Entered characters");
+                                setSort(t('entered_characters'));
                                 break;
                               default:
                                 break;
@@ -506,16 +532,16 @@ export default function Leaderboard() {
                             <TableRow>
                               <TableCell sx={{ fontWeight: 900 }}>ID</TableCell>
                               <TableCell sx={{ fontWeight: 900 }}>
-                                Username
+                                {t("username")}
                               </TableCell>
                               <TableCell sx={{ fontWeight: 900 }} align="right">
-                                Total chats
+                                {t("total_chats")}
                               </TableCell>
                               <TableCell sx={{ fontWeight: 900 }} align="right">
-                                Total sent messages
+                                {t("total_sent_messages")}
                               </TableCell>
                               <TableCell sx={{ fontWeight: 900 }} align="right">
-                                Total entered characters
+                                {t("total_entered_characters")}
                               </TableCell>
                             </TableRow>
                           </TableHead>
@@ -603,13 +629,13 @@ export default function Leaderboard() {
                                 <TableCell
                                   sx={{ fontWeight: 900, paddingLeft: "80px" }}
                                 >
-                                  Username
+                                  {t('username')}
                                 </TableCell>
                               </TableRow>
                             </TableHead>
                             <TableBody>
                               {rows.map((row: ILeaderboardRow, idx: number) => (
-                                <Row key={idx} row={row} idx={idx} />
+                                <Row key={idx} row={row} idx={idx} t={t} />
                               ))}
                             </TableBody>
                           </Table>

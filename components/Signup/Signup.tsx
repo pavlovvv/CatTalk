@@ -10,7 +10,7 @@ import {
   TextField,
   ThemeProvider,
   Typography,
-  useMediaQuery
+  useMediaQuery,
 } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import IconButton from "@mui/material/IconButton";
@@ -31,10 +31,11 @@ import { continueWithGoogle, signAsGuest, signUp } from "../../redux/signSlice";
 import s from "../../styles/sign.module.css";
 import { useAppDispatch, useAppSelector } from "../../typescript/hook";
 import {
-  IGoogleUserData, IInputPasswordValues,
-  ISignUpSubmit
+  IGoogleUserData,
+  IInputPasswordValues,
+  ISignUpProps,
+  ISignUpSubmit,
 } from "../../typescript/interfaces/data";
-
 
 const StyledTextField = styled(TextField)({
   "& label": {
@@ -117,7 +118,7 @@ declare module "@mui/material/styles" {
 
 declare const window: any;
 
-export default function Signup() {
+export default function Signup({ ct, t }: ISignUpProps) {
   const dispatch = useAppDispatch();
 
   const error = useAppSelector((state) => state.sign.error);
@@ -282,15 +283,14 @@ export default function Signup() {
     /* global google */
 
     window.google.accounts.id.initialize({
-      client_id:
-      process.env.NEXT_PUBLIC_CAT_TALK_GOOGLE_ACCOUNTS_CLIENT_ID,
+      client_id: process.env.NEXT_PUBLIC_CAT_TALK_GOOGLE_ACCOUNTS_CLIENT_ID,
       callback: (response: any) => {
         const userData: IGoogleUserData = jwtDecode(response.credential);
         const sentUserData: IGoogleUserData = {
           email: null,
           given_name: null,
           family_name: null,
-          picture: null
+          picture: null,
         };
 
         sentUserData.email = userData.email;
@@ -319,7 +319,7 @@ export default function Signup() {
         }
 
         const emailName: string[] | undefined = sentUserData.email?.split("@");
-        
+
         dispatch(
           continueWithGoogle({
             email: sentUserData.email ? sentUserData.email.toLowerCase() : null,
@@ -344,7 +344,7 @@ export default function Signup() {
         size: "large",
         text: "continue_with",
         logo_alignment: "left",
-        locale: "en",
+        locale: router.locale,
         type: "standard",
         width: "100",
       }
@@ -355,7 +355,7 @@ export default function Signup() {
     <ThemeProvider theme={theme}>
       <div className={s.signup_panel}>
         <div className={s.container}>
-          <h2 className={s.singup__title}>SIGN UP</h2>
+          <h2 className={s.singup__title}>{t("sign_up")}</h2>
 
           {!isMakenHidden ? (
             <div>
@@ -398,18 +398,18 @@ export default function Signup() {
                       error={!!errors.email}
                       helperText={errors.email && errors.email.message}
                       {...register("email", {
-                        required: "Field must be filled",
+                        required: ct("filled"),
                         minLength: {
                           value: 8,
-                          message: "Minimum 8 characters",
+                          message: ct("min", { count: 8 }),
                         },
                         maxLength: {
                           value: 35,
-                          message: "Maximum 35 characters",
+                          message: ct("max", { count: 35 }),
                         },
                         pattern: {
                           value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]+\s*$/i,
-                          message: "Invalid email",
+                          message: ct("invalid_email"),
                         },
                       })}
                     />
@@ -427,19 +427,19 @@ export default function Signup() {
                       error={!!errors.password}
                     >
                       <InputLabel color="primary" sx={{ color: "#fff" }}>
-                        Password
+                        {t("password")}
                       </InputLabel>
                       <StyledInput
                         required
                         {...register("password", {
-                          required: "Fieled must be filled",
+                          required: ct("filled"),
                           minLength: {
                             value: 8,
-                            message: "Minimum 8 characters",
+                            message: ct("min", { count: 8 }),
                           },
                           maxLength: {
                             value: 25,
-                            message: "Maximum 25 characters",
+                            message: ct("max", { count: 35 }),
                           },
                         })}
                         id="password"
@@ -487,7 +487,7 @@ export default function Signup() {
                     sx={{ fontSize: "14px", display: "flex" }}
                     component={"span"}
                   >
-                    Already a user? &nbsp;
+                    {t("already_a_user")} &nbsp;
                     <Link href="/login" passHref>
                       <Typography
                         variant="body1"
@@ -508,7 +508,7 @@ export default function Signup() {
                     variant="contained"
                     sx={{ marginTop: "15px", width: "100%" }}
                   >
-                    NEXT
+                    {t("next")}
                   </Button>
                 </form>
                 {isRegConfirmed && (
@@ -517,7 +517,7 @@ export default function Signup() {
                     variant="filled"
                     sx={{ backgroundColor: "#4E9F3D", color: "#fff" }}
                   >
-                    Registration confirmed
+                    {t("reg_confirmed")}
                   </Alert>
                 )}
                 {error && (
@@ -554,7 +554,7 @@ export default function Signup() {
                     <div className={s.sign__continueWithGoogleIcon}>
                       <StartAnonymousIcon />
                     </div>{" "}
-                    Continue as guest
+                    {t("continue_as_guest")}
                   </div>
                 </Button>
                 {!isGuestHidden && (
@@ -579,7 +579,7 @@ export default function Signup() {
                           columnGap: "20px",
                         }}
                       >
-                        All guests delete every day at 3:30 AM
+                        {t("guests_delete")}
                         <Button
                           variant="contained"
                           sx={{
@@ -604,11 +604,11 @@ export default function Signup() {
                               <span
                                 style={{ marginLeft: "10px", color: "#fff" }}
                               >
-                                got it
+                                {ct("got_it")}
                               </span>
                             </>
                           ) : (
-                            "got it"
+                            <>{ct("got_it")}</>
                           )}
                         </Button>
                       </div>
@@ -656,7 +656,7 @@ export default function Signup() {
                   >
                     <StyledTextField
                       id="name"
-                      label="Name"
+                      label={t("name")}
                       variant="standard"
                       sx={
                         mw600px
@@ -667,19 +667,18 @@ export default function Signup() {
                       error={!!errors.firstName}
                       helperText={errors.firstName && errors.firstName.message}
                       {...register("firstName", {
-                        required: "Fieled must be filled",
+                        required: ct("filled"),
                         minLength: {
                           value: 2,
-                          message: "Minimum 2 characters",
+                          message: ct("min", { count: 2 }),
                         },
                         maxLength: {
                           value: 15,
-                          message: "Maximum 15 characters",
+                          message: ct("max", { count: 15 }),
                         },
                         pattern: {
                           value: /^[A-Za-zА-Яа-яЁё]+\s*$/,
-                          message:
-                            "Use only letters of the Russian and Latin alphabets",
+                          message: ct("r_and_l"),
                         },
                       })}
                     />
@@ -692,7 +691,7 @@ export default function Signup() {
                   >
                     <StyledTextField
                       id="surname"
-                      label="Surname"
+                      label={t("surname")}
                       variant="standard"
                       sx={
                         mw600px
@@ -703,19 +702,18 @@ export default function Signup() {
                       error={!!errors.lastName}
                       helperText={errors.lastName && errors.lastName.message}
                       {...register("lastName", {
-                        required: "Fieled must be filled",
+                        required: ct("filled"),
                         minLength: {
                           value: 2,
-                          message: "Minimum 2 characters",
+                          message: ct("min", { count: 2 }),
                         },
                         maxLength: {
                           value: 15,
-                          message: "Maximum 15 characters",
+                          message: ct("max", { count: 15 }),
                         },
                         pattern: {
                           value: /^[A-Za-zА-Яа-яЁё]+\s*$/,
-                          message:
-                            "Use only letters of the Russian and Latin alphabets",
+                          message: ct("r_and_l"),
                         },
                       })}
                     />
@@ -728,7 +726,7 @@ export default function Signup() {
                   >
                     <StyledTextField
                       id="username"
-                      label="Username"
+                      label={t("username")}
                       variant="standard"
                       sx={
                         mw600px
@@ -739,19 +737,18 @@ export default function Signup() {
                       error={!!errors.username}
                       helperText={errors.username && errors.username.message}
                       {...register("username", {
-                        required: "Fieled must be filled",
+                        required: ct("filled"),
                         minLength: {
                           value: 3,
-                          message: "Minimum 3 characters",
+                          message: ct("min", { count: 3 }),
                         },
                         maxLength: {
                           value: 14,
-                          message: "Maximum 14 characters",
+                          message: ct("max", { count: 14 }),
                         },
                         pattern: {
                           value: /^[\w](?!.*?\.{2})[\w.]{1,28}[\w]+\s*$/,
-                          message:
-                            "Use only letters of the Latin alphabet and numbers",
+                          message: ct("r_and_l"),
                         },
                       })}
                     />
@@ -766,7 +763,7 @@ export default function Signup() {
                     {isPending ? (
                       <CircularProgress size={30} sx={{ color: "#fff" }} />
                     ) : (
-                      "SIGN UP"
+                      <>{t("to_sign_up")}</>
                     )}
                   </Button>
                 </form>

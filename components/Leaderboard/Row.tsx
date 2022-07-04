@@ -22,7 +22,7 @@ import { IRowProps } from "../../typescript/interfaces/data";
 
 
 export default function Row(props: IRowProps){
-    const { row } = props;
+    const { row, t } = props;
     const [open, setOpen] = useState<boolean>(false);
   
     const stringAvatar = (name: string): IStringAvatar => {
@@ -102,12 +102,12 @@ export default function Row(props: IRowProps){
                 <Table size="small" aria-label="purchases">
                   <TableHead>
                     <TableRow>
-                      <TableCell sx={{ fontWeight: 900 }}>Total chats</TableCell>
+                      <TableCell sx={{ fontWeight: 900 }}>{t('total_chats')}</TableCell>
                       <TableCell sx={{ fontWeight: 900 }}>
-                        Total messages sent
+                      {t('total_sent_messages')}
                       </TableCell>
                       <TableCell sx={{ fontWeight: 900 }}>
-                        Total entered characters
+                      {t('total_entered_characters')}
                       </TableCell>
                     </TableRow>
                   </TableHead>

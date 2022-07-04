@@ -63,7 +63,7 @@
 .entrancePanel__topUsername {
     background-color: #333C83;
     margin-top: auto;
-    font-family: 'Quicksand';
+    font-family: 'Quicksand', 'Poiret One';
     font-size: 18px;
 }
 
@@ -117,7 +117,7 @@
 
 .messages__connectionUsername {
     text-decoration: underline;
-    font-family: 'Quicksand';
+    font-family: 'Quicksand', 'Poiret One';
 }
 
 
@@ -226,7 +226,7 @@
 
 .messages__messageName {
   font-weight: 800;
-  font-family: 'Quicksand';
+  font-family: 'Quicksand', 'Poiret One';
 }
 
 .messages__messageText {
@@ -290,7 +290,7 @@
 
 
 .bottom__dragArea{
-  font-family: 'Quicksand';
+  font-family: 'Quicksand', 'Poiret One';
   height: 350px;
   width: 300px;
   border-radius: 5px;
@@ -303,6 +303,16 @@
 @media(max-width: 999px) {
   .bottom__dragArea{
     height: 200px;
+  }
+}
+
+.bottom__provider {
+  padding: 0 10px;
+}
+
+@media(max-width: 321px) {
+  .bottom__provider {
+    font-size: 15px;
   }
 }
 

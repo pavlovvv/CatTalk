@@ -16,7 +16,7 @@ export interface IFilteredUser {
   surname: string
   username: string
   avatar: null | string
-  stats: {
+  stats?: {
     totalChats: number
     totalMessagesSent: number
     totalCharactersEntered: number
@@ -46,21 +46,47 @@ export interface IProfileGetServerSideProps {
   params: {
     id: number
   }
+  locale: string
+}
+
+export interface IFriend {
+  id: number
+  name: string
+  surname: string
+  username: string
+  avatar: string
 }
 
 export interface IProfileProps {
   userData: {
     info: {
+      name: string
+      surname: string
+      username: string
+      email: string
       id: number
+      age: string | number | null
+      location: any
+      avatar: string | null
+      instagramLink: string | null
+      telegramUsername: string | null
+      discordUsername: string | null
     }
-    stats: object
+    stats: {
+      totalChats: number
+      totalMessagesSent: number
+      totalCharactersEntered: number
+    }
     friends: {
-      confirmedFriends: object[];
-      pendingFriends: object[];
-      waitingFriends: object[];
+      confirmedFriends: IFriend[] | null[];
+      pendingFriends: IFriend[] | null[];
+      waitingFriends: IFriend[] | null[];
       totalFriendsCount: number;     
     }
-    limits: object
+    limits: {
+      freeSpaceTaken: number
+      filesSent: number
+    }
   }
 }
 
@@ -69,9 +95,9 @@ export interface IProfileFriend {
 }
 
 export interface IProfileFriends {
-  confirmedFriends: object[];
-  pendingFriends: object[];
-  waitingFriends: object[];
+  confirmedFriends: IFriend[] | null | null[];
+  pendingFriends: IFriend[] | null | null[];
+  waitingFriends: IFriend[] | null | null[];
   totalFriendsCount: number;
 }
 
@@ -86,6 +112,8 @@ export interface IProfileConfirmedFriend {
 export interface IProfileChangingProps {
   info: Array<any>
   setChanging: (bool: boolean) => void
+  t: (e: string) => string
+  ct: (e: string, num?: {count: number}) => string
 }
 
 export interface IProfileChangingSubmit {
@@ -203,8 +231,41 @@ export interface IGoogleUserData {
 export interface IRowProps {
   row: ILeaderboardRow
   idx: number
+  t: (e: string) => string
 }
 
 export interface INewsProps {
   isMobile: boolean
+}
+
+export interface ILocale {
+  locale: string
+}
+
+export interface IMobileMenuProps {
+  mobileMoreAnchorEl: null | HTMLElement
+  setMobileMoreAnchorEl: (value: null | HTMLElement) => void
+}
+
+export interface ISignUpProps {
+  t: (e: string) => string
+  ct: (e: string, num?: {count: number}) => string
+}
+
+interface IRef<T> {
+  current: T
+}
+
+export interface IConnectionProps {
+  theme: object
+  error: string | null
+  isPending: boolean
+  isLeft: IRef<boolean>
+  socket: IRef<any>
+  connectedUsersInterval: IRef<any>
+  setMessages: (value: any) => void
+  setError: (value: string | null) => void
+  setPending: (bool: boolean) => void
+  setConnected: (bool: boolean) => void
+  t: (e: string) => string
 }

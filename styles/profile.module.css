@@ -99,7 +99,7 @@
 .title {
 	line-height: 60px;
 	font-size: 20px;
-	font-family: 'Kanit', sans-serif;
+	font-family: 'Kanit', 'Roboto Mono', sans-serif;
 	background-color:  rgb(5, 30, 52);
 	letter-spacing: 3px;
 }
@@ -159,7 +159,7 @@
 	font-weight: 400;
 	text-transform: uppercase;
 	width: 150px;
-	font-family: 'Kanit', serif;
+	font-family: 'Kanit', 'Roboto Mono', serif;
 	margin-top: auto;
 	margin-bottom: auto;
 	letter-spacing: 3px;
@@ -296,7 +296,7 @@
 	z-index: 2;
 	display: block;
 	align-self: center;
-	font-family: 'Kanit', sans-serif;
+	font-family: 'Kanit', 'Roboto Mono', sans-serif;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;

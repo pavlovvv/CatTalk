@@ -49,7 +49,7 @@
 
 .title {
     font-size: 25px;
-    font-family: 'Quicksand', serif;
+    font-family: 'Quicksand', "Poiret One", serif;
 }
 
 .newsPage__panelInner {
@@ -100,5 +100,5 @@
     color: #8D8DAA;
     align-self: flex-end;
     padding-top: 15px;
-    font-family: 'Quicksand', serif;
+    font-family: 'Quicksand', "Poiret One", serif;
 }

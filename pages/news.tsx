@@ -1,18 +1,28 @@
+import { useMediaQuery } from "@mui/material";
 import { motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Image from "next/image";
+import React from "react";
 import MainLayout from "../components/MainLayout";
 import catTalkIcon from "../images/catlogo1.png";
 import fileUpload from "../images/fileUpload.png";
+import googleIcon from "../images/google-icon.png";
+import multiLanguageIcon from "../images/multi-language-icon.png";
 import typescriptIcon from "../images/typescript-icon.png";
 import s from "../styles/news.module.css";
-import googleIcon from "../images/google-icon.png";
-import React from "react";
-import { useMediaQuery } from "@mui/material";
-import { INewsProps } from "../typescript/interfaces/data";
+import { ILocale, INewsProps } from "../typescript/interfaces/data";
+
+export async function getStaticProps({ locale }: ILocale) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common", "news"])),
+    },
+  };
+}
 
 const News: React.FC<INewsProps> = (props) => {
-
-  var moveLeft = {
+  const moveLeft = {
     visible: {
       x: 0,
       opacity: 1,
@@ -24,7 +34,7 @@ const News: React.FC<INewsProps> = (props) => {
     },
   };
 
-  var moveRight = {
+  const moveRight = {
     visible: {
       x: 0,
       opacity: 1,
@@ -35,6 +45,8 @@ const News: React.FC<INewsProps> = (props) => {
       opacity: 0,
     },
   };
+
+  const { t } = useTranslation("news");
 
   return (
     <MainLayout>
@@ -47,23 +59,54 @@ const News: React.FC<INewsProps> = (props) => {
               variants={moveLeft}
               viewport={{ once: true }}
             >
-              <div className={s.title}>Update 1.3</div>
+              <div className={s.title}>{t("update")} 1.4</div>
+              <div className={s.newsPage__panelInner}>
+                <div className={s.newsPage__panelInfo}>
+                  <div
+                    className={s.newsPage__panelText}
+                    style={{ maxWidth: "320px" }}
+                  >
+                    {t("1.4")}
+                  </div>
+                  <div className={s.newsPage__panelImage}>
+                    <Image
+                      width="100px"
+                      height="100px"
+                      src={"/" + multiLanguageIcon.src}
+                      alt="GoogleIcon"
+                    />
+                    <div
+                      className={s.newsPage__panelDate}
+                      style={{ alignSelf: "flex-start" }}
+                    >
+                      05/07/2022
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.section>
+            <motion.section
+              initial="hidden"
+              whileInView="visible"
+              variants={moveLeft}
+              viewport={{ once: true }}
+            >
+              <div className={s.title}>{t("update")} 1.3</div>
               <div className={s.newsPage__panelInner}>
                 <div className={s.newsPage__panelInfo}>
                   <div className={s.newsPage__panelImage}>
                     <Image
                       width="70px"
                       height="70px"
-                      src={googleIcon.src}
+                      src={"/" + googleIcon.src}
                       alt="GoogleIcon"
                     />
                   </div>
-                  <div className={s.newsPage__panelText}>
-                    Now you can login using Google account or as guest.
-                    <br />
-                    All guests delete every day at 3:30 AM by Moscow time.
-                    <br />
-                    Notice: guests can not have friends 
+                  <div
+                    className={s.newsPage__panelText}
+                    style={{ maxWidth: "390px" }}
+                  >
+                    {t("1.3")}
                   </div>
                 </div>
                 <div
@@ -80,19 +123,20 @@ const News: React.FC<INewsProps> = (props) => {
               variants={moveRight}
               viewport={{ once: true }}
             >
-              <div className={s.title}>Update 1.2</div>
+              <div className={s.title}>{t("update")} 1.2</div>
               <div className={s.newsPage__panelInner}>
                 <div className={s.newsPage__panelInfo}>
-                  <div className={s.newsPage__panelText}>
-                    The project was rewritten via TypeScript.
-                    <br />
-                    Small design changes.
+                  <div
+                    className={s.newsPage__panelText}
+                    style={{ maxWidth: "300px" }}
+                  >
+                    {t("1.2")}
                   </div>
                   <div className={s.newsPage__panelImage}>
                     <Image
                       width="80px"
                       height="80px"
-                      src={typescriptIcon.src}
+                      src={"/" + typescriptIcon.src}
                       alt="TypeScript_logo"
                     />
                   </div>
@@ -106,31 +150,22 @@ const News: React.FC<INewsProps> = (props) => {
               variants={moveLeft}
               viewport={{ once: true }}
             >
-              <div className={s.title}>Update 1.1</div>
+              <div className={s.title}>{t("update")} 1.1</div>
               <div className={s.newsPage__panelInner}>
                 <div className={s.newsPage__panelInfo}>
                   <div className={s.newsPage__panelImage}>
                     <Image
                       width="125px"
                       height="80px"
-                      src={fileUpload.src}
+                      src={"/" + fileUpload.src}
                       alt="FileUploader"
                     />
                   </div>
-                  <div className={s.newsPage__panelText}>
-                    A few bugs were fixed.
-                    <br />
-                    Now you can sent files in chats.
-                    <br />
-                    For now, you are provided only 1 GB free space and 100 files
-                    per day
-                    <br />
-                    (The limit updates every day at 3:30 AM by Moscow time. At
-                    this time also delete all files sent during the day)
-                    <br />
-                    Also, now you can format your message before sending
-                    <br />
-                    (** - bold; * - italic etc.)
+                  <div
+                    className={s.newsPage__panelText}
+                    style={{ maxWidth: "400px" }}
+                  >
+                    {t("1.1")}
                   </div>
                 </div>
                 <div
@@ -150,16 +185,17 @@ const News: React.FC<INewsProps> = (props) => {
               <div className={s.title}>Release 1.0</div>
               <div className={s.newsPage__panelInner}>
                 <div className={s.newsPage__panelInfo}>
-                  <div className={s.newsPage__panelText}>
-                    Over a month of development...
-                    <br />
-                    Over 8k lines of code...
+                  <div
+                    className={s.newsPage__panelText}
+                    style={{ maxWidth: "220px" }}
+                  >
+                    {t("1.0")}
                   </div>
                   <div className={s.newsPage__panelImage}>
                     <Image
                       width="100px"
                       height="80px"
-                      src={catTalkIcon.src}
+                      src={"/" + catTalkIcon.src}
                       alt="CatTalk"
                     />
                   </div>
@@ -172,10 +208,10 @@ const News: React.FC<INewsProps> = (props) => {
       </div>
     </MainLayout>
   );
-}
+};
 
 export default function InitialNews() {
   const mw599px = useMediaQuery("(max-width:599px)");
 
-  return <News key={mw599px ? 0 : 1} isMobile={mw599px}/>
+  return <News key={mw599px ? 0 : 1} isMobile={mw599px} />;
 }

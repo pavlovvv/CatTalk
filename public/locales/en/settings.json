@@ -1,0 +1,14 @@
+{
+    "security": "SECURITY",
+    "new_email": "New email",
+    "new_password": "New password",
+    "personal": "PERSONAL",
+    "avatar": "Avatar",
+    "upload_file": "Upload file",
+    "delete_avatar": "Delete avatar",
+    "update_confirmed": "Update confirmed",
+    "width_recommendation": "It is HIGHLY recommended to use images with at least approximately width and height (100x100; 404x404; 777x777 etc.)",
+    "not_instagram_link": "Not Instagram link",
+    "not_telegram_account": "Not Telegram account. Please, start with @",
+    "not_discord_account": "Not Discord account"
+}
