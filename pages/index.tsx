@@ -11,7 +11,7 @@ import { updUniKey } from "../redux/signSlice";
 import { useAppSelector } from "../typescript/hook";
 import { ILocale } from "../typescript/interfaces/data";
 import { useAppDispatch } from "./../typescript/hook";
-import style from "./index.module.css";
+import style from "../styles/index.module.css";
 
 export async function getStaticProps({ locale }: ILocale) {
   return {
@@ -72,7 +72,7 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!router.query.isHidden && welcomeRef.current.style.marginLeft !== "") {
+    if (!router.query.isHidden && welcomeRef.current?.style.marginLeft !== "") {
       dispatch(updUniKey());
     }
   }, [router.query.isHidden]);

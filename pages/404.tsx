@@ -2,6 +2,17 @@ import MainLayout from "../components/MainLayout";
 import s from "../styles/404.module.css";
 import errorIcon from '../images/404.png' 
 import Image from "next/image";
+import { ILocale } from "../typescript/interfaces/data";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+export async function getStaticProps({ locale }: ILocale) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
+
 
 export default function ErrorComponent() {
   return (

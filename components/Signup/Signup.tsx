@@ -27,15 +27,16 @@ import { useRouter } from "next/router";
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import anonymousIcon from "../../images/anonymous-icon.png";
+import setTranslation from "../../other/locales/setTranslation";
 import { continueWithGoogle, signAsGuest, signUp } from "../../redux/signSlice";
 import s from "../../styles/sign.module.css";
 import { useAppDispatch, useAppSelector } from "../../typescript/hook";
 import {
   IGoogleUserData,
   IInputPasswordValues,
+  IOtherTranslation,
   ISignUpSubmit,
 } from "../../typescript/interfaces/data";
-import setTranslation from "../../other/locales/setTranslation";
 
 const StyledTextField = styled(TextField)({
   "& label": {
@@ -128,7 +129,7 @@ export default function Signup() {
 
   const router = useRouter();
 
-  const t = setTranslation(router.locale as string)
+  const t: IOtherTranslation = setTranslation(router.locale as string);
 
   if (isAuthed) {
     router.push("/");

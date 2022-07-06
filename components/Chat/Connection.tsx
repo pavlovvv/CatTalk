@@ -5,11 +5,12 @@ import {
   Button,
   CircularProgress,
   styled,
-  ThemeProvider,
+  ThemeProvider
 } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React from "react";
+import setTranslation from "../../other/locales/setTranslation";
 import { join } from "../../redux/chatSlice";
 import { getConnectedUsers } from "../../redux/tokenSlice";
 import s from "../../styles/chat.module.css";
@@ -18,9 +19,9 @@ import {
   IConnectionProps,
   ISocketOnMessage,
   IStringAvatar,
+  IOtherTranslation
 } from "../../typescript/interfaces/data";
 import MainLayout from "../MainLayout";
-import setTranslation from "../../other/locales/setTranslation";
 
 const StyledBadge = styled(Badge)(({ theme }: any) => ({
   "& .MuiBadge-badge": {
@@ -64,11 +65,11 @@ const Connection: React.FC<IConnectionProps> = ({
   setError,
   setPending,
   setConnected,
-  connectedUsersInterval
+  connectedUsersInterval,
 }) => {
   const router = useRouter();
 
-  const t = setTranslation(router.locale as string)
+  const t: IOtherTranslation = setTranslation(router.locale as string);
 
   const dispatch = useAppDispatch();
 

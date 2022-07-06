@@ -20,24 +20,25 @@ import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import * as React from "react";
 import { useState } from "react";
+import setTranslation from "../../other/locales/setTranslation";
 import { logOut } from "../../redux/signSlice";
 import {
   confirmFriendRequest,
   rejectFriendRequest,
-  searchUsers,
+  searchUsers
 } from "../../redux/usersSlice";
 import { useAppDispatch, useAppSelector } from "../../typescript/hook";
 import {
   IFilteredUser,
-  IStringAvatar,
+  IOtherTranslation,
+  IStringAvatar
 } from "../../typescript/interfaces/data.js";
+import LanguageChanger from "./LanguageChanger";
 import MobileMenu from "./MobileMenu";
 import NavDrawer from "./NavDrawer";
-import LanguageChanger from "./LanguageChanger";
-import { useRouter } from "next/router";
-import setTranslation from "../../other/locales/setTranslation";
 
 
 const Search = styled("div")(({ theme }) => ({
@@ -133,7 +134,7 @@ export default function Header() {
   const dispatch = useAppDispatch();
 
   const router = useRouter();
-  const t = setTranslation(router.locale as string)
+  const t: IOtherTranslation = setTranslation(router.locale as string)
 
   const renderMenu = (
     <Menu

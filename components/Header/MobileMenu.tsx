@@ -15,12 +15,13 @@ import {
   confirmFriendRequest,
   rejectFriendRequest,
 } from "../../redux/usersSlice";
-import { IWaitingFriendsItem } from "../../typescript/interfaces/data.js";
 import { useAppDispatch, useAppSelector } from "../../typescript/hook";
 import { useState } from "react";
 import {
   IStringAvatar,
   IMobileMenuProps,
+  IOtherTranslation,
+  IWaitingFriendsItem
 } from "../../typescript/interfaces/data.js";
 import { useRouter } from "next/router";
 import setTranslation from "../../other/locales/setTranslation";
@@ -64,7 +65,7 @@ const MobileMenu: React.FC<IMobileMenuProps> = (props) => {
   };
 
   const router = useRouter();
-  const t = setTranslation(router.locale as string)
+  const t: IOtherTranslation = setTranslation(router.locale as string)
 
   return (
     <Menu

@@ -52,15 +52,6 @@ import {
   IStringAvatar,
 } from "../../../typescript/interfaces/data";
 
-
-export async function getServerSideProps({ locale }: ILocale) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["common", "chat"])),
-    },
-  };
-}
-
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     backgroundColor: "#44b700",
@@ -1257,4 +1248,12 @@ export default function InitialChat() {
   const key = useAppSelector((state) => state.sign.uniKey);
 
   return <Chat2 key={key} />;
+}
+
+export async function getServerSideProps({ locale }: ILocale) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common", "chat"])),
+    },
+  };
 }

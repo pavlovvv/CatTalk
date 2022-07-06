@@ -16,6 +16,7 @@ import Link from "next/link";
 import * as React from "react";
 import { useState } from "react";
 import {
+  IOtherTranslation,
     IStringAvatar
 } from "../../typescript/interfaces/data";
 import { IRowProps } from "../../typescript/interfaces/data";
@@ -29,7 +30,7 @@ export default function Row(props: IRowProps){
 
     const {locale} = useRouter()
 
-    const t = setTranslation(locale as string)
+    const t: IOtherTranslation = setTranslation(locale as string)
   
     const stringAvatar = (name: string): IStringAvatar => {
       return {

@@ -259,5 +259,42 @@ export interface IConnectionProps {
   setError: (value: string | null) => void
   setPending: (bool: boolean) => void
   setConnected: (bool: boolean) => void
-  //t: (e: string) => string
+}
+
+export interface IOtherTranslation {
+  join: string
+  wait: string
+  profile: string
+  account_settings: string
+  log_out: string
+  confirm: string
+  reject: string
+  friends_msg_1: string
+  friends_msg_2: string
+  messages: string
+  friend_requests: string
+  total_chats: string
+  total_messages_sent: string
+  total_entered_characters: string
+  info: string
+  filled: string
+  min: (count: number) => string
+  max: (count: number) => string
+  r_and_l: string
+  latin: string
+  numbers: string
+  cancel: string
+  sign_up: string
+  password: string
+  already_a_user: string
+  next: string
+  reg_confirmed: string
+  continue_as_guest: string
+  name: string
+  surname: string
+  username: string
+  to_sign_up: string
+  guests_delete: string
+  got_it: string
+  invalid_email: string
 }

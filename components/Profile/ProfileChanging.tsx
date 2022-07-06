@@ -9,6 +9,7 @@ import { setProfileError, updateOwnInfo } from "../../redux/signSlice";
 import s from "../../styles/profile.module.css";
 import { useAppDispatch, useAppSelector } from "../../typescript/hook";
 import {
+  IOtherTranslation,
   IProfileChangingProps,
   IProfileChangingSubmit
 } from "../../typescript/interfaces/data";
@@ -61,7 +62,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
 
   const {locale} = useRouter()
   
-  const t = setTranslation(locale as string)
+  const t: IOtherTranslation = setTranslation(locale as string)
 
   useEffect(() => {
     if (isUpdatingConfirmed && !profileError && isPending === false) {
