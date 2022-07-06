@@ -19,11 +19,17 @@ import {
     IStringAvatar
 } from "../../typescript/interfaces/data";
 import { IRowProps } from "../../typescript/interfaces/data";
+import setTranslation from "../../other/locales/setTranslation";
+import { useRouter } from "next/router";
 
 
 export default function Row(props: IRowProps){
-    const { row, t } = props;
+    const { row } = props;
     const [open, setOpen] = useState<boolean>(false);
+
+    const {locale} = useRouter()
+
+    const t = setTranslation(locale as string)
   
     const stringAvatar = (name: string): IStringAvatar => {
       return {
@@ -96,18 +102,18 @@ export default function Row(props: IRowProps){
           </TableCell>
         </TableRow>
         <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0, paddingLeft: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box sx={{ margin: 1 }}>
                 <Table size="small" aria-label="purchases">
                   <TableHead>
                     <TableRow>
-                      <TableCell sx={{ fontWeight: 900 }}>{t('total_chats')}</TableCell>
+                      <TableCell sx={{ fontWeight: 900 }}>{t.total_chats}</TableCell>
                       <TableCell sx={{ fontWeight: 900 }}>
-                      {t('total_sent_messages')}
+                      {t.total_messages_sent}
                       </TableCell>
                       <TableCell sx={{ fontWeight: 900 }}>
-                      {t('total_entered_characters')}
+                      {t.total_entered_characters}
                       </TableCell>
                     </TableRow>
                   </TableHead>

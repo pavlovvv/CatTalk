@@ -7,7 +7,7 @@ import { AppProps } from 'next/app';
 import '../other/firebase'
 import { appWithTranslation } from 'next-i18next';
 
-function MyApp({ Component, pageProps }: AppProps) {
+const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   
   return <>
     <Head>

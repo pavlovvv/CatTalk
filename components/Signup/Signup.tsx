@@ -33,9 +33,9 @@ import { useAppDispatch, useAppSelector } from "../../typescript/hook";
 import {
   IGoogleUserData,
   IInputPasswordValues,
-  ISignUpProps,
   ISignUpSubmit,
 } from "../../typescript/interfaces/data";
+import setTranslation from "../../other/locales/setTranslation";
 
 const StyledTextField = styled(TextField)({
   "& label": {
@@ -118,7 +118,7 @@ declare module "@mui/material/styles" {
 
 declare const window: any;
 
-export default function Signup({ ct, t }: ISignUpProps) {
+export default function Signup() {
   const dispatch = useAppDispatch();
 
   const error = useAppSelector((state) => state.sign.error);
@@ -127,6 +127,8 @@ export default function Signup({ ct, t }: ISignUpProps) {
   const isPending = useAppSelector((state) => state.sign.isPending);
 
   const router = useRouter();
+
+  const t = setTranslation(router.locale as string)
 
   if (isAuthed) {
     router.push("/");
@@ -355,7 +357,7 @@ export default function Signup({ ct, t }: ISignUpProps) {
     <ThemeProvider theme={theme}>
       <div className={s.signup_panel}>
         <div className={s.container}>
-          <h2 className={s.singup__title}>{t("sign_up")}</h2>
+          <h2 className={s.singup__title}>{t.sign_up}</h2>
 
           {!isMakenHidden ? (
             <div>
@@ -398,18 +400,18 @@ export default function Signup({ ct, t }: ISignUpProps) {
                       error={!!errors.email}
                       helperText={errors.email && errors.email.message}
                       {...register("email", {
-                        required: ct("filled"),
+                        required: t.filled,
                         minLength: {
                           value: 8,
-                          message: ct("min", { count: 8 }),
+                          message: t.min(8),
                         },
                         maxLength: {
                           value: 35,
-                          message: ct("max", { count: 35 }),
+                          message: t.max(35),
                         },
                         pattern: {
                           value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]+\s*$/i,
-                          message: ct("invalid_email"),
+                          message: t.invalid_email,
                         },
                       })}
                     />
@@ -427,19 +429,19 @@ export default function Signup({ ct, t }: ISignUpProps) {
                       error={!!errors.password}
                     >
                       <InputLabel color="primary" sx={{ color: "#fff" }}>
-                        {t("password")}
+                        {t.password}
                       </InputLabel>
                       <StyledInput
                         required
                         {...register("password", {
-                          required: ct("filled"),
+                          required: t.filled,
                           minLength: {
                             value: 8,
-                            message: ct("min", { count: 8 }),
+                            message: t.min(8),
                           },
                           maxLength: {
                             value: 25,
-                            message: ct("max", { count: 35 }),
+                            message: t.max(25),
                           },
                         })}
                         id="password"
@@ -487,7 +489,7 @@ export default function Signup({ ct, t }: ISignUpProps) {
                     sx={{ fontSize: "14px", display: "flex" }}
                     component={"span"}
                   >
-                    {t("already_a_user")} &nbsp;
+                    {t.already_a_user} &nbsp;
                     <Link href="/login" passHref>
                       <Typography
                         variant="body1"
@@ -508,7 +510,7 @@ export default function Signup({ ct, t }: ISignUpProps) {
                     variant="contained"
                     sx={{ marginTop: "15px", width: "100%" }}
                   >
-                    {t("next")}
+                    {t.next}
                   </Button>
                 </form>
                 {isRegConfirmed && (
@@ -517,7 +519,7 @@ export default function Signup({ ct, t }: ISignUpProps) {
                     variant="filled"
                     sx={{ backgroundColor: "#4E9F3D", color: "#fff" }}
                   >
-                    {t("reg_confirmed")}
+                    {t.reg_confirmed}
                   </Alert>
                 )}
                 {error && (
@@ -554,7 +556,7 @@ export default function Signup({ ct, t }: ISignUpProps) {
                     <div className={s.sign__continueWithGoogleIcon}>
                       <StartAnonymousIcon />
                     </div>{" "}
-                    {t("continue_as_guest")}
+                    {t.continue_as_guest}
                   </div>
                 </Button>
                 {!isGuestHidden && (
@@ -579,7 +581,7 @@ export default function Signup({ ct, t }: ISignUpProps) {
                           columnGap: "20px",
                         }}
                       >
-                        {t("guests_delete")}
+                        {t.guests_delete}
                         <Button
                           variant="contained"
                           sx={{
@@ -604,11 +606,11 @@ export default function Signup({ ct, t }: ISignUpProps) {
                               <span
                                 style={{ marginLeft: "10px", color: "#fff" }}
                               >
-                                {ct("got_it")}
+                                {t.got_it}
                               </span>
                             </>
                           ) : (
-                            <>{ct("got_it")}</>
+                            t.got_it
                           )}
                         </Button>
                       </div>
@@ -656,7 +658,7 @@ export default function Signup({ ct, t }: ISignUpProps) {
                   >
                     <StyledTextField
                       id="name"
-                      label={t("name")}
+                      label={t.name}
                       variant="standard"
                       sx={
                         mw600px
@@ -667,18 +669,18 @@ export default function Signup({ ct, t }: ISignUpProps) {
                       error={!!errors.firstName}
                       helperText={errors.firstName && errors.firstName.message}
                       {...register("firstName", {
-                        required: ct("filled"),
+                        required: t.filled,
                         minLength: {
                           value: 2,
-                          message: ct("min", { count: 2 }),
+                          message: t.min(2),
                         },
                         maxLength: {
                           value: 15,
-                          message: ct("max", { count: 15 }),
+                          message: t.max(15),
                         },
                         pattern: {
                           value: /^[A-Za-zА-Яа-яЁё]+\s*$/,
-                          message: ct("r_and_l"),
+                          message: t.r_and_l,
                         },
                       })}
                     />
@@ -691,7 +693,7 @@ export default function Signup({ ct, t }: ISignUpProps) {
                   >
                     <StyledTextField
                       id="surname"
-                      label={t("surname")}
+                      label={t.surname}
                       variant="standard"
                       sx={
                         mw600px
@@ -702,18 +704,18 @@ export default function Signup({ ct, t }: ISignUpProps) {
                       error={!!errors.lastName}
                       helperText={errors.lastName && errors.lastName.message}
                       {...register("lastName", {
-                        required: ct("filled"),
+                        required: t.filled,
                         minLength: {
                           value: 2,
-                          message: ct("min", { count: 2 }),
+                          message: t.min(2),
                         },
                         maxLength: {
                           value: 15,
-                          message: ct("max", { count: 15 }),
+                          message: t.max(15),
                         },
                         pattern: {
                           value: /^[A-Za-zА-Яа-яЁё]+\s*$/,
-                          message: ct("r_and_l"),
+                          message: t.r_and_l,
                         },
                       })}
                     />
@@ -726,7 +728,7 @@ export default function Signup({ ct, t }: ISignUpProps) {
                   >
                     <StyledTextField
                       id="username"
-                      label={t("username")}
+                      label={t.username}
                       variant="standard"
                       sx={
                         mw600px
@@ -737,18 +739,18 @@ export default function Signup({ ct, t }: ISignUpProps) {
                       error={!!errors.username}
                       helperText={errors.username && errors.username.message}
                       {...register("username", {
-                        required: ct("filled"),
+                        required: t.filled,
                         minLength: {
                           value: 3,
-                          message: ct("min", { count: 3 }),
+                          message: t.min(3),
                         },
                         maxLength: {
                           value: 14,
-                          message: ct("max", { count: 14 }),
+                          message: t.max(14),
                         },
                         pattern: {
                           value: /^[\w](?!.*?\.{2})[\w.]{1,28}[\w]+\s*$/,
-                          message: ct("r_and_l"),
+                          message: t.r_and_l,
                         },
                       })}
                     />
@@ -763,7 +765,7 @@ export default function Signup({ ct, t }: ISignUpProps) {
                     {isPending ? (
                       <CircularProgress size={30} sx={{ color: "#fff" }} />
                     ) : (
-                      <>{t("to_sign_up")}</>
+                      t.to_sign_up
                     )}
                   </Button>
                 </form>

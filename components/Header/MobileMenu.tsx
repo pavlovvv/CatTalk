@@ -23,6 +23,8 @@ import {
   IMobileMenuProps,
 } from "../../typescript/interfaces/data.js";
 import { useRouter } from "next/router";
+import setTranslation from "../../other/locales/setTranslation";
+
 
 const MobileMenu: React.FC<IMobileMenuProps> = (props) => {
   const dispatch = useAppDispatch();
@@ -62,6 +64,7 @@ const MobileMenu: React.FC<IMobileMenuProps> = (props) => {
   };
 
   const router = useRouter();
+  const t = setTranslation(router.locale as string)
 
   return (
     <Menu
@@ -97,9 +100,7 @@ const MobileMenu: React.FC<IMobileMenuProps> = (props) => {
             <AccountCircle />
           </IconButton>
           <p>
-            {router.locale === "en" && "Profile"}
-            {router.locale === "ua" && "Профіль"}
-            {router.locale === "ru" && "Профиль"}
+            {t.profile}
           </p>
         </MenuItem>
       </Link>
@@ -111,9 +112,8 @@ const MobileMenu: React.FC<IMobileMenuProps> = (props) => {
             </Badge>
           </IconButton>
           <p>
-            {router.locale === "en" && "Messages"}
-            {router.locale === "ua" && "Повідомлення"}
-            {router.locale === "ru" && "Сообщения"}
+                                    {/* this is not page component so I can't get access to getStaticProps  */}
+            {t.messages}
           </p>
         </MenuItem>
       </Link>
@@ -130,9 +130,7 @@ const MobileMenu: React.FC<IMobileMenuProps> = (props) => {
           </Badge>
         </IconButton>
         <p>
-          {router.locale === "en" && "Friend requests"}
-          {router.locale === "ua" && "Друзі"}
-          {router.locale === "ru" && "Друзья"}
+          {t.friend_requests}
         </p>
         <Popover
           id={notificationMobileId}
@@ -235,9 +233,7 @@ const MobileMenu: React.FC<IMobileMenuProps> = (props) => {
                         disabled={authData.type === 'Guest'}
                       >
                         {/* this is not page component so I can't get access to getStaticProps  */}
-                        {router.locale === "en" && "Confirm"}
-                        {router.locale === "ua" && "Прийняти"}
-                        {router.locale === "ru" && "Принять"}
+                        {t.confirm}
                       </Button>
                       <Button
                         color="error"
@@ -250,10 +246,7 @@ const MobileMenu: React.FC<IMobileMenuProps> = (props) => {
                           dispatch(rejectFriendRequest({ id: item.id }));
                         }}
                       >
-                        {/* this is not page component so I can't get access to getStaticProps  */}
-                        {router.locale === "en" && "Reject"}
-                        {router.locale === "ua" && "Відмовити"}
-                        {router.locale === "ru" && "Отказать"}
+                        {t.reject}
                       </Button>
                     </div>
                   </div>
@@ -263,16 +256,9 @@ const MobileMenu: React.FC<IMobileMenuProps> = (props) => {
           ) : (
             <Box sx={{ p: 3, textAlign: "center" }}>
               {/* this is not page component so I can't get access to getStaticProps  */}
-              {router.locale === "en" && "We regret to inform you that"}
-              {router.locale === "ua" && "На жаль, повідомляємо Вам,"}
-              {router.locale === "ru" && "К сожалению сообщаем Вам,"}
+              {t.friends_msg_1}
               <br />
-              {router.locale === "en" &&
-                "nobody has sent you a friend request yet"}
-              {router.locale === "ua" &&
-                "що поки що ніхто не відправлял Вам запит у друзі"}
-              {router.locale === "ru" &&
-                "что пока что никто не отправлял Вам запрос в друзья"}
+              {t.friends_msg_2}
               <br />
               :(
             </Box>

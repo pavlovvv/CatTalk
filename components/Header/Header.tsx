@@ -37,6 +37,8 @@ import MobileMenu from "./MobileMenu";
 import NavDrawer from "./NavDrawer";
 import LanguageChanger from "./LanguageChanger";
 import { useRouter } from "next/router";
+import setTranslation from "../../other/locales/setTranslation";
+
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -131,6 +133,7 @@ export default function Header() {
   const dispatch = useAppDispatch();
 
   const router = useRouter();
+  const t = setTranslation(router.locale as string)
 
   const renderMenu = (
     <Menu
@@ -157,18 +160,12 @@ export default function Header() {
       <Link href="/profile" passHref>
         <MenuItem onClick={handleMenuClose}>
           {/* this is not page component so I can't get access to getStaticProps  */}
-          {router.locale === "en" && "Profile"}
-          {router.locale === "ua" && "Профіль"}
-          {router.locale === "ru" && "Профиль"}
-          {/* this is not page component so I can't get access to getStaticProps  */}
+          {t.profile}
         </MenuItem>
       </Link>
       <Link href="/settings" passHref>
         <MenuItem onClick={handleMenuClose}>
-          {/* this is not page component so I can't get access to getStaticProps  */}
-          {router.locale === "en" && "Account settings"}
-          {router.locale === "ua" && "Налаштування"}
-          {router.locale === "ru" && "Настройки"}
+        {t.account_settings}
         </MenuItem>
       </Link>
       <MenuItem
@@ -178,10 +175,7 @@ export default function Header() {
           dispatch(logOut());
         }}
       >
-        {/* this is not page component so I can't get access to getStaticProps  */}
-        {router.locale === "en" && "Log out"}
-        {router.locale === "ua" && "Вийти"}
-        {router.locale === "ru" && "Выйти"}
+        {t.log_out}
       </MenuItem>
     </Menu>
   );
@@ -525,9 +519,7 @@ export default function Header() {
                                     }}
                                     disabled={authData.type === 'Guest'}
                                   >
-                                    {router.locale === "en" && "Confirm"}
-                                    {router.locale === "ua" && "Прийняти"}
-                                    {router.locale === "ru" && "Принять"}
+                                    {t.confirm}
                                   </Button>
                                   <Button
                                     color="error"
@@ -542,9 +534,7 @@ export default function Header() {
                                       );
                                     }}
                                   >
-                                    {router.locale === "en" && "Reject"}
-                                    {router.locale === "ua" && "Відмовити"}
-                                    {router.locale === "ru" && "Отказать"}
+                                    {t.reject}
                                   </Button>
                                 </div>
                               </div>
@@ -553,19 +543,9 @@ export default function Header() {
                         </Box>
                       ) : (
                         <Box sx={{ p: 3, textAlign: "center" }}>
-                          {router.locale === "en" &&
-                            "We regret to inform you that"}
-                          {router.locale === "ua" &&
-                            "На жаль, повідомляємо Вам,"}
-                          {router.locale === "ru" &&
-                            "К сожалению сообщаем Вам,"}
+                          {t.friends_msg_1}
                           <br />
-                          {router.locale === "en" &&
-                            "nobody has sent you a friend request yet"}
-                          {router.locale === "ua" &&
-                            "що поки що ніхто не відправлял Вам запит у друзі"}
-                          {router.locale === "ru" &&
-                            "что пока что никто не отправлял Вам запрос в друзья"}
+                          {t.friends_msg_2}
                           <br />
                           :(
                         </Box>

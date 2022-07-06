@@ -16,7 +16,7 @@ import style from "./index.module.css";
 export async function getStaticProps({ locale }: ILocale) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["common", "home", "signUp"])),
+      ...(await serverSideTranslations(locale, ["common", "home"])),
     },
   };
 }
@@ -58,7 +58,7 @@ const Home: React.FC = () => {
   const st = useTranslation("signUp").t;
 
   const router = useRouter();
-  const welcomeRef = useRef<any>();
+  const welcomeRef = useRef<HTMLDivElement>();
 
   const dispatch = useAppDispatch();
 
@@ -87,7 +87,7 @@ const Home: React.FC = () => {
             variants={moveLeft}
             viewport={{ amount: 0.9555 }}
           >
-            <Signup t={st} ct={ct} key={key} />
+            <Signup key={key} />
           </motion.div>
         ) : (
           <motion.div

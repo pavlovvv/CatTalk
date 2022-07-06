@@ -377,8 +377,6 @@ const Profile: React.FC = () => {
                     <ProfileChanging
                       info={authData.info}
                       setChanging={setChanging}
-                      t={t}
-                      ct={ct}
                     />
                   )}
                 </div>

@@ -627,7 +627,7 @@ export default function Leaderboard() {
                             <TableHead>
                               <TableRow>
                                 <TableCell
-                                  sx={{ fontWeight: 900, paddingLeft: "80px" }}
+                                  sx={{ fontWeight: 900}}
                                 >
                                   {t('username')}
                                 </TableCell>
@@ -635,7 +635,7 @@ export default function Leaderboard() {
                             </TableHead>
                             <TableBody>
                               {rows.map((row: ILeaderboardRow, idx: number) => (
-                                <Row key={idx} row={row} idx={idx} t={t} />
+                                <Row key={idx} row={row} idx={idx} />
                               ))}
                             </TableBody>
                           </Table>

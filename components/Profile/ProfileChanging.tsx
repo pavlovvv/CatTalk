@@ -12,6 +12,8 @@ import {
   IProfileChangingProps,
   IProfileChangingSubmit
 } from "../../typescript/interfaces/data";
+import { useRouter } from "next/router";
+import setTranslation from './../../other/locales/setTranslation';
 
 const StyledTextField = styled(TextField)({
   "& label": {
@@ -48,7 +50,6 @@ const StyledTextField = styled(TextField)({
 
 
 export default function ProfileChanging(props: IProfileChangingProps) {
-  const {t, ct} = props
   const dispatch = useAppDispatch();
   const isProfileUpdatingConfirmed = useAppSelector(
     (state) => state.sign.isProfileUpdatingConfirmed
@@ -57,6 +58,10 @@ export default function ProfileChanging(props: IProfileChangingProps) {
   const profileError = useAppSelector((state) => state.sign.profileError);
 
   const [isUpdatingConfirmed, setUpdatingConfirmed] = useState(false);
+
+  const {locale} = useRouter()
+  
+  const t = setTranslation(locale as string)
 
   useEffect(() => {
     if (isUpdatingConfirmed && !profileError && isPending === false) {
@@ -120,7 +125,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
       <div>
         <div className={s.info__menu}>
           <Button variant="contained" color="secondary" sx={{ width: "100px" }}>
-            {t('info')}
+            {t.info}
           </Button>
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -149,19 +154,19 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   error={!!errors.name}
                   helperText={errors.name && errors.name.message}
                   {...register("name", {
-                    required: ct('filled'),
+                    required: t.filled,
                     minLength: {
                       value: 2,
-                      message: ct('min', {count: 2}),
+                      message: t.min(2),
                     },
                     maxLength: {
                       value: 15,
-                      message: ct('max', {count: 15}),
+                      message: t.max(15),
                     },
                     pattern: {
                       value: /^[A-Za-zА-Яа-яЁё]+\s*$/,
                       message:
-                      ct('r_and_l'),
+                      t.r_and_l,
                     },
                   })}
                 />
@@ -192,19 +197,19 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   }
                   helperText={errors.surname && errors.surname.message}
                   {...register("surname", {
-                    required: ct('filled'),
+                    required: t.filled,
                     minLength: {
                       value: 2,
-                      message: ct('min', {count: 2}),
+                      message: t.min(2),
                     },
                     maxLength: {
                       value: 15,
-                      message: ct('max', {count: 15}),
+                      message: t.min(15),
                     },
                     pattern: {
                       value: /^[A-Za-zА-Яа-яЁё]+\s*$/,
                       message:
-                      ct('r_and_l'),
+                      t.r_and_l,
                     },
                   })}
                 />
@@ -235,18 +240,18 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   }
                   helperText={errors.username && errors.username.message}
                   {...register("username", {
-                    required: ct('filled'),
+                    required: t.filled,
                     minLength: {
                       value: 2,
-                      message: ct('min', {count: 2}),
+                      message: t.min(2),
                     },
                     maxLength: {
                       value: 15,
-                      message: ct('max', {count: 15}),
+                      message: t.max(15),
                     },
                     pattern: {
                       value: /^[\w](?!.*?\.{2})[\w.]{1,28}[\w]+\s*$/,
-                      message: ct('latin'),
+                      message: t.latin,
                     },
                   })}
                 />
@@ -304,11 +309,11 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   {...register("age", {
                     maxLength: {
                       value: 2,
-                      message: ct('max', {count: 2}),
+                      message: t.max(2),
                     },
                     pattern: {
                       value: /^[ 0-9]+$/,
-                      message: ct('numbers'),
+                      message: t.numbers,
                     },
                   })}
                 />
@@ -340,11 +345,11 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   {...register("location", {
                     minLength: {
                       value: 2,
-                      message: ct('min', {count: 2}),
+                      message: t.min(2),
                     },
                     maxLength: {
                       value: 25,
-                      message: ct('max', {count: 25}),
+                      message: t.max(25),
                     },
                   })}
                 />
@@ -362,7 +367,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                 {isPending ? (
                   <CircularProgress size={30} sx={{ color: "#fff" }} />
                 ) : (
-                  ct('confirm')
+                  t.confirm
                 )}
               </Button>
               <Button
@@ -374,7 +379,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   props.setChanging(false);
                 }}
               >
-                {ct('cancel')}
+                {t.cancel}
               </Button>
             </div>
             {profileError && (

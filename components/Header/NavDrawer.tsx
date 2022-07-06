@@ -48,8 +48,6 @@ export default function NavDrawer(props: INavDrawerProps) {
 
   const router = useRouter()
 
-
-
   if (router.locale === 'en') {
     var navItems: string[] = [
       "Profile",

@@ -52,6 +52,7 @@ import {
   IStringAvatar,
 } from "../../../typescript/interfaces/data";
 
+
 export async function getServerSideProps({ locale }: ILocale) {
   return {
     props: {
@@ -350,7 +351,7 @@ const Chat: React.FC = () => {
         setPending={setPending}
         setConnected={setConnected}
         connectedUsersInterval={connectedUsersInterval}
-        t={t}
+        //t={t}
       />
     );
   }

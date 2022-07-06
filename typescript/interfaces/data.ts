@@ -112,8 +112,6 @@ export interface IProfileConfirmedFriend {
 export interface IProfileChangingProps {
   info: Array<any>
   setChanging: (bool: boolean) => void
-  t: (e: string) => string
-  ct: (e: string, num?: {count: number}) => string
 }
 
 export interface IProfileChangingSubmit {
@@ -231,7 +229,6 @@ export interface IGoogleUserData {
 export interface IRowProps {
   row: ILeaderboardRow
   idx: number
-  t: (e: string) => string
 }
 
 export interface INewsProps {
@@ -245,11 +242,6 @@ export interface ILocale {
 export interface IMobileMenuProps {
   mobileMoreAnchorEl: null | HTMLElement
   setMobileMoreAnchorEl: (value: null | HTMLElement) => void
-}
-
-export interface ISignUpProps {
-  t: (e: string) => string
-  ct: (e: string, num?: {count: number}) => string
 }
 
 interface IRef<T> {
@@ -267,5 +259,5 @@ export interface IConnectionProps {
   setError: (value: string | null) => void
   setPending: (bool: boolean) => void
   setConnected: (bool: boolean) => void
-  t: (e: string) => string
+  //t: (e: string) => string
 }

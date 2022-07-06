@@ -20,6 +20,7 @@ import {
   IStringAvatar,
 } from "../../typescript/interfaces/data";
 import MainLayout from "../MainLayout";
+import setTranslation from "../../other/locales/setTranslation";
 
 const StyledBadge = styled(Badge)(({ theme }: any) => ({
   "& .MuiBadge-badge": {
@@ -63,10 +64,12 @@ const Connection: React.FC<IConnectionProps> = ({
   setError,
   setPending,
   setConnected,
-  connectedUsersInterval,
-  t
+  connectedUsersInterval
 }) => {
   const router = useRouter();
+
+  const t = setTranslation(router.locale as string)
+
   const dispatch = useAppDispatch();
 
   const authData = useAppSelector((state) => state.sign.userData);
@@ -189,7 +192,7 @@ const Connection: React.FC<IConnectionProps> = ({
                   {isPending ? (
                     <CircularProgress size={30} sx={{ color: "#fff" }} />
                   ) : (
-                    <>{t('join')}</>
+                    <>{t.join}</>
                   )}
                 </Button>
                 {error && (
@@ -213,7 +216,7 @@ const Connection: React.FC<IConnectionProps> = ({
                       color: "#fff",
                     }}
                   >
-                    {t('wait')}
+                    {t.wait}
                   </Alert>
                 )}
               </div>
