@@ -10,6 +10,7 @@ const nextConfig = {
     loader: 'akamai',
     path: ''
   },
+  output: 'standalone'
 }
 
 module.exports = nextConfig
