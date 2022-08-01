@@ -28,7 +28,7 @@ import { useForm } from "react-hook-form";
 import MainLayout from "../components/MainLayout";
 import anonymousIcon from "../images/anonymous-icon.png";
 import { auth, continueWithGoogle, signAsGuest } from "../redux/signSlice";
-import s from "../styles/sign.module.css";
+import s from "../styles/sign.module.scss";
 import { useAppDispatch, useAppSelector } from "../typescript/hook";
 import {
   IGoogleUserData,

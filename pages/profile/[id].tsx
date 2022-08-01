@@ -14,7 +14,7 @@ import telegramIcon from "../../images/Telegram_icon.png";
 import {
   addFriend, deleteFriend, refuseOwnFriendRequest
 } from "../../redux/usersSlice";
-import s from "../../styles/profile.module.css";
+import s from "../../styles/profile.module.scss";
 import { useAppDispatch, useAppSelector } from "../../typescript/hook";
 import {
   IProfileConfirmedFriend, IProfileFriend,
@@ -34,7 +34,8 @@ export async function getServerSideProps({
   );
   const user = await res.json();
 
-  return { props: {...(await serverSideTranslations(locale, ['common', 'profile'])), userData: user }, };
+  return { props: {...(await serverSideTranslations(locale, ['common', 'profile'])), userData: user, 
+  fullName: user.info.name + ' ' + user.info.surname, service: 'CatTalk' }, };
 }
 
 export default function Profile(props: IProfileProps) {
@@ -164,12 +165,11 @@ export default function Profile(props: IProfileProps) {
               <div className={s.top__items}>
                 <div className={s.top__ava}>
                   {info[7]?.avatar ? (
-                    <Image
-                      width="150px"
-                      height="150px"
+                    <img
+                      style={{width: '150px', height: '150px'}}
                       className={s.top__img}
                       src={info[7].avatar}
-                      alt="content__img"
+                      alt="CatTalk avatar"
                     />
                   ) : (
                     <Avatar
@@ -196,7 +196,6 @@ export default function Profile(props: IProfileProps) {
             <div className={s.container}>
               <div className={s.info__inner}>
                 <div className={s.panel + " " + s.info__info}>
-                  <div>
                     {isProfileUpdatingConfirmed && (
                       <Alert
                         severity="success"
@@ -207,7 +206,7 @@ export default function Profile(props: IProfileProps) {
                       </Alert>
                     )}
                     {infoOption === "info" ? (
-                      <div>
+                      <>
                         <div className={s.info__menu}>
                           <Button
                             variant="contained"
@@ -357,28 +356,24 @@ export default function Profile(props: IProfileProps) {
                           const key: string[] = Object.keys(e);
                           const value: string[] = Object.values(e);
                           return (
-                            <div key={i}>
+                            <React.Fragment key={i}>
                               {key[0] !== "_id" &&
                                 key[0] !== "instagramLink" &&
                                 key[0] !== "telegramUsername" &&
                                 key[0] !== "discordUsername" &&
                                 key[0] !== "avatar" && (
-                                  <div>
-                                    <div className={s.info__infoItems}>
-                                      <span className={s.info__infoItemName}>
+                                  <div key={i}>
+                                    <div className={s.items + ' ' + s.items_padding}>
+                                      <span className={s.items__name}>
                                         {key[0]}
                                       </span>
-                                      <span className={s.info__infoItemValue}>
+                                      <span className={s.items__value}>
                                         {value[0] ?? "unknown"}
                                       </span>
                                     </div>
-
-                                    {i !== info.length - 5 && (
-                                      <hr className={s.hrUnder} />
-                                    )}
                                   </div>
                                 )}
-                            </div>
+                            </React.Fragment>
                           );
                         })}
 
@@ -391,7 +386,7 @@ export default function Profile(props: IProfileProps) {
                                     src={"/" + instagramIcon.src}
                                     width='50px'
                                     height='50px'
-                                    alt="instagramIcon"
+                                    alt="CatTalk instagramIcon"
                                   />
                                 </a>
                               </Link>
@@ -405,7 +400,7 @@ export default function Profile(props: IProfileProps) {
                                 height='50px'
                                 onMouseEnter={handlePopoverTelegramOpen}
                                 onMouseLeave={handlePopoverTelegramClose}
-                                alt="telegramIcon"
+                                alt="CatTalk telegramIcon"
                                 onClick={() => {
                                   setTelegramCopy(true);
                                   setDiscordCopy(false);
@@ -456,7 +451,7 @@ export default function Profile(props: IProfileProps) {
                                 height='50px'
                                 onMouseEnter={handlePopoverDiscordOpen}
                                 onMouseLeave={handlePopoverDiscordClose}
-                                alt="discordIcon"
+                                alt="CatTalk discordIcon"
                                 onClick={() => {
                                   setDiscordCopy(true);
                                   setTelegramCopy(false);
@@ -499,9 +494,9 @@ export default function Profile(props: IProfileProps) {
                             </div>
                           )}
                         </div>
-                      </div>
+                      </>
                     ) : (
-                      <div>
+                      <div className={s.info__stats}>
                         <div className={s.info__menu}>
                           <Button
                             variant="contained"
@@ -639,24 +634,19 @@ export default function Profile(props: IProfileProps) {
                           const value = Object.values(e);
                           return (
                             <div key={i}>
-                              <div className={s.info__infoItems}>
-                                <span className={s.info__infoItemName}>
+                              <div className={s.items + ' ' + s.items_padding}>
+                                <span className={s.items__name}>
                                   {statistics[i]}
                                 </span>
-                                <span className={s.info__infoItemValue}>
+                                <span className={s.items__value}>
                                   {value[0]}
                                 </span>
                               </div>
-
-                              {i !== stats.length - 1 && (
-                                <hr className={s.hrUnder} />
-                              )}
                             </div>
                           );
                         })}
                       </div>
                     )}{" "}
-                  </div>
                 </div>
 
                 <div className={s.panel + " " + s.info__friends}>
@@ -695,7 +685,7 @@ export default function Profile(props: IProfileProps) {
                                             height="75px"
                                             className={s.infoMemberItem__ava}
                                             src={e!.avatar}
-                                            alt="ava"
+                                            alt="CatTalk avatar"
                                           />
                                         ) : (
                                           <Avatar
@@ -731,8 +721,6 @@ export default function Profile(props: IProfileProps) {
                                     </a>
                                   </Link>
                                 )}
-                                {i !== friends.confirmedFriends!.length - 1 &&
-                                  i <= 1 && <hr className={s.hrUnder} />}
                               </div>
                             );
                           }
@@ -772,7 +760,7 @@ export default function Profile(props: IProfileProps) {
                                           height="75px"
                                           className={s.infoMemberItem__ava}
                                           src={e!.avatar}
-                                          alt="ava"
+                                          alt="CatTalk avatar"
                                         />
                                       ) : (
                                         <Avatar
@@ -805,9 +793,6 @@ export default function Profile(props: IProfileProps) {
                                     </div>
                                   </a>
                                 </Link>
-                                {i !== friends.confirmedFriends!.length - 1 && (
-                                  <hr className={s.hrUnder} />
-                                )}
                               </div>
                             );
                           }

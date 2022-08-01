@@ -13,7 +13,7 @@ import React from "react";
 import setTranslation from "../../other/locales/setTranslation";
 import { join } from "../../redux/chatSlice";
 import { getConnectedUsers } from "../../redux/tokenSlice";
-import s from "../../styles/chat.module.css";
+import s from "../../styles/chat.module.scss";
 import { useAppDispatch, useAppSelector } from "../../typescript/hook";
 import {
   IConnectionProps,
@@ -102,7 +102,7 @@ const Connection: React.FC<IConnectionProps> = ({
         }, 1000);
       }
       setMessages((prev: object[]) => [...prev, message]);
-      router.push("#last");
+      router.push("#last")
     };
     socket.current.onclose = (): void => {
       if (!isLeft.current) {

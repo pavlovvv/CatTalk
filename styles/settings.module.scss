@@ -1,41 +1,41 @@
 .settingsPage {
-    width: 100%;
-    min-height: 100vh;
-    background: linear-gradient(
-      90deg,
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(90deg,
       rgba(2, 0, 36, 1) 0%,
       rgba(108, 9, 121, 1) 48%,
-      rgba(128, 0, 255, 1) 100%
-    );
+      rgba(128, 0, 255, 1) 100%);
 
-    color: #fff;
-    background-size: 200% 100%;
-    animation: gradient 8s ease infinite;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  color: #fff;
+  background-size: 200% 100%;
+  animation: gradient 8s ease infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
   }
 
-  
-  @keyframes gradient {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
+  50% {
+    background-position: 100% 50%;
   }
 
-  .settingsPanel {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 80vh;
+  100% {
+    background-position: 0% 50%;
   }
+}
+
+.settingsPanel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+}
 
 .container {
   margin: 50px 0;
@@ -47,24 +47,22 @@
   flex-direction: column;
   overflow: hidden;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-}
 
-@media(max-width: 499px) {
-  .container {
+  @media(max-width: 499px) {
     width: 100%;
     padding: 30px 40px;
   }
 }
 
 .settingsPanel__inner {
-    display: flex;
-    flex-direction: column;
-    row-gap: 20px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
 }
 
 .settingsPanelTitle {
-    font-size: 25px;
-    font-family: 'Roboto', serif;
+  font-size: 25px;
+  font-family: 'Roboto', serif;
 }
 
 .settingsPanel__securityElements {
@@ -78,7 +76,7 @@
   width: 100%;
 }
 
-.settingsPanel__personal{
+.settingsPanel__personal {
   margin-top: 25px;
 }
 

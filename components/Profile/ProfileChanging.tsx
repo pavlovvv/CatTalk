@@ -6,7 +6,7 @@ import {
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { setProfileError, updateOwnInfo } from "../../redux/signSlice";
-import s from "../../styles/profile.module.css";
+import s from "../../styles/profile.module.scss";
 import { useAppDispatch, useAppSelector } from "../../typescript/hook";
 import {
   IOtherTranslation,
@@ -129,11 +129,11 @@ export default function ProfileChanging(props: IProfileChangingProps) {
             {t.info}
           </Button>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <div className={s.info__infoItems}>
-              <span className={s.info__infoItemName}>name</span>
-              <span className={s.info__infoItemValue}>
+        <form className={s.info__changeMenu} onSubmit={handleSubmit(onSubmit)}>
+          <>
+            <div className={s.items + ' ' + s.items_padding}>
+              <span className={s.items__name}>name</span>
+              <span className={s.items__value}>
                 <StyledTextField
                   id="name"
                   label="Name"
@@ -174,11 +174,9 @@ export default function ProfileChanging(props: IProfileChangingProps) {
               </span>
             </div>
 
-            <hr className={s.hrUnder} />
-
-            <div className={s.info__infoItems}>
-              <span className={s.info__infoItemName}>surname</span>
-              <span className={s.info__infoItemValue}>
+            <div className={s.items + ' ' + s.items_padding}>
+              <span className={s.items__name}>surname</span>
+              <span className={s.items__value}>
                 <StyledTextField
                   id="surname"
                   label="Surname"
@@ -217,11 +215,9 @@ export default function ProfileChanging(props: IProfileChangingProps) {
               </span>
             </div>
 
-            <hr className={s.hrUnder} />
-
-            <div className={s.info__infoItems}>
-              <span className={s.info__infoItemName}>username</span>
-              <span className={s.info__infoItemValue}>
+            <div className={s.items + ' ' + s.items_padding}>
+              <span className={s.items__name}>username</span>
+              <span className={s.items__value}>
                 <StyledTextField
                   id="username"
                   label="Username"
@@ -259,37 +255,31 @@ export default function ProfileChanging(props: IProfileChangingProps) {
               </span>
             </div>
 
-            <hr className={s.hrUnder} />
-
-            <div className={s.info__infoItems}>
-              <span className={s.info__infoItemName + " " + s.info_changedName}>
+            <div className={s.items + ' ' + s.items_padding}>
+              <span className={s.items__name + " " + s.info_changedName}>
                 email
               </span>
               <span
-                className={s.info__infoItemValue + " " + s.info_changedValue}
+                className={s.items__value + " " + s.info_changedValue}
               >
                 {props.info[3]?.email}
               </span>
             </div>
 
-            <hr className={s.hrUnder} />
-
-            <div className={s.info__infoItems}>
-              <span className={s.info__infoItemName + " " + s.info_changedName}>
+            <div className={s.items + ' ' + s.items_padding}>
+              <span className={s.items__name + " " + s.info_changedName}>
                 id
               </span>
               <span
-                className={s.info__infoItemValue + " " + s.info_changedValue}
+                className={s.items__value + " " + s.info_changedValue}
               >
                 {props.info[4]?.id}
               </span>
             </div>
 
-            <hr className={s.hrUnder} />
-
-            <div className={s.info__infoItems}>
-              <span className={s.info__infoItemName}>age</span>
-              <span className={s.info__infoItemValue}>
+            <div className={s.items + ' ' + s.items_padding}>
+              <span className={s.items__name}>age</span>
+              <span className={s.items__value}>
                 <StyledTextField
                   id="age"
                   label="Age"
@@ -321,11 +311,9 @@ export default function ProfileChanging(props: IProfileChangingProps) {
               </span>
             </div>
 
-            <hr className={s.hrUnder} />
-
-            <div className={s.info__infoItems}>
-              <span className={s.info__infoItemName}>location</span>
-              <span className={s.info__infoItemValue}>
+            <div className={s.items + ' ' + s.items_padding}>
+              <span className={s.items__name}>location</span>
+              <span className={s.items__value}>
                 <StyledTextField
                   id="location"
                   label="Location"
@@ -395,7 +383,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                 {profileError}
               </Alert>
             )}
-          </div>
+          </>
         </form>
       </div>
     </ThemeProvider>

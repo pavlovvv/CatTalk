@@ -4,7 +4,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { getOwnInfo } from "../redux/signSlice";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/Home.module.scss";
 import { useAppDispatch, useAppSelector } from "../typescript/hook";
 import { IHomeProps } from "../typescript/interfaces/data";
 import Header from "./Header/Header";

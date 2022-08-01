@@ -37,7 +37,7 @@ import {
   sortByMostEnteredCharacters,
   sortByMostSentMessages,
 } from "../redux/usersSlice";
-import s from "../styles/leaderboard.module.css";
+import s from "../styles/leaderboard.module.scss";
 import { useAppDispatch, useAppSelector } from "../typescript/hook";
 import {
   IFilteredUser,
@@ -388,7 +388,7 @@ export default function Leaderboard() {
                       </SearchIconWrapper>
                       <StyledInputBase
                         placeholder="Search..."
-                        value={router.query.search || handlerSearchText}
+                        value={handlerSearchText}
                         sx={
                           !mw715px
                             ? { height: "60px", width: "400px" }

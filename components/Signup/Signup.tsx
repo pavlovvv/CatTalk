@@ -29,7 +29,7 @@ import { useForm } from "react-hook-form";
 import anonymousIcon from "../../images/anonymous-icon.png";
 import setTranslation from "../../other/locales/setTranslation";
 import { continueWithGoogle, signAsGuest, signUp } from "../../redux/signSlice";
-import s from "../../styles/sign.module.css";
+import s from "../../styles/sign.module.scss";
 import { useAppDispatch, useAppSelector } from "../../typescript/hook";
 import {
   IGoogleUserData,

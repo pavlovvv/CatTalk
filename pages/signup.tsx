@@ -1,5 +1,5 @@
 import MainLayout from "../components/MainLayout";
-import s from "../styles/sign.module.css";
+import s from "../styles/sign.module.scss";
 import SignUp from "../components/Signup/Signup";
 import { useAppSelector } from "../typescript/hook";
 import { ILocale } from "../typescript/interfaces/data";

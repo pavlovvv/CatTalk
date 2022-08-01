@@ -40,7 +40,7 @@ import {
   setChatPage,
 } from "../../../redux/chatSlice";
 import { getOwnInfo, setDynamicPage } from "../../../redux/signSlice";
-import s from "../../../styles/chat.module.css";
+import s from "../../../styles/chat.module.scss";
 import { useAppDispatch, useAppSelector } from "../../../typescript/hook";
 import {
   IChatAuthRef,
@@ -106,7 +106,7 @@ const useStyles = makeStyles({
   },
 });
 
-const SlideTransition = (props: any) => {
+const SlideTransition: React.FC<any> = (props) => {
   return <Slide {...props} direction="up" />;
 };
 

@@ -11,7 +11,7 @@ import { updUniKey } from "../redux/signSlice";
 import { useAppSelector } from "../typescript/hook";
 import { ILocale } from "../typescript/interfaces/data";
 import { useAppDispatch } from "./../typescript/hook";
-import style from "../styles/index.module.css";
+import style from "../styles/index.module.scss";
 
 export async function getStaticProps({ locale }: ILocale) {
   return {
@@ -65,8 +65,8 @@ const Home: React.FC = () => {
   useEffect(() => {
     window.addEventListener("mousemove", (e) => {
       if (welcomeRef.current?.children.length === 3) {
-        welcomeRef.current.style.marginLeft = -(e.pageX * 0.1) + "px";
-        welcomeRef.current.style.marginTop = -(e.pageY * 0.1) + "px";
+        welcomeRef.current.style.marginLeft = -(e.pageX * 0.03) + "px";
+        welcomeRef.current.style.marginTop = -(e.pageY * 0.03) + "px";
       }
     });
   }, []);

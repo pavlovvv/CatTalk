@@ -16,7 +16,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../components/MainLayout";
 import ProfileChanging from "../../components/Profile/ProfileChanging";
-import s from "../../styles/profile.module.css";
+import s from "../../styles/profile.module.scss";
 import { useAppSelector } from "../../typescript/hook";
 import {
   ILocale, IProfileConfirmedFriend,
@@ -114,7 +114,7 @@ const Profile: React.FC = () => {
                       height="150px"
                       className={s.top__img}
                       src={authData.info[7].avatar}
-                      alt="content__img"
+                      alt="CatTalk content__img"
                     />
                   ) : (
                     <Avatar
@@ -142,9 +142,9 @@ const Profile: React.FC = () => {
           <section className={s.info}>
             <div className={s.container}>
               <div className={s.info__inner}>
-                <div className={s.panel + " " + s.info__info}>
+                <div className={isProfileUpdatingConfirmed ? s.panel + " " + s.info__infoConfirmed : s.panel + " " + s.info__info}>
                   {!isChanging ? (
-                    <div>
+                    <>
                       {isProfileUpdatingConfirmed && (
                         <Alert
                           severity="success"
@@ -155,7 +155,7 @@ const Profile: React.FC = () => {
                         </Alert>
                       )}
                       {infoOption === "info" ? (
-                        <div>
+                        <>
                           <div className={s.info__menu}>
                             <Button
                               variant="contained"
@@ -189,28 +189,24 @@ const Profile: React.FC = () => {
                             const value = Object.values(e);
 
                             return (
-                              <div key={i}>
+                              <React.Fragment key={i}>
                                 {key[0] !== "_id" &&
                                   key[0] !== "instagramLink" &&
                                   key[0] !== "telegramUsername" &&
                                   key[0] !== "discordUsername" &&
                                   key[0] !== "avatar" && (
                                     <div>
-                                      <div className={s.info__infoItems}>
-                                        <span className={s.info__infoItemName}>
+                                      <div className={s.items + ' ' + s.items_padding}>
+                                        <span className={s.items__name}>
                                           {key[0]}
                                         </span>
-                                        <span className={s.info__infoItemValue}>
+                                        <span className={s.items__value}>
                                           {value[0] ?? "unknown"}
                                         </span>
                                       </div>
-
-                                      {i !== authData.info.length - 5 && (
-                                        <hr className={s.hrUnder} />
-                                      )}
                                     </div>
                                   )}
-                              </div>
+                              </React.Fragment>
                             );
                           })}
                           <div className={s.info__links}>
@@ -222,7 +218,7 @@ const Profile: React.FC = () => {
                                       src={"/" + instagramIcon.src}
                                       width="50px"
                                       height="50px"
-                                      alt="instagramIcon"
+                                      alt="CatTalk instagramIcon"
                                     />
                                   </a>
                                 </Link>
@@ -236,7 +232,7 @@ const Profile: React.FC = () => {
                                   height="50px"
                                   onMouseEnter={handlePopoverTelegramOpen}
                                   onMouseLeave={handlePopoverTelegramClose}
-                                  alt="telegramIcon"
+                                  alt="CatTalk telegramIcon"
                                   onClick={() => {
                                     setTelegramCopy(true);
                                     setDiscordCopy(false);
@@ -287,7 +283,7 @@ const Profile: React.FC = () => {
                                   height="50px"
                                   onMouseEnter={handlePopoverDiscordOpen}
                                   onMouseLeave={handlePopoverDiscordClose}
-                                  alt="discordIcon"
+                                  alt="CatTalk discordIcon"
                                   onClick={() => {
                                     setDiscordCopy(true);
                                     setTelegramCopy(false);
@@ -330,9 +326,9 @@ const Profile: React.FC = () => {
                               </div>
                             )}
                           </div>
-                        </div>
+                        </>
                       ) : (
-                        <div>
+                        <div className={s.info__stats}>
                           <div className={s.info__menu}>
                             <Button
                               variant="contained"
@@ -355,24 +351,20 @@ const Profile: React.FC = () => {
                             const value = Object.values(e);
                             return (
                               <div key={i}>
-                                <div className={s.info__infoItems}>
-                                  <span className={s.info__infoItemName}>
+                                <div className={s.items + ' ' + s.items_padding}>
+                                  <span className={s.items__name}>
                                     {stats[i]}
                                   </span>
-                                  <span className={s.info__infoItemValue}>
+                                  <span className={s.items__value}>
                                     {value[0]}
                                   </span>
                                 </div>
-
-                                {i !== authData.stats.length - 1 && (
-                                  <hr className={s.hrUnder} />
-                                )}
                               </div>
                             );
                           })}
                         </div>
                       )}{" "}
-                    </div>
+                    </>
                   ) : (
                     <ProfileChanging
                       info={authData.info}
@@ -418,7 +410,7 @@ const Profile: React.FC = () => {
                                               height="75px"
                                               className={s.infoMemberItem__ava}
                                               src={e.avatar}
-                                              alt="ava"
+                                              alt="CatTalk ava"
                                             />
                                           ) : (
                                             <Avatar
@@ -456,10 +448,6 @@ const Profile: React.FC = () => {
                                       </a>
                                     </Link>
                                   )}
-                                  {i !==
-                                    authData.friends.confirmedFriends.length -
-                                      1 &&
-                                    i <= 1 && <hr className={s.hrUnder} />}
                                 </div>
                               );
                             }
@@ -502,7 +490,7 @@ const Profile: React.FC = () => {
                                             height="75px"
                                             className={s.infoMemberItem__ava}
                                             src={e.avatar}
-                                            alt="ava"
+                                            alt="CatTalk ava"
                                           />
                                         ) : (
                                           <Avatar
@@ -537,10 +525,6 @@ const Profile: React.FC = () => {
                                       </div>
                                     </a>
                                   </Link>
-                                  {i !==
-                                    authData.friends.totalFriendsCount - 1 && (
-                                    <hr className={s.hrUnder} />
-                                  )}
                                 </div>
                               );
                             }

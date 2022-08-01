@@ -1,26 +1,22 @@
-
-
 .leaderboardPage {
-	background-color: #333C83;
+    background-color: #333C83;
     min-height: 95vh;
     margin: 0;
 }
 
 .container {
-	max-width: 1605px;
-	margin-left: auto;
-	margin-right: auto;
-	padding: 10px 15px;
+    max-width: 1605px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px 15px;
 }
 
-
 .panel {
-	background-color: rgb(5, 30, 52); 
-    /* #8280FF */
-	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-	border-radius: 5px;
-	overflow: hidden;
-	color: #000000
+    background-color: rgb(5, 30, 52);
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 5px;
+    overflow: hidden;
+    color: #000
 }
 
 .panel__pagination {
@@ -35,18 +31,21 @@
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-}
 
-@media(max-width: 714px) {
-    .panel__top {
+    @media(max-width: 714px) {
         flex-direction: column;
     }
 
-    .panel__topList {
+}
+
+.panel__topList {
+    @media(max-width: 714px) {
         align-self: flex-start;
     }
+}
 
-    .panel__topSearch {
+.panel__topSearch {
+    @media(max-width: 714px) {
         width: 100%;
     }
 }

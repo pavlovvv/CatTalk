@@ -16,7 +16,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import MainLayout from "../components/MainLayout";
 import { findToken, getToken, setFoundToken } from "../redux/tokenSlice";
-import s from "../styles/token.module.css";
+import s from "../styles/token.module.scss";
 import { useAppDispatch, useAppSelector } from "../typescript/hook";
 import { ILocale } from "../typescript/interfaces/data";
 import { ITokenSubmit } from "./../typescript/interfaces/data";

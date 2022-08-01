@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { API } from "../DataAccessLayer/DAL";
+import { API } from "../other/DataAccessLayer";
 import { AppDispatch } from "./store";
 import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInAnonymously, } from "firebase/auth";
 import { IFriend } from "../typescript/interfaces/data";

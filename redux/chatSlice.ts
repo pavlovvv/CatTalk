@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { API } from "../DataAccessLayer/DAL";
+import { API } from "../other/DataAccessLayer";
 
 interface IToken {
   token: string | string[];

@@ -10,7 +10,7 @@ import fileUpload from "../images/fileUpload.png";
 import googleIcon from "../images/google-icon.png";
 import multiLanguageIcon from "../images/multi-language-icon.png";
 import typescriptIcon from "../images/typescript-icon.png";
-import s from "../styles/news.module.css";
+import s from "../styles/news.module.scss";
 import { ILocale, INewsProps } from "../typescript/interfaces/data";
 
 export async function getStaticProps({ locale }: ILocale) {
@@ -79,7 +79,7 @@ const News: React.FC<INewsProps> = (props) => {
                       className={s.newsPage__panelDate}
                       style={{ alignSelf: "flex-start" }}
                     >
-                      05/07/2022
+                      01/08/2022
                     </div>
                   </div>
                 </div>

@@ -10,10 +10,18 @@
 
 .footertitle {
   font-size: 17px;
+
+  @media(max-width: 599px) {
+    font-size: 16px;
+  }
 }
 
 .footertitle__items {
   padding-top: 30px;
+
+  @media(max-width: 599px) {
+    font-size: 15px;
+  }
 }
 
 .footertitle__item {
@@ -41,52 +49,41 @@
 }
 
 .sections {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .footertitle__thirditem {
-    display: block;
-    text-align: center;
-}
-
-@media(max-width: 599px) {
-  .footertitle {
-    font-size: 16px;
-  }
-
-  .footertitle__items {
-    font-size: 15px;
-  }
+  display: block;
+  text-align: center;
 }
 
 
-
-.preloader{
+.preloader {
   width: 100%;
   height: 100vh;
-  background: linear-gradient(
-    90deg,
-    rgba(2, 0, 36, 1) 0%,
-    rgba(108, 9, 121, 1) 48%,
-    rgba(128, 0, 255, 1) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(2, 0, 36, 1) 0%,
+      rgba(108, 9, 121, 1) 48%,
+      rgba(128, 0, 255, 1) 100%);
 
-background-size: 200% 100%;
-animation: gradient 8s ease infinite;
-overflow: hidden;
+  background-size: 200% 100%;
+  animation: gradient 8s ease infinite;
+  overflow: hidden;
 }
 
 @keyframes gradient {
-0% {
-  background-position: 0% 50%;
-}
-50% {
-  background-position: 100% 50%;
-}
-100% {
-  background-position: 0% 50%;
-}
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .preloaderitem {

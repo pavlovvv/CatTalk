@@ -22,7 +22,7 @@ import {
   updatePersonalData,
   updateSecurityData
 } from "../redux/settingsSlice";
-import s from "../styles/settings.module.css";
+import s from "../styles/settings.module.scss";
 import { useAppDispatch, useAppSelector } from "../typescript/hook";
 import { ILocale, ILoginSubmit, IPersonalSubmit } from "../typescript/interfaces/data";
 import discordIcon from "/images/discord-icon.svg";
