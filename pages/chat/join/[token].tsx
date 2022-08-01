@@ -22,23 +22,25 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { DragEvent, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import Connection from "../../../components/Chat/Connection";
 import MainLayout from "../../../components/MainLayout";
 import {
   enterCharacter,
-  join,
   sendChatMessage,
   setChatPage,
 } from "../../../redux/chatSlice";
 import { getOwnInfo, setDynamicPage } from "../../../redux/signSlice";
-import { getConnectedUsers } from "../../../redux/tokenSlice";
-import s from "../../../styles/chat.module.css";
+import s from "../../../styles/chat.module.scss";
 import { useAppDispatch, useAppSelector } from "../../../typescript/hook";
 import {
   IChatAuthRef,
@@ -46,10 +48,9 @@ import {
   IChatProgressProps,
   IChatSnackbar,
   IChatUploadedFile,
-  ISocketOnMessage,
+  ILocale,
   IStringAvatar,
 } from "../../../typescript/interfaces/data";
-import { makeStyles } from "@mui/styles";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -105,7 +106,7 @@ const useStyles = makeStyles({
   },
 });
 
-const SlideTransition = (props: any) => {
+const SlideTransition: React.FC<any> = (props) => {
   return <Slide {...props} direction="up" />;
 };
 
@@ -207,6 +208,7 @@ const Chat: React.FC = () => {
   const socket = useRef<any>();
   const authRef = useRef<IChatAuthRef>();
   const isLeft = useRef<boolean>();
+  const connectedUsersInterval = useRef<any>();
   const [connected, setConnected] = useState<boolean>(false);
   const [isPending, setPending] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -220,6 +222,9 @@ const Chat: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [drag, setDrag] = useState<boolean>(false);
   const [uploadingError, setUploadingError] = useState<boolean>(false);
+
+  const { t } = useTranslation("chat");
+  const ct = useTranslation("common").t;
 
   authRef.current = useAppSelector((state) => state.sign.userData);
 
@@ -248,7 +253,7 @@ const Chat: React.FC = () => {
     });
 
     return function disconnection() {
-      // if (count.current > 1) {
+      clearInterval(connectedUsersInterval.current);
 
       if (authRef.current) {
         const message = {
@@ -263,67 +268,7 @@ const Chat: React.FC = () => {
 
       dispatch(setChatPage(false));
     };
-    //   count.current = 2
-    // }
   }, []);
-
-  function connect() {
-    let token: string | string[] = "";
-    if (router.query.token) {
-      token = router.query.token;
-    }
-    isLeft.current = false;
-    socket.current = new WebSocket(`wss://${token}.glitch.me/`);
-
-    socket.current.onopen = (): void => {
-      setConnected(true);
-      const message = {
-        event: "connection",
-        username: authData.info[2].username,
-        userId: authData.info[4].id,
-        id: Date.now(),
-      };
-      socket.current.send(JSON.stringify(message));
-      dispatch(join({ token }));
-    };
-    socket.current.onmessage = (event: ISocketOnMessage): void => {
-      const message = JSON.parse(event.data);
-      if (message.event === "connection" || message.event === "disconnection") {
-        setTimeout(() => {
-          dispatch(getConnectedUsers({ token }));
-        }, 1000);
-      }
-      setMessages((prev) => [...prev, message]);
-      router.push("#last");
-    };
-    socket.current.onclose = (): void => {
-      if (!isLeft.current) {
-        // dispatch(leave({token}))
-        fetch("https://cattalkapi.herokuapp.com/chat/leave/", {
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            token: token,
-          }),
-          keepalive: true, // this is important!
-        });
-        isLeft.current = true;
-      }
-
-      console.log("disconnected from socket");
-      const message = {
-        event: "own disconnection",
-        id: Date.now(),
-      };
-      setMessages((prev) => [...prev, message]);
-    };
-    socket.current.onerror = (): void => {
-      setError("Incorrect token");
-      setPending(false);
-    };
-  }
 
   const sendMessage = async () => {
     const now = new Date();
@@ -386,92 +331,19 @@ const Chat: React.FC = () => {
 
   if (!connected) {
     return (
-      <MainLayout>
-        <ThemeProvider theme={theme}>
-          <div className={s.entrancePage}>
-            <div className={s.entrancePanel}>
-              <div className={s.container}>
-                <div className={s.entrancePanel__inner}>
-                  <div className={s.entrancePanel__top}>
-                    <StyledBadge
-                      overlap="circular"
-                      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                      variant="dot"
-                    >
-                      {authData.info[7]?.avatar ? (
-                        <Image
-                          width="80px"
-                          height="80px"
-                          className={s.userAvatar}
-                          src={authData.info[7].avatar}
-                          alt="content__img"
-                        />
-                      ) : (
-                        <Avatar
-                          {...stringAvatar(
-                            authData.info[0]?.name +
-                              " " +
-                              authData.info[1]?.surname
-                          )}
-                          sx={{
-                            bgcolor: "#2A2550",
-                            width: "80px",
-                            height: "80px",
-                            fontSize: "25px",
-                          }}
-                        />
-                      )}
-                    </StyledBadge>
-                    <span className={s.entrancePanel__topUsername}>
-                      {authData.info[2]?.username}
-                    </span>
-                  </div>
-                  <Button
-                    variant="contained"
-                    sx={{ width: "100%", lineHeight: "25px" }}
-                    color="secondary"
-                    onClick={() => {
-                      connect();
-                      setPending(true);
-                    }}
-                    disabled={isPending}
-                  >
-                    {isPending ? (
-                      <CircularProgress size={30} sx={{ color: "#fff" }} />
-                    ) : (
-                      "JOIN"
-                    )}
-                  </Button>
-                  {error && (
-                    <Alert
-                      severity="error"
-                      variant="filled"
-                      sx={{
-                        backgroundColor: "rgb(211, 47, 47)",
-                        color: "#fff",
-                      }}
-                    >
-                      {error}
-                    </Alert>
-                  )}
-                  {isPending && (
-                    <Alert
-                      severity="warning"
-                      variant="filled"
-                      sx={{
-                        backgroundColor: "rgb(245, 124, 0)",
-                        color: "#fff",
-                      }}
-                    >
-                      Please, wait. This may take up to 1 minute
-                    </Alert>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </ThemeProvider>
-      </MainLayout>
+      <Connection
+        theme={theme}
+        error={error}
+        isPending={isPending}
+        isLeft={isLeft}
+        socket={socket}
+        setMessages={setMessages}
+        setError={setError}
+        setPending={setPending}
+        setConnected={setConnected}
+        connectedUsersInterval={connectedUsersInterval}
+        //t={t}
+      />
     );
   }
 
@@ -617,13 +489,13 @@ const Chat: React.FC = () => {
                 router.push("/token");
               }}
             >
-              Leave
+              {t("leave")}
             </Button>
             <Typography
               variant="overline"
               sx={{ color: "#fff", fontSize: "15px" }}
             >
-              Connected users: {connectedUsersCount}
+              {t("connected_users")} {connectedUsersCount}
             </Typography>
           </section>
           <section className={s.chat}>
@@ -651,7 +523,7 @@ const Chat: React.FC = () => {
                                     </span>
                                   </a>
                                 </Link>
-                                &quot; has joined
+                                &quot; {t("has_joined")}
                               </div>
                             </div>
                           )}
@@ -668,15 +540,15 @@ const Chat: React.FC = () => {
                                     </span>
                                   </a>
                                 </Link>
-                                &quot; has left
+                                &quot; {t("has_left")}
                               </div>
                             </div>
                           )}
                           {msg.event === "own disconnection" && (
                             <div className={s.messages__connection}>
                               <div className={s.connectionContainer}>
-                                You have been disconnected. <br />
-                                You may have been inactive for a while
+                                {t("disconnection1")} <br />
+                                {t("disconnection2")}
                               </div>
                             </div>
                           )}
@@ -918,7 +790,7 @@ const Chat: React.FC = () => {
                                   </span>
                                 </a>
                               </Link>
-                              &quot; has joined
+                              &quot; {t("has_joined")}
                             </div>
                           </div>
                         )}
@@ -935,7 +807,7 @@ const Chat: React.FC = () => {
                                   </span>
                                 </a>
                               </Link>
-                              &quot; has left
+                              &quot; {t("has_left")}
                             </div>
                           </div>
                         )}
@@ -1248,19 +1120,15 @@ const Chat: React.FC = () => {
                     style={drag ? { border: "2px dashed #000000" } : {}}
                   >
                     <div className={s.bottom__dragAreaInfo}>
+                      <div className={s.bottom__provider}>{t("provider")}</div>
                       <div>
-                        Every day you are provided 1 gb free space and 100 files
-                      </div>
-                      <div>
-                        <div>Current usage:</div>
+                        <div>{t("current_usage")}</div>
                         <div>
                           <span>
                             {authData.limits.freeSpaceTaken && (
-                              <>
-                                {parseInt(authData.limits.freeSpaceTaken)}/1000
-                                Mb
-                              </>
+                              <>{parseInt(authData.limits.freeSpaceTaken)}</>
                             )}
+                            /1000 Mb
                           </span>{" "}
                           <span>{authData.limits.filesSent}/100 files</span>
                         </div>
@@ -1284,7 +1152,7 @@ const Chat: React.FC = () => {
                           component="label"
                           sx={{ color: "#000000" }}
                         >
-                          Browse files {hiddenFileUploadInput()}
+                          {t("browse_files")} {hiddenFileUploadInput()}
                         </Button>
                       </>
                     ) : (
@@ -1294,7 +1162,7 @@ const Chat: React.FC = () => {
                         component="label"
                         sx={{ color: "#000000", marginTop: "30px" }}
                       >
-                        Got it {hiddenFileUploadInput()}
+                        {ct("got_it")} {hiddenFileUploadInput()}
                       </Button>
                     )}
                   </div>
@@ -1380,4 +1248,12 @@ export default function InitialChat() {
   const key = useAppSelector((state) => state.sign.uniKey);
 
   return <Chat2 key={key} />;
+}
+
+export async function getServerSideProps({ locale }: ILocale) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common", "chat"])),
+    },
+  };
 }

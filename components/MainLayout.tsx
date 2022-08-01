@@ -1,10 +1,10 @@
-import React from 'react'
+import React from "react";
 import { CircularProgress, useMediaQuery } from "@mui/material";
 import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { getOwnInfo } from "../redux/signSlice";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/Home.module.scss";
 import { useAppDispatch, useAppSelector } from "../typescript/hook";
 import { IHomeProps } from "../typescript/interfaces/data";
 import Header from "./Header/Header";
@@ -18,22 +18,22 @@ import reactIcon from "/images/react-icon.png";
 import reduxIcon from "/images/redux-icon.png";
 import telegramIcon from "/images/Telegram_icon.png";
 import viberIcon from "/images/viber_icon.png";
-import jsIcon from '/images/js-icon.png'
-import tsIcon from '/images/typescript-icon.png'
-import githubIcon from '/images/github-icon.png'
+import jsIcon from "/images/js-icon.png";
+import tsIcon from "/images/typescript-icon.png";
+import githubIcon from "/images/github-icon.png";
 
 const Home: React.FC = ({ children }: IHomeProps) => {
   const isAuthFulfilled = useAppSelector((state) => state.sign.isAuthFulfilled);
   const onChatPage = useAppSelector((state) => state.chat.onChatPage);
   const isDynamicPage = useAppSelector((state) => state.sign.isDynamicPage);
 
-  const isDone = useRef<boolean>(false);
+  const isInfoCheckDone = useRef<boolean>(false);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (!isDone.current) {
+    if (!isInfoCheckDone.current) {
       dispatch(getOwnInfo());
-      isDone.current = true
+      isInfoCheckDone.current = true;
     }
   }, []);
 
@@ -69,9 +69,13 @@ const Home: React.FC = ({ children }: IHomeProps) => {
                 href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap"
                 rel="stylesheet"
               />
+              <link
+                href="https://fonts.googleapis.com/css2?family=Poiret+One&family=Roboto+Mono&display=swap"
+                rel="stylesheet"
+              />
             </>
           )}
-                  <script src="https://accounts.google.com/gsi/client" async defer /> 
+          <script src="https://accounts.google.com/gsi/client" async defer />
         </Head>
         <header className={styles.header}>
           <Header />
@@ -84,7 +88,7 @@ const Home: React.FC = ({ children }: IHomeProps) => {
                 <section className={styles.leftone}>
                   <h3 className={styles.footertitle}>By Alexey Pavlov</h3>
                   <ul className={styles.footertitle__items}>
-                  <li className={styles.footertitle__item}>
+                    <li className={styles.footertitle__item}>
                       <Image
                         src={"/" + emailIcon.src}
                         alt="email"
@@ -98,7 +102,7 @@ const Home: React.FC = ({ children }: IHomeProps) => {
                       <Image
                         src={"/" + githubIcon.src}
                         alt="github"
-                        style={{borderRadius: '50%'}}
+                        style={{ borderRadius: "50%" }}
                         className={styles.footertitle__img}
                         width={!mw599px ? "30px" : "25px"}
                         height={!mw599px ? "30px" : "25px"}
@@ -141,7 +145,7 @@ const Home: React.FC = ({ children }: IHomeProps) => {
                 <section className={styles.rightone}>
                   <h3 className={styles.footertitle}>Made with</h3>
                   <ul className={styles.footertitle__items}>
-                  <li className={styles.footertitle__item}>
+                    <li className={styles.footertitle__item}>
                       <Image
                         src={"/" + jsIcon.src}
                         alt="js"
@@ -160,7 +164,7 @@ const Home: React.FC = ({ children }: IHomeProps) => {
                         width="30px"
                         height="30px"
                       />
-                    </li>                    
+                    </li>
                     <li className={styles.footertitle__item}>
                       <Image
                         src={"/" + reactIcon.src}

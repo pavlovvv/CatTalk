@@ -6,17 +6,28 @@ import {
   Popover,
   TextField,
   ThemeProvider,
-  Typography,
+  Typography
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import MainLayout from "../components/MainLayout";
 import { findToken, getToken, setFoundToken } from "../redux/tokenSlice";
-import s from "../styles/token.module.css";
+import s from "../styles/token.module.scss";
 import { useAppDispatch, useAppSelector } from "../typescript/hook";
+import { ILocale } from "../typescript/interfaces/data";
 import { ITokenSubmit } from "./../typescript/interfaces/data";
+
+export async function getStaticProps({ locale }: ILocale) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common", "token"])),
+    },
+  };
+}
 
 const StyledTextField = styled(TextField)({
   "& label": {
@@ -64,7 +75,7 @@ declare module "@mui/material/styles" {
   }
 }
 
-function TokenPage() {
+const TokenPage: React.FC = () => {
   const theme = createTheme({
     palette: {
       primary: {
@@ -90,6 +101,8 @@ function TokenPage() {
 
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { t } = useTranslation("token");
+  const ct = useTranslation("common").t;
 
   const isGetPending = useAppSelector((state) => state.token.isGetPending);
   const isFindPending = useAppSelector((state) => state.token.isFindPending);
@@ -128,7 +141,7 @@ function TokenPage() {
           <div className={s.tokenPage__panel}>
             <div className={s.container}>
               <section>
-                <h2 className={s.tokenPage__title}>ENTER TOKEN</h2>
+                <h2 className={s.tokenPage__title}>{t("enter_token")}</h2>
                 <div className={s.tokenPage__elements}>
                   <form
                     onSubmit={handleSubmit(onSubmit)}
@@ -144,10 +157,10 @@ function TokenPage() {
                         error={!!errors.token}
                         helperText={errors.token && errors.token.message}
                         {...register("token", {
-                          required: "Field must be filled",
+                          required: ct("filled"),
                           minLength: {
                             value: 5,
-                            message: "Minimum 5 characters",
+                            message: ct("min", { count: 5 }),
                           },
                         })}
                       />
@@ -161,7 +174,7 @@ function TokenPage() {
                         {isFindPending ? (
                           <CircularProgress size={30} sx={{ color: "#fff" }} />
                         ) : (
-                          "ENTER"
+                          <>{t("enter")}</>
                         )}
                       </Button>
                     </div>
@@ -201,8 +214,8 @@ function TokenPage() {
                   {isGetPending && (
                     <CircularProgress size={30} sx={{ color: "#fff" }} />
                   )}
-                  {token && "YOUR TOKEN IS:"}
-                  {!isGetPending && !token && "GET TOKEN"}
+                  {token && <>{t("your_token")}</>}
+                  {!isGetPending && !token && <>{t("get_token")}</>}
                 </Button>
                 {token && (
                   <div>
@@ -242,7 +255,11 @@ function TokenPage() {
                       disableRestoreFocus
                     >
                       <Typography sx={{ p: 1 }}>
-                        {!isCopied ? "Click to copy" : "Copied!"}
+                        {!isCopied ? (
+                          <>{t("click_to_copy")}</>
+                        ) : (
+                          <>{t("copied")}</>
+                        )}
                       </Typography>
                     </Popover>
                   </div>
@@ -254,7 +271,7 @@ function TokenPage() {
       </ThemeProvider>
     </MainLayout>
   );
-}
+};
 
 export default function InititalTokenPage() {
   const isAuthed = useAppSelector((state) => state.sign.isAuthed);

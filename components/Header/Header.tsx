@@ -20,21 +20,26 @@ import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import * as React from "react";
 import { useState } from "react";
+import setTranslation from "../../other/locales/setTranslation";
 import { logOut } from "../../redux/signSlice";
 import {
   confirmFriendRequest,
   rejectFriendRequest,
-  searchUsers,
+  searchUsers
 } from "../../redux/usersSlice";
-import NavDrawer from "./NavDrawer";
-import {
-  IStringAvatar,
-  IWaitingFriendsItem,
-  IFilteredUser,
-} from "../../typescript/interfaces/data.js";
 import { useAppDispatch, useAppSelector } from "../../typescript/hook";
+import {
+  IFilteredUser,
+  IOtherTranslation,
+  IStringAvatar
+} from "../../typescript/interfaces/data.js";
+import LanguageChanger from "./LanguageChanger";
+import MobileMenu from "./MobileMenu";
+import NavDrawer from "./NavDrawer";
+
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -89,7 +94,7 @@ declare module "@mui/material/styles" {
   }
 }
 
-export default function PrimarySearchAppBar() {
+export default function Header() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     useState<null | HTMLElement>(null);
@@ -98,7 +103,6 @@ export default function PrimarySearchAppBar() {
   const [searchText, setSearchText] = useState<string>("");
 
   const isMenuOpen: boolean = Boolean(anchorEl);
-  const isMobileMenuOpen: boolean = Boolean(mobileMoreAnchorEl);
 
   const handleProfileMenuOpen = (
     event: React.MouseEvent<HTMLElement>
@@ -129,36 +133,21 @@ export default function PrimarySearchAppBar() {
 
   const dispatch = useAppDispatch();
 
-  const [anchorFriendsMobileEl, setAnchorFriendsMobileEl] =
-    useState<null | HTMLElement>(null);
-
-  const handleFriendsMobileClick = (
-    event: React.MouseEvent<HTMLElement>
-  ): void => {
-    setAnchorFriendsMobileEl(event.currentTarget);
-  };
-
-  const handleFriendsMobileClose = (): void => {
-    setAnchorFriendsMobileEl(null);
-  };
-
-  const notificationMobileOpen: boolean = Boolean(anchorFriendsMobileEl);
-  const notificationMobileId: string | undefined = notificationMobileOpen
-    ? "simple-friends-popover-mobile"
-    : undefined;
+  const router = useRouter();
+  const t: IOtherTranslation = setTranslation(router.locale as string)
 
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
       anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
+        vertical: "bottom",
+        horizontal: "center",
       }}
       id={menuId}
       keepMounted
       transformOrigin={{
         vertical: "top",
-        horizontal: "right",
+        horizontal: "center",
       }}
       open={isMenuOpen}
       onClose={handleMenuClose}
@@ -170,10 +159,15 @@ export default function PrimarySearchAppBar() {
       }}
     >
       <Link href="/profile" passHref>
-        <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+        <MenuItem onClick={handleMenuClose}>
+          {/* this is not page component so I can't get access to getStaticProps  */}
+          {t.profile}
+        </MenuItem>
       </Link>
       <Link href="/settings" passHref>
-        <MenuItem onClick={handleMenuClose}>Account settings</MenuItem>
+        <MenuItem onClick={handleMenuClose}>
+        {t.account_settings}
+        </MenuItem>
       </Link>
       <MenuItem
         onClick={() => {
@@ -182,202 +176,12 @@ export default function PrimarySearchAppBar() {
           dispatch(logOut());
         }}
       >
-        Log out
+        {t.log_out}
       </MenuItem>
     </Menu>
   );
 
   const mobileMenuId: string = "primary-search-account-menu-mobile";
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-      PaperProps={{
-        sx: {
-          backgroundColor: "#333C83",
-          color: "#fff",
-        },
-      }}
-    >
-      <Link href="/profile" passHref>
-        <MenuItem>
-          <IconButton
-            size="large"
-            aria-label="account of current user"
-            aria-controls="primary-search-account-menu"
-            aria-haspopup="true"
-            color="inherit"
-          >
-            <AccountCircle />
-          </IconButton>
-          <p>Profile</p>
-        </MenuItem>
-      </Link>
-      <Link href="/token" passHref>
-        <MenuItem>
-          <IconButton size="large" color="inherit">
-            <Badge badgeContent={0} color="error">
-              <MailIcon />
-            </Badge>
-          </IconButton>
-          <p>Messages</p>
-        </MenuItem>
-      </Link>
-      <MenuItem
-        onMouseEnter={handleFriendsMobileClick}
-        onMouseLeave={handleFriendsMobileClose}
-      >
-        <IconButton size="large" color="inherit">
-          <Badge
-            badgeContent={authData.friends.waitingFriends?.length}
-            color="error"
-          >
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Friend requests</p>
-        <Popover
-          id={notificationMobileId}
-          open={notificationMobileOpen}
-          anchorEl={anchorFriendsMobileEl}
-          onClose={handleFriendsMobileClose}
-          disableAutoFocus
-          disableEnforceFocus
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
-          PaperProps={{
-            sx: {
-              backgroundColor: "#333C83",
-              color: "#fff",
-            },
-          }}
-        >
-          {authData.friends.waitingFriends?.length !== 0 ? (
-            <Box sx={{ p: 2 }}>
-              {authData.friends.waitingFriends?.map(
-                (item: IWaitingFriendsItem) => (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      rowGap: "15px",
-                    }}
-                    key={item.id}
-                  >
-                    <div>
-                      <Link href={`/profile/${item.id}`} passHref>
-                        <a target="_blank" rel="noopener noreferrer">
-                          <div
-                            style={{
-                              fontFamily: "Quicksand",
-                              fontWeight: 800,
-                              display: "flex",
-                              columnGap: "20px",
-                              alignItems: "center",
-                              marginTop: "20px",
-                              cursor: "pointer",
-                            }}
-                          >
-                            {" "}
-                            <div>
-                              {item.avatar ? (
-                                <Image
-                                  width="55px"
-                                  height="55px"
-                                  style={{ borderRadius: "50%" }}
-                                  src={item.avatar}
-                                  alt="content__img"
-                                />
-                              ) : (
-                                <Avatar
-                                  {...stringAvatar(
-                                    item.name + " " + item.surname
-                                  )}
-                                  sx={{
-                                    bgcolor: "#fff",
-                                    width: "65px",
-                                    height: "65px",
-                                    fontSize: "20px",
-                                    color: "#000000",
-                                  }}
-                                />
-                              )}
-                            </div>{" "}
-                            <div style={{ fontSize: "17px" }}>
-                              {item.username}
-                            </div>
-                          </div>
-                        </a>
-                      </Link>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        columnGap: "25px",
-                      }}
-                    >
-                      <Button
-                        color="success"
-                        variant="contained"
-                        sx={{ backgroundColor: "#4E9F3D", color: "#fff" }}
-                        onClick={() => {
-                          dispatch(
-                            confirmFriendRequest({
-                              id: item.id,
-                              name: item.name,
-                              surname: item.surname,
-                              username: item.username,
-                              avatar: item.avatar,
-                            })
-                          );
-                        }}
-                      >
-                        Confirm
-                      </Button>
-                      <Button
-                        color="error"
-                        variant="contained"
-                        sx={{
-                          backgroundColor: "rgb(211, 47, 47)",
-                          color: "#fff",
-                        }}
-                        onClick={() => {
-                          dispatch(rejectFriendRequest({ id: item.id }));
-                        }}
-                      >
-                        Reject
-                      </Button>
-                    </div>
-                  </div>
-                )
-              )}
-            </Box>
-          ) : (
-            <Box sx={{ p: 3, textAlign: "center" }}>
-              We regret to inform you that
-              <br />
-              nobody has sent you a friend request yet <br />
-              :(
-            </Box>
-          )}
-        </Popover>
-      </MenuItem>
-    </Menu>
-  );
 
   const theme = createTheme({
     palette: {
@@ -583,10 +387,6 @@ export default function PrimarySearchAppBar() {
               </Popover>
             )}
 
-            {/* {filteredUsers.map((item) => (
-              <li key={item.id}>{item.username}</li>
-            ))} */}
-
             <Box sx={{ flexGrow: 1 }} />
 
             {isAuthed ? (
@@ -597,11 +397,7 @@ export default function PrimarySearchAppBar() {
                     columnGap: "15px",
                   }}
                 >
-                  <IconButton
-                    size="large"
-                    aria-label="show 17 new notifications"
-                    color="inherit"
-                  >
+                  <IconButton size="large" color="inherit">
                     <Badge
                       badgeContent={authData.friends.waitingFriends?.length}
                       color="error"
@@ -622,7 +418,11 @@ export default function PrimarySearchAppBar() {
                       disableEnforceFocus
                       anchorOrigin={{
                         vertical: "bottom",
-                        horizontal: "left",
+                        horizontal: "center",
+                      }}
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "center",
                       }}
                       PaperProps={{
                         sx: {
@@ -718,8 +518,9 @@ export default function PrimarySearchAppBar() {
                                         })
                                       );
                                     }}
+                                    disabled={authData.type === 'Guest'}
                                   >
-                                    Confirm
+                                    {t.confirm}
                                   </Button>
                                   <Button
                                     color="error"
@@ -734,7 +535,7 @@ export default function PrimarySearchAppBar() {
                                       );
                                     }}
                                   >
-                                    Reject
+                                    {t.reject}
                                   </Button>
                                 </div>
                               </div>
@@ -743,20 +544,17 @@ export default function PrimarySearchAppBar() {
                         </Box>
                       ) : (
                         <Box sx={{ p: 3, textAlign: "center" }}>
-                          We regret to inform you that
+                          {t.friends_msg_1}
                           <br />
-                          nobody has sent you a friend request yet <br />
+                          {t.friends_msg_2}
+                          <br />
                           :(
                         </Box>
                       )}
                     </Popover>
                   </IconButton>
 
-                  <IconButton
-                    size="large"
-                    aria-label="show 4 new mails"
-                    color="inherit"
-                  >
+                  <IconButton size="large" color="inherit">
                     <Link href="/token" passHref>
                       <Badge badgeContent={0} color="error">
                         <MailIcon />
@@ -766,7 +564,6 @@ export default function PrimarySearchAppBar() {
 
                   <IconButton
                     size="large"
-                    edge="end"
                     aria-label="account of current user"
                     aria-controls={menuId}
                     aria-haspopup="true"
@@ -775,8 +572,13 @@ export default function PrimarySearchAppBar() {
                   >
                     <AccountCircle />
                   </IconButton>
+                  <LanguageChanger />
                 </Box>
-                <Box sx={{ display: { xs: "flex", md: "none" } }}>
+                <Box
+                  sx={{
+                    display: { xs: "flex", md: "none", columnGap: "20px" },
+                  }}
+                >
                   <IconButton
                     size="large"
                     aria-label="show more"
@@ -787,11 +589,16 @@ export default function PrimarySearchAppBar() {
                   >
                     <MoreIcon />
                   </IconButton>
+                  <LanguageChanger />
                 </Box>
               </>
             ) : (
               <>
-                <Box sx={{ display: { xs: "flex", md: "flex" } }}>
+                <Box
+                  sx={{
+                    display: { xs: "flex", md: "flex", columnGap: "30px" },
+                  }}
+                >
                   <Link href={"/signup"} passHref>
                     <IconButton
                       size="large"
@@ -805,12 +612,17 @@ export default function PrimarySearchAppBar() {
                       <AccountCircle />
                     </IconButton>
                   </Link>
+                  <LanguageChanger />
                 </Box>
               </>
             )}
           </Toolbar>
         </AppBar>
-        {renderMobileMenu}
+
+        <MobileMenu
+          mobileMoreAnchorEl={mobileMoreAnchorEl}
+          setMobileMoreAnchorEl={setMobileMoreAnchorEl}
+        />
         {isAuthed && renderMenu}
       </Box>
     </ThemeProvider>

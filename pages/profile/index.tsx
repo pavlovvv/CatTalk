@@ -1,30 +1,47 @@
-import React from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {
   Alert,
-  Avatar, Button,
-  createTheme, Popover, ThemeProvider, Typography
+  Avatar,
+  Button,
+  createTheme,
+  Popover,
+  ThemeProvider,
+  Typography
 } from "@mui/material";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../../components/MainLayout";
 import ProfileChanging from "../../components/Profile/ProfileChanging";
+import s from "../../styles/profile.module.scss";
+import { useAppSelector } from "../../typescript/hook";
+import {
+  ILocale, IProfileConfirmedFriend,
+  IStringAvatar
+} from "../../typescript/interfaces/data";
 import discordIcon from "/images/discord-icon.svg";
 import instagramIcon from "/images/Instagram_icon.png";
 import telegramIcon from "/images/Telegram_icon.png";
-import s from "../../styles/profile.module.css";
-import { useAppSelector } from "../../typescript/hook";
-import {
-  IProfileConfirmedFriend, IStringAvatar
-} from "../../typescript/interfaces/data";
+
+export async function getStaticProps({ locale }: ILocale) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common", "profile"])),
+    },
+  };
+}
 
 const Profile: React.FC = () => {
+  const { t } = useTranslation("profile");
+  const ct = useTranslation("common").t;
+
   const stats: string[] = [
-    "Total chats",
-    "Total messages sent",
-    "Total entered characters",
+    t("total_chats"),
+    t("total_messages_sent"),
+    t("total_entered_characters"),
   ];
 
   const [infoOption, setInfo] = useState<string>("info");
@@ -86,7 +103,7 @@ const Profile: React.FC = () => {
   return (
     <MainLayout>
       <ThemeProvider theme={theme}>
-        <div style={{overflow: 'hidden'}}>
+        <div style={{ overflow: "hidden" }}>
           <section className={s.top}>
             <div className={s.container}>
               <div className={s.top__items}>
@@ -97,7 +114,7 @@ const Profile: React.FC = () => {
                       height="150px"
                       className={s.top__img}
                       src={authData.info[7].avatar}
-                      alt="content__img"
+                      alt="CatTalk content__img"
                     />
                   ) : (
                     <Avatar
@@ -125,27 +142,27 @@ const Profile: React.FC = () => {
           <section className={s.info}>
             <div className={s.container}>
               <div className={s.info__inner}>
-                <div className={s.panel + " " + s.info__info}>
+                <div className={isProfileUpdatingConfirmed ? s.panel + " " + s.info__infoConfirmed : s.panel + " " + s.info__info}>
                   {!isChanging ? (
-                    <div>
+                    <>
                       {isProfileUpdatingConfirmed && (
                         <Alert
                           severity="success"
                           variant="filled"
                           sx={{ backgroundColor: "#4E9F3D", color: "#fff" }}
                         >
-                          Updating confirmed
+                          {t("updating_confirmed")}
                         </Alert>
                       )}
                       {infoOption === "info" ? (
-                        <div>
+                        <>
                           <div className={s.info__menu}>
                             <Button
                               variant="contained"
                               color="secondary"
                               sx={{ width: "125px" }}
                             >
-                              INFO
+                              {t("info")}
                             </Button>
                             <Button
                               variant="contained"
@@ -154,7 +171,7 @@ const Profile: React.FC = () => {
                                 setInfo("stats");
                               }}
                             >
-                              STATISTICS
+                              {t("statistics")}
                             </Button>
 
                             <div
@@ -172,28 +189,24 @@ const Profile: React.FC = () => {
                             const value = Object.values(e);
 
                             return (
-                              <div key={i}>
+                              <React.Fragment key={i}>
                                 {key[0] !== "_id" &&
                                   key[0] !== "instagramLink" &&
                                   key[0] !== "telegramUsername" &&
                                   key[0] !== "discordUsername" &&
                                   key[0] !== "avatar" && (
                                     <div>
-                                      <div className={s.info__infoItems}>
-                                        <span className={s.info__infoItemName}>
+                                      <div className={s.items + ' ' + s.items_padding}>
+                                        <span className={s.items__name}>
                                           {key[0]}
                                         </span>
-                                        <span className={s.info__infoItemValue}>
+                                        <span className={s.items__value}>
                                           {value[0] ?? "unknown"}
                                         </span>
                                       </div>
-
-                                      {i !== authData.info.length - 5 && (
-                                        <hr className={s.hrUnder} />
-                                      )}
                                     </div>
                                   )}
-                              </div>
+                              </React.Fragment>
                             );
                           })}
                           <div className={s.info__links}>
@@ -202,10 +215,10 @@ const Profile: React.FC = () => {
                                 <Link href={authData.info[8].instagramLink}>
                                   <a target="_blank">
                                     <Image
-                                      src={instagramIcon.src}
+                                      src={"/" + instagramIcon.src}
                                       width="50px"
                                       height="50px"
-                                      alt="instagramIcon"
+                                      alt="CatTalk instagramIcon"
                                     />
                                   </a>
                                 </Link>
@@ -214,12 +227,12 @@ const Profile: React.FC = () => {
                             {authData.info[9]?.telegramUsername && (
                               <div style={{ cursor: "pointer" }}>
                                 <Image
-                                  src={telegramIcon.src}
+                                  src={"/" + telegramIcon.src}
                                   width="50px"
                                   height="50px"
                                   onMouseEnter={handlePopoverTelegramOpen}
                                   onMouseLeave={handlePopoverTelegramClose}
-                                  alt="telegramIcon"
+                                  alt="CatTalk telegramIcon"
                                   onClick={() => {
                                     setTelegramCopy(true);
                                     setDiscordCopy(false);
@@ -265,12 +278,12 @@ const Profile: React.FC = () => {
                             {authData.info[10]?.discordUsername && (
                               <div style={{ cursor: "pointer" }}>
                                 <Image
-                                  src={discordIcon.src}
+                                  src={"/" + discordIcon.src}
                                   width="50px"
                                   height="50px"
                                   onMouseEnter={handlePopoverDiscordOpen}
                                   onMouseLeave={handlePopoverDiscordClose}
-                                  alt="discordIcon"
+                                  alt="CatTalk discordIcon"
                                   onClick={() => {
                                     setDiscordCopy(true);
                                     setTelegramCopy(false);
@@ -313,9 +326,9 @@ const Profile: React.FC = () => {
                               </div>
                             )}
                           </div>
-                        </div>
+                        </>
                       ) : (
-                        <div>
+                        <div className={s.info__stats}>
                           <div className={s.info__menu}>
                             <Button
                               variant="contained"
@@ -324,38 +337,34 @@ const Profile: React.FC = () => {
                                 setInfo("info");
                               }}
                             >
-                              INFO
+                              {t("info")}
                             </Button>
                             <Button
                               variant="contained"
                               color="secondary"
                               sx={{ width: "125px" }}
                             >
-                              STATISTICS
+                              {t("statistics")}
                             </Button>
                           </div>
                           {authData.stats.map((e, i) => {
                             const value = Object.values(e);
                             return (
                               <div key={i}>
-                                <div className={s.info__infoItems}>
-                                  <span className={s.info__infoItemName}>
+                                <div className={s.items + ' ' + s.items_padding}>
+                                  <span className={s.items__name}>
                                     {stats[i]}
                                   </span>
-                                  <span className={s.info__infoItemValue}>
+                                  <span className={s.items__value}>
                                     {value[0]}
                                   </span>
                                 </div>
-
-                                {i !== authData.stats.length - 1 && (
-                                  <hr className={s.hrUnder} />
-                                )}
                               </div>
                             );
                           })}
                         </div>
                       )}{" "}
-                    </div>
+                    </>
                   ) : (
                     <ProfileChanging
                       info={authData.info}
@@ -374,7 +383,7 @@ const Profile: React.FC = () => {
                       s.title_fontSize_25px
                     }
                   >
-                    Friends
+                    {t("friends")}
                   </h3>
 
                   <div className={s.info__friendsItems}>
@@ -401,7 +410,7 @@ const Profile: React.FC = () => {
                                               height="75px"
                                               className={s.infoMemberItem__ava}
                                               src={e.avatar}
-                                              alt="ava"
+                                              alt="CatTalk ava"
                                             />
                                           ) : (
                                             <Avatar
@@ -439,10 +448,6 @@ const Profile: React.FC = () => {
                                       </a>
                                     </Link>
                                   )}
-                                  {i !==
-                                    authData.friends.confirmedFriends.length -
-                                      1 &&
-                                    i <= 1 && <hr className={s.hrUnder} />}
                                 </div>
                               );
                             }
@@ -485,7 +490,7 @@ const Profile: React.FC = () => {
                                             height="75px"
                                             className={s.infoMemberItem__ava}
                                             src={e.avatar}
-                                            alt="ava"
+                                            alt="CatTalk ava"
                                           />
                                         ) : (
                                           <Avatar
@@ -520,10 +525,6 @@ const Profile: React.FC = () => {
                                       </div>
                                     </a>
                                   </Link>
-                                  {i !==
-                                    authData.friends.totalFriendsCount - 1 && (
-                                    <hr className={s.hrUnder} />
-                                  )}
                                 </div>
                               );
                             }
@@ -550,7 +551,7 @@ const Profile: React.FC = () => {
                             width: "100%",
                           }}
                         >
-                          You have no friends
+                          {t("no_friends1")}
                         </Alert>
                       </div>
                     )}

@@ -1,20 +1,41 @@
 import styled from "@emotion/styled";
 import NoAccountsIcon from "@mui/icons-material/NoAccounts";
-import { Alert, Button, CircularProgress, createTheme, TextField, ThemeProvider, useMediaQuery } from "@mui/material";
+import {
+  Alert,
+  Button,
+  CircularProgress,
+  createTheme,
+  TextField,
+  ThemeProvider,
+  useMediaQuery
+} from "@mui/material";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import MainLayout from "../components/MainLayout";
+import {
+  deleteAvatar,
+  updateAvatar,
+  updatePersonalData,
+  updateSecurityData
+} from "../redux/settingsSlice";
+import s from "../styles/settings.module.scss";
+import { useAppDispatch, useAppSelector } from "../typescript/hook";
+import { ILocale, ILoginSubmit, IPersonalSubmit } from "../typescript/interfaces/data";
 import discordIcon from "/images/discord-icon.svg";
 import instagramIcon from "/images/Instagram_icon.png";
 import telegramIcon from "/images/Telegram_icon.png";
-import {
-  deleteAvatar, updateAvatar, updatePersonalData, updateSecurityData
-} from "../redux/settingsSlice";
-import s from "../styles/settings.module.css";
-import { useAppDispatch, useAppSelector } from "../typescript/hook";
-import { ILoginSubmit, IPersonalSubmit } from "../typescript/interfaces/data";
+
+export async function getStaticProps({ locale }: ILocale) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common", "settings"])),
+    },
+  };
+}
 
 const StyledTextField = styled(TextField)({
   "& label": {
@@ -93,6 +114,9 @@ const Settings: React.FC = () => {
     (state) => state.settings.avatarChangingError
   );
 
+  const { t } = useTranslation("settings");
+  const ct = useTranslation("common").t;
+
   const {
     register,
     watch,
@@ -110,7 +134,7 @@ const Settings: React.FC = () => {
       },
       secondary: {
         main: "#fff",
-      }
+      },
     },
   });
 
@@ -157,16 +181,23 @@ const Settings: React.FC = () => {
             <div className={s.container}>
               <div className={s.settingsPanel__inner}>
                 <section className={s.settingsPanel__security}>
-                  <h2 className={s.settingsPanelTitle}>SECURITY</h2>
+                  <h2 className={s.settingsPanelTitle}>{t("security")}</h2>
                   <form
                     onSubmit={handleSubmit(onSecuritySubmit)}
                     className={s.settingsPanel__securityElements}
                   >
-                    <div className={s.settingsPanel__securityElement} style={authData.type === 'defaultUser' ? {} : {display: 'none'}}>
+                    <div
+                      className={s.settingsPanel__securityElement}
+                      style={
+                        authData.type === "defaultUser"
+                          ? {}
+                          : { display: "none" }
+                      }
+                    >
                       <div>
                         <StyledTextField
                           id="email"
-                          label="New email"
+                          label={t("new_email")}
                           variant="outlined"
                           required
                           error={!!errors.email}
@@ -179,18 +210,18 @@ const Settings: React.FC = () => {
                           }}
                           helperText={errors.email && errors.email.message}
                           {...register("email", {
-                            required: "Fieled must be filled",
+                            required: ct("filled"),
                             minLength: {
                               value: 2,
-                              message: "Minimum 2 characters",
+                              message: ct("min", { count: 2 }),
                             },
                             maxLength: {
                               value: 25,
-                              message: "Maximum 25 characters",
+                              message: ct("max", { count: 25 }),
                             },
                             pattern: {
                               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]+\s*$/i,
-                              message: "Invalid email",
+                              message: ct("invaild_email"),
                             },
                           })}
                         />
@@ -200,7 +231,7 @@ const Settings: React.FC = () => {
                       <div>
                         <StyledTextField
                           id="password"
-                          label="New password"
+                          label={t("new_password")}
                           variant="outlined"
                           error={!!errors.password}
                           color="primary"
@@ -211,11 +242,11 @@ const Settings: React.FC = () => {
                           {...register("password", {
                             minLength: {
                               value: 8,
-                              message: "Minimum 8 characters",
+                              message: ct("min", { count: 8 }),
                             },
                             maxLength: {
                               value: 25,
-                              message: "Maximum 25 characters",
+                              message: ct("max", { count: 25 }),
                             },
                           })}
                         />
@@ -231,7 +262,7 @@ const Settings: React.FC = () => {
                       {isSecurityDataChangingPending ? (
                         <CircularProgress size={30} sx={{ color: "#fff" }} />
                       ) : (
-                        "CONFIRM"
+                        ct("confirm")
                       )}
                     </Button>
 
@@ -241,7 +272,7 @@ const Settings: React.FC = () => {
                         variant="filled"
                         sx={{ backgroundColor: "#4E9F3D", color: "#fff" }}
                       >
-                        Update confirmed
+                        {t("update_confirmed")}
                       </Alert>
                     )}
                     {securityDataChangingError && (
@@ -260,13 +291,13 @@ const Settings: React.FC = () => {
                 </section>
 
                 <section className={s.settingsPanel__personal}>
-                  <h2 className={s.settingsPanelTitle}>PERSONAL</h2>
+                  <h2 className={s.settingsPanelTitle}>{t("personal")}</h2>
                   <form
                     onSubmit={handleSubmit(onPersonalSubmit)}
                     className={s.settingsPanel__personalElements}
                   >
                     <div className={s.settingsPanel__personalElement}>
-                      <span style={{ fontSize: "18px" }}>Avatar: </span>
+                      <span style={{ fontSize: "18px" }}>{t("avatar")}: </span>
                       <div>
                         <Button
                           variant="outlined"
@@ -281,7 +312,7 @@ const Settings: React.FC = () => {
                               sx={{ color: "#fff" }}
                             />
                           ) : (
-                            "UPLOAD FILE"
+                            t("upload_file")
                           )}
                           <input
                             type="file"
@@ -317,7 +348,7 @@ const Settings: React.FC = () => {
                               sx={{ color: "#fff" }}
                             />
                           ) : (
-                            "DELETE AVATAR"
+                            t("delete_avatar")
                           )}
                         </Button>
                       </div>
@@ -330,10 +361,13 @@ const Settings: React.FC = () => {
                           color: "#fff",
                         }}
                       >
-                        It is HIGHLY recommended to use images <br /> with the
-                        same width and height <br />
-                        (100x100; 404x404; 777x777 etc.) <br /> or at least
-                        approximately
+                        <div
+                          className={
+                            s.settingsPanel__personalElementWidthRecommendation
+                          }
+                        >
+                          {t("width_recommendation")}
+                        </div>
                       </Alert>
                     )}
 
@@ -343,7 +377,7 @@ const Settings: React.FC = () => {
                         variant="filled"
                         sx={{ backgroundColor: "#4E9F3D", color: "#fff" }}
                       >
-                        Update confirmed
+                        {t("update_confirmed")}
                       </Alert>
                     )}
                     {avatarChangingError && (
@@ -361,7 +395,7 @@ const Settings: React.FC = () => {
                     <div className={s.settingsPanel__personalElement}>
                       <div>
                         <Image
-                          src={instagramIcon.src}
+                          src={"/" + instagramIcon.src}
                           width="50px"
                           height="50px"
                           alt="instagramIcon"
@@ -390,12 +424,12 @@ const Settings: React.FC = () => {
                           {...register("instagramLink", {
                             minLength: {
                               value: 10,
-                              message: "Minimum 10 characters",
+                              message: ct("min", { count: 10 }),
                             },
                             pattern: {
                               value:
                                 /(?:(?:http|https):\/\/)?(?:www\.)?(?:instagram\.com)\/([A-Za-z0-9-_\.]+)/im,
-                              message: "Not instagram link",
+                              message: t("not_instagram_link"),
                             },
                           })}
                         />
@@ -405,7 +439,7 @@ const Settings: React.FC = () => {
                     <div className={s.settingsPanel__personalElement}>
                       <div>
                         <Image
-                          src={telegramIcon.src}
+                          src={"/" + telegramIcon.src}
                           width="50px"
                           height="50px"
                           alt="telegramIcon"
@@ -434,15 +468,14 @@ const Settings: React.FC = () => {
                           }
                           {...register("telegramUsername", {
                             minLength: {
-                              value: 4,
-                              message: "Minimum 4 characters",
+                              value: 3,
+                              message: ct("min", { count: 3 }),
                             },
                             pattern: {
                               // value: /@+[a-z]+$/,
                               value:
                                 /.*\B@(?=\w{5,32}\b)[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*.*/,
-                              message:
-                                "Not telegram account. Please, start with @",
+                              message: t("not_telegram_account"),
                             },
                           })}
                         />
@@ -452,7 +485,7 @@ const Settings: React.FC = () => {
                     <div className={s.settingsPanel__personalElement}>
                       <div>
                         <Image
-                          src={discordIcon.src}
+                          src={"/" + discordIcon.src}
                           width="50px"
                           height="50px"
                           alt="discordIcon"
@@ -482,11 +515,11 @@ const Settings: React.FC = () => {
                           {...register("discordUsername", {
                             minLength: {
                               value: 6,
-                              message: "Minimum 6 characters",
+                              message: ct("min", { count: 6 }),
                             },
                             pattern: {
                               value: /^((.+?)#\d{4})/,
-                              message: "Not discord account",
+                              message: t("not_discord_account"),
                             },
                           })}
                         />
@@ -502,7 +535,7 @@ const Settings: React.FC = () => {
                       {isPersonalDataChangingPending ? (
                         <CircularProgress size={30} sx={{ color: "#fff" }} />
                       ) : (
-                        "CONFIRM"
+                        ct("confirm")
                       )}
                     </Button>
 
@@ -512,7 +545,7 @@ const Settings: React.FC = () => {
                         variant="filled"
                         sx={{ backgroundColor: "#4E9F3D", color: "#fff" }}
                       >
-                        Update confirmed
+                        {t("update_confirmed")}
                       </Alert>
                     )}
                     {personalDataChangingError && (
@@ -549,6 +582,5 @@ export default function InitialSettings() {
     }
   }, [isAuthFulfilled, isAuthed]);
 
-
-  return <Settings key={!isAuthed ? 0 : 1}/>;
+  return <Settings key={!isAuthed ? 0 : 1} />;
 }

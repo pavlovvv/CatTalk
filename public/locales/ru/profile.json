@@ -1,0 +1,15 @@
+{
+    "info": "Инфо",
+    "statistics": "Статистика",
+    "friends": "ДРУЗЬЯ",
+    "total_chats": "Чаты",
+    "total_messages_sent": "Сообщения",
+    "total_entered_characters": "Символы",
+    "no_friends1": "У вас нет друзей",
+    "no_friends2": "Этот пользователь не имеет друзей",
+    "updating_confirmed": "Обновление подтверждено",
+    "add_friend": "Добавить в друзья",
+    "request": "Запрос в друзья отправлен",
+    "delete_friend": "Удалить друга",
+    "guests": "Гости не могут иметь друзей"
+}

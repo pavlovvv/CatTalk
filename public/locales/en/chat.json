@@ -1,0 +1,13 @@
+{
+    "join": "Join",
+    "leave": "Leave",
+    "wait": "Please, wait. This may take up to 1 minute",
+    "connected_users": "Connected users:",
+    "has_joined": "has joined",
+    "has_left": "has left",
+    "disconnection1": "You have been disconnected.",
+    "disconnection2": "You may have been inactive for a while",
+    "provider": "Every day you are provided 1 gb free space and 100 files",
+    "current_usage": "Current usage:",
+    "browse_files": "Browse files"
+}

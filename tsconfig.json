@@ -21,13 +21,13 @@
     "jsx": "preserve",
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "strictNullChecks": true
+    "strictNullChecks": false
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "next-i18next.config.js", "next-i18next.config.js"  ],
   "exclude": [
     "node_modules"
   ]

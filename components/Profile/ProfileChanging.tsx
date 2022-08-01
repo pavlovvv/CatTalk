@@ -6,12 +6,15 @@ import {
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { setProfileError, updateOwnInfo } from "../../redux/signSlice";
-import s from "../../styles/profile.module.css";
+import s from "../../styles/profile.module.scss";
 import { useAppDispatch, useAppSelector } from "../../typescript/hook";
 import {
+  IOtherTranslation,
   IProfileChangingProps,
   IProfileChangingSubmit
 } from "../../typescript/interfaces/data";
+import { useRouter } from "next/router";
+import setTranslation from './../../other/locales/setTranslation';
 
 const StyledTextField = styled(TextField)({
   "& label": {
@@ -56,6 +59,10 @@ export default function ProfileChanging(props: IProfileChangingProps) {
   const profileError = useAppSelector((state) => state.sign.profileError);
 
   const [isUpdatingConfirmed, setUpdatingConfirmed] = useState(false);
+
+  const {locale} = useRouter()
+  
+  const t: IOtherTranslation = setTranslation(locale as string)
 
   useEffect(() => {
     if (isUpdatingConfirmed && !profileError && isPending === false) {
@@ -119,14 +126,14 @@ export default function ProfileChanging(props: IProfileChangingProps) {
       <div>
         <div className={s.info__menu}>
           <Button variant="contained" color="secondary" sx={{ width: "100px" }}>
-            INFO
+            {t.info}
           </Button>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <div className={s.info__infoItems}>
-              <span className={s.info__infoItemName}>name</span>
-              <span className={s.info__infoItemValue}>
+        <form className={s.info__changeMenu} onSubmit={handleSubmit(onSubmit)}>
+          <>
+            <div className={s.items + ' ' + s.items_padding}>
+              <span className={s.items__name}>name</span>
+              <span className={s.items__value}>
                 <StyledTextField
                   id="name"
                   label="Name"
@@ -148,30 +155,28 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   error={!!errors.name}
                   helperText={errors.name && errors.name.message}
                   {...register("name", {
-                    required: "Fieled must be filled",
+                    required: t.filled,
                     minLength: {
                       value: 2,
-                      message: "Minimum 2 characters",
+                      message: t.min(2),
                     },
                     maxLength: {
                       value: 15,
-                      message: "Maximum 15 characters",
+                      message: t.max(15),
                     },
                     pattern: {
                       value: /^[A-Za-zА-Яа-яЁё]+\s*$/,
                       message:
-                        "Use only letters of the Russian and Latin alphabets",
+                      t.r_and_l,
                     },
                   })}
                 />
               </span>
             </div>
 
-            <hr className={s.hrUnder} />
-
-            <div className={s.info__infoItems}>
-              <span className={s.info__infoItemName}>surname</span>
-              <span className={s.info__infoItemValue}>
+            <div className={s.items + ' ' + s.items_padding}>
+              <span className={s.items__name}>surname</span>
+              <span className={s.items__value}>
                 <StyledTextField
                   id="surname"
                   label="Surname"
@@ -191,30 +196,28 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   }
                   helperText={errors.surname && errors.surname.message}
                   {...register("surname", {
-                    required: "Fieled must be filled",
+                    required: t.filled,
                     minLength: {
                       value: 2,
-                      message: "Minimum 2 characters",
+                      message: t.min(2),
                     },
                     maxLength: {
                       value: 15,
-                      message: "Maximum 15 characters",
+                      message: t.min(15),
                     },
                     pattern: {
                       value: /^[A-Za-zА-Яа-яЁё]+\s*$/,
                       message:
-                        "Use only letters of the Russian and Latin alphabets",
+                      t.r_and_l,
                     },
                   })}
                 />
               </span>
             </div>
 
-            <hr className={s.hrUnder} />
-
-            <div className={s.info__infoItems}>
-              <span className={s.info__infoItemName}>username</span>
-              <span className={s.info__infoItemValue}>
+            <div className={s.items + ' ' + s.items_padding}>
+              <span className={s.items__name}>username</span>
+              <span className={s.items__value}>
                 <StyledTextField
                   id="username"
                   label="Username"
@@ -234,55 +237,49 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   }
                   helperText={errors.username && errors.username.message}
                   {...register("username", {
-                    required: "Fieled must be filled",
+                    required: t.filled,
                     minLength: {
                       value: 2,
-                      message: "Minimum 2 characters",
+                      message: t.min(2),
                     },
                     maxLength: {
                       value: 15,
-                      message: "Maximum 15 characters",
+                      message: t.max(15),
                     },
                     pattern: {
                       value: /^[\w](?!.*?\.{2})[\w.]{1,28}[\w]+\s*$/,
-                      message: "Use only letters of the Latin alphabet",
+                      message: t.latin,
                     },
                   })}
                 />
               </span>
             </div>
 
-            <hr className={s.hrUnder} />
-
-            <div className={s.info__infoItems}>
-              <span className={s.info__infoItemName + " " + s.info_changedName}>
+            <div className={s.items + ' ' + s.items_padding}>
+              <span className={s.items__name + " " + s.info_changedName}>
                 email
               </span>
               <span
-                className={s.info__infoItemValue + " " + s.info_changedValue}
+                className={s.items__value + " " + s.info_changedValue}
               >
                 {props.info[3]?.email}
               </span>
             </div>
 
-            <hr className={s.hrUnder} />
-
-            <div className={s.info__infoItems}>
-              <span className={s.info__infoItemName + " " + s.info_changedName}>
+            <div className={s.items + ' ' + s.items_padding}>
+              <span className={s.items__name + " " + s.info_changedName}>
                 id
               </span>
               <span
-                className={s.info__infoItemValue + " " + s.info_changedValue}
+                className={s.items__value + " " + s.info_changedValue}
               >
                 {props.info[4]?.id}
               </span>
             </div>
 
-            <hr className={s.hrUnder} />
-
-            <div className={s.info__infoItems}>
-              <span className={s.info__infoItemName}>age</span>
-              <span className={s.info__infoItemValue}>
+            <div className={s.items + ' ' + s.items_padding}>
+              <span className={s.items__name}>age</span>
+              <span className={s.items__value}>
                 <StyledTextField
                   id="age"
                   label="Age"
@@ -303,22 +300,20 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   {...register("age", {
                     maxLength: {
                       value: 2,
-                      message: "Maximum 2 characters",
+                      message: t.max(2),
                     },
                     pattern: {
                       value: /^[ 0-9]+$/,
-                      message: "Use only numbers",
+                      message: t.numbers,
                     },
                   })}
                 />
               </span>
             </div>
 
-            <hr className={s.hrUnder} />
-
-            <div className={s.info__infoItems}>
-              <span className={s.info__infoItemName}>location</span>
-              <span className={s.info__infoItemValue}>
+            <div className={s.items + ' ' + s.items_padding}>
+              <span className={s.items__name}>location</span>
+              <span className={s.items__value}>
                 <StyledTextField
                   id="location"
                   label="Location"
@@ -339,11 +334,11 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   {...register("location", {
                     minLength: {
                       value: 2,
-                      message: "Minimum 2 characters",
+                      message: t.min(2),
                     },
                     maxLength: {
                       value: 25,
-                      message: "Maximum 25 characters",
+                      message: t.max(25),
                     },
                   })}
                 />
@@ -361,7 +356,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                 {isPending ? (
                   <CircularProgress size={30} sx={{ color: "#fff" }} />
                 ) : (
-                  "CONFIRM"
+                  t.confirm
                 )}
               </Button>
               <Button
@@ -373,7 +368,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                   props.setChanging(false);
                 }}
               >
-                Cancel
+                {t.cancel}
               </Button>
             </div>
             {profileError && (
@@ -388,7 +383,7 @@ export default function ProfileChanging(props: IProfileChangingProps) {
                 {profileError}
               </Alert>
             )}
-          </div>
+          </>
         </form>
       </div>
     </ThemeProvider>

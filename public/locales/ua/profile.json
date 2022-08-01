@@ -1,0 +1,15 @@
+{
+    "info": "Інфо",
+    "statistics": "Статистика",
+    "friends": "ДРУЗІ",
+    "total_chats": "Чати",
+    "total_messages_sent": "Повідомлення",
+    "total_entered_characters": "Символи",
+    "no_friends1": "У вас немає друзів",
+    "no_friends2": "Цей користувач не має друзів",
+    "updating_confirmed": "Оновлення підтверджено",
+    "add_friend": "Додати друга",
+    "request": "Запрошення відправлено",
+    "delete_friend": "Видалити друга",
+    "guests": "Гості не можуть мати друзів"
+}

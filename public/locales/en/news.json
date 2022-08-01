@@ -1,0 +1,8 @@
+{
+    "update": "Update",
+    "1.4": "Now you can change the website language. The desired button is on the top right.",
+    "1.3": "Now you can login using Google account or as guest. All guests delete every day at 3:30 AM by Moscow time. Notice: guests can not have friends.",
+    "1.2": "The project was rewritten in TypeScript. Small design changes.",
+    "1.1": "A few bugs were fixed. Now you can sent files in chats. For now, you are provided only 1 GB free space and 100 files per day (The limit updates every day at 3:30 AM by Moscow time. At this time also delete all files sent during the day) Also, now you can format your message before sending (** - bold; * - italic etc.)",
+    "1.0": "Over a month of development... Over 8k lines of code..."
+}

@@ -28,13 +28,24 @@ import { useForm } from "react-hook-form";
 import MainLayout from "../components/MainLayout";
 import anonymousIcon from "../images/anonymous-icon.png";
 import { auth, continueWithGoogle, signAsGuest } from "../redux/signSlice";
-import s from "../styles/sign.module.css";
+import s from "../styles/sign.module.scss";
 import { useAppDispatch, useAppSelector } from "../typescript/hook";
 import {
   IGoogleUserData,
   IInputPasswordValues,
   ILoginSubmit,
 } from "../typescript/interfaces/data";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { ILocale } from "../typescript/interfaces/data";
+import { useTranslation } from "next-i18next";
+
+export async function getStaticProps({ locale }: ILocale) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common", "login"])),
+    },
+  };
+}
 
 const StyledTextField = styled(TextField)({
   "& label": {
@@ -125,6 +136,8 @@ const Login: React.FC = () => {
 
   const [isHidden, setHide] = useState<boolean>(true);
 
+  const router = useRouter()
+
   const {
     register,
     watch,
@@ -184,6 +197,9 @@ const Login: React.FC = () => {
   const guestPending = useAppSelector((state) => state.sign.guestPending);
   const error = useAppSelector((state) => state.sign.error);
 
+  const { t } = useTranslation("login");
+  const ct = useTranslation("common").t;
+
   const StartAnonymousIcon = (): ReactElement => {
     return (
       <Image
@@ -211,8 +227,7 @@ const Login: React.FC = () => {
     /* global google */
 
     window.google.accounts.id.initialize({
-      client_id:
-      process.env.NEXT_PUBLIC_CAT_TALK_GOOGLE_ACCOUNTS_CLIENT_ID,
+      client_id: process.env.NEXT_PUBLIC_CAT_TALK_GOOGLE_ACCOUNTS_CLIENT_ID,
       callback: (response: any) => {
         const userData: IGoogleUserData = jwtDecode(response.credential);
         const sentUserData: IGoogleUserData = {
@@ -248,7 +263,7 @@ const Login: React.FC = () => {
         }
 
         const emailName: string[] | undefined = sentUserData.email?.split("@");
-        
+
         dispatch(
           continueWithGoogle({
             email: sentUserData.email ? sentUserData.email.toLowerCase() : null,
@@ -273,7 +288,7 @@ const Login: React.FC = () => {
         size: "large",
         text: "continue_with",
         logo_alignment: "left",
-        locale: "en",
+        locale: router.locale,
         type: "standard",
         width: "100",
       }
@@ -286,7 +301,7 @@ const Login: React.FC = () => {
         <div className={s.loginpage}>
           <div className={s.signup_panel}>
             <div className={s.container}>
-              <h2 className={s.singup__title}>LOG IN</h2>
+              <h2 className={s.singup__title}>{t("log_in")}</h2>
 
               <div>
                 <div className={s.signup__inputs}>
@@ -308,14 +323,14 @@ const Login: React.FC = () => {
                         error={!!errors.email}
                         helperText={errors.email && errors.email.message}
                         {...register("email", {
-                          required: "Field must be filled",
+                          required: ct("filled"),
                           minLength: {
                             value: 8,
-                            message: "Minimum 8 characters",
+                            message: ct("min", { count: 8 }),
                           },
                           maxLength: {
                             value: 35,
-                            message: "Maximum 35 characters",
+                            message: ct("max", { count: 35 }),
                           },
                           pattern: {
                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]+\s*$/i,
@@ -333,18 +348,18 @@ const Login: React.FC = () => {
                         error={!!errors.password}
                       >
                         <InputLabel color="primary" sx={{ color: "#fff" }}>
-                          Password
+                          {t('password')}
                         </InputLabel>
                         <StyledInput
                           {...register("password", {
-                            // required: "Field must be filled",
+                            required: ct("filled"),
                             minLength: {
                               value: 8,
-                              message: "Minimum 8 characters",
+                              message: ct("min", { count: 8 }),
                             },
                             maxLength: {
                               value: 25,
-                              message: "Maximum 25 characters",
+                              message: ct("max", { count: 25 }),
                             },
                           })}
                           id="password"
@@ -392,7 +407,7 @@ const Login: React.FC = () => {
                       sx={{ fontSize: "14px", display: "flex" }}
                       component={"span"}
                     >
-                      New here? &nbsp;
+                      {t("new_here")} &nbsp;
                       <Link href="/signup" passHref>
                         <Typography
                           variant="body1"
@@ -403,7 +418,7 @@ const Login: React.FC = () => {
                           }}
                           component={"span"}
                         >
-                          Sign up
+                          {t("sign_up")}
                         </Typography>
                       </Link>
                     </Typography>
@@ -417,7 +432,7 @@ const Login: React.FC = () => {
                       {isPending ? (
                         <CircularProgress size={30} sx={{ color: "#fff" }} />
                       ) : (
-                        "LOG IN"
+                        t("to_log_in")
                       )}
                     </Button>
                   </form>
@@ -463,7 +478,7 @@ const Login: React.FC = () => {
                       <div className={s.sign__continueWithGoogleIcon}>
                         <StartAnonymousIcon />
                       </div>{" "}
-                      Continue as guest
+                      {t("continue_as_guest")}
                     </div>
                   </Button>
                   {!isHidden && (
@@ -488,7 +503,7 @@ const Login: React.FC = () => {
                             columnGap: "20px",
                           }}
                         >
-                          All guests delete every day at 3:30 AM
+                          {t("guests_delete")}
                           <Button
                             variant="contained"
                             sx={{
@@ -513,11 +528,11 @@ const Login: React.FC = () => {
                                 <span
                                   style={{ marginLeft: "10px", color: "#fff" }}
                                 >
-                                  got it
+                                  {ct("got_it")}
                                 </span>
                               </>
                             ) : (
-                              "got it"
+                              ct("got_it")
                             )}
                           </Button>
                         </div>

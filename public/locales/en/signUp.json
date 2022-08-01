@@ -1,0 +1,13 @@
+{
+    "sign_up": "SIGN UP",
+    "already_a_user": "Already a user?",
+    "next": "next",
+    "continue_as_guest": "Continue as guest",
+    "password": "Password",
+    "name": "Name",
+    "surname": "Surname",
+    "username": "Username",
+    "to_sign_up": "Sign up",
+    "guests_delete": "All guests delete every day at 3:30 AM",
+    "reg_confirmed": "Registration confirmed"
+}

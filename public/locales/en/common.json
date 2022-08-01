@@ -1,0 +1,13 @@
+{
+    "language": "Language",
+    "filled": "Field must be filled",
+    "min": "Minimum {{count}} characters",
+    "max": "Maximum {{count}} characters",
+    "invalid_email": "Invalid email",
+    "r_and_l": "Use only letters of the Russian and Latin alphabets",
+    "latin": "Use only letters of the Latin alphabet",
+    "numbers": "Use only numbers",
+    "got_it": "Got it",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+}

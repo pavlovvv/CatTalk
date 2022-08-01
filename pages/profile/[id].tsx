@@ -14,23 +14,28 @@ import telegramIcon from "../../images/Telegram_icon.png";
 import {
   addFriend, deleteFriend, refuseOwnFriendRequest
 } from "../../redux/usersSlice";
-import s from "../../styles/profile.module.css";
+import s from "../../styles/profile.module.scss";
 import { useAppDispatch, useAppSelector } from "../../typescript/hook";
 import {
   IProfileConfirmedFriend, IProfileFriend,
   IProfileFriends, IProfileGetServerSideProps,
-  IProfileProps, IStringAvatar
+  IProfileProps, IStringAvatar, 
 } from "../../typescript/interfaces/data.js";
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
+
 
 export async function getServerSideProps({
-  params,
+  params, 
+  locale
 }: IProfileGetServerSideProps) {
   const res = await fetch(
     `https://cattalkapi.herokuapp.com/users/search/${params.id}`
   );
   const user = await res.json();
 
-  return { props: { userData: user } };
+  return { props: {...(await serverSideTranslations(locale, ['common', 'profile'])), userData: user, 
+  fullName: user.info.name + ' ' + user.info.surname, service: 'CatTalk' }, };
 }
 
 export default function Profile(props: IProfileProps) {
@@ -62,7 +67,6 @@ export default function Profile(props: IProfileProps) {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    // dispatch(setDynamicPage(true));
 
     if (props.userData) {
       setInform(
@@ -75,7 +79,8 @@ export default function Profile(props: IProfileProps) {
           [entry[0]]: entry[1],
         }))
       );
-      setFriends(props.userData.friends);
+
+        setFriends(props.userData.friends);
 
       if (authData) {
         const friend = authData.friends.confirmedFriends?.filter(
@@ -101,10 +106,12 @@ export default function Profile(props: IProfileProps) {
     }
   }, [props, authData, key]);
 
+  const {t} = useTranslation('profile')
+
   const statistics: string[] = [
-    "Total chats",
-    "Total messages sent",
-    "Total entered characters",
+    t("total_chats"),
+    t("total_messages_sent"),
+    t("total_entered_characters"),
   ];
 
   const theme = createTheme({
@@ -158,12 +165,11 @@ export default function Profile(props: IProfileProps) {
               <div className={s.top__items}>
                 <div className={s.top__ava}>
                   {info[7]?.avatar ? (
-                    <Image
-                      width="150px"
-                      height="150px"
+                    <img
+                      style={{width: '150px', height: '150px'}}
                       className={s.top__img}
                       src={info[7].avatar}
-                      alt="content__img"
+                      alt="CatTalk avatar"
                     />
                   ) : (
                     <Avatar
@@ -190,25 +196,24 @@ export default function Profile(props: IProfileProps) {
             <div className={s.container}>
               <div className={s.info__inner}>
                 <div className={s.panel + " " + s.info__info}>
-                  <div>
                     {isProfileUpdatingConfirmed && (
                       <Alert
                         severity="success"
                         variant="filled"
                         sx={{ backgroundColor: "#4E9F3D", color: "#fff" }}
                       >
-                        Updating confirmed
+                        {t('updating_confirmed')}
                       </Alert>
                     )}
                     {infoOption === "info" ? (
-                      <div>
+                      <>
                         <div className={s.info__menu}>
                           <Button
                             variant="contained"
                             color="secondary"
                             sx={{ width: "125px" }}
                           >
-                            INFO
+                            {t('info')}
                           </Button>
                           <Button
                             variant="contained"
@@ -217,7 +222,7 @@ export default function Profile(props: IProfileProps) {
                               setInfo("stats");
                             }}
                           >
-                            STATISTICS
+                            {t('statistics')}
                           </Button>
 
                           {isAuthed && authData.info[4]?.id !== info[4]?.id && authData.type !== 'Guest' && (
@@ -257,10 +262,10 @@ export default function Profile(props: IProfileProps) {
                                           size={30}
                                           sx={{ color: "#fff" }}
                                         />{" "}
-                                        Add friend{" "}
+                                        {t('add_friend')}{" "}
                                       </div>
                                     ) : (
-                                      "Add friend"
+                                      <>{t('add_friend')}</>
                                     )}
                                   </Button>
                                 )}
@@ -293,10 +298,10 @@ export default function Profile(props: IProfileProps) {
                                         size={30}
                                         sx={{ color: "#fff" }}
                                       />
-                                      Request has been sent{" "}
+                                      {t('request')}{" "}
                                     </div>
                                   ) : (
-                                    "Request has been sent"
+                                    <>{t('request')}</>
                                   )}
                                 </Button>
                               )}
@@ -327,10 +332,10 @@ export default function Profile(props: IProfileProps) {
                                         size={30}
                                         sx={{ color: "#fff" }}
                                       />
-                                      Delete friend{" "}
+                                      {t('delete_friend')}{" "}
                                     </div>
                                   ) : (
-                                    "Delete friend"
+                                    <>{t('delete_friend')}</>
                                   )}
                                 </Button>
                               )}
@@ -344,35 +349,31 @@ export default function Profile(props: IProfileProps) {
                                     backgroundColor: "rgb(211, 47, 47)",
                                     color: "#fff",
                                   }}
-                                >Guest can not have friends</Button>)}
+                                >{t('guests')}</Button>)}
                         </div>
 
                         {info.map((e: object, i: number) => {
                           const key: string[] = Object.keys(e);
                           const value: string[] = Object.values(e);
                           return (
-                            <div key={i}>
+                            <React.Fragment key={i}>
                               {key[0] !== "_id" &&
                                 key[0] !== "instagramLink" &&
                                 key[0] !== "telegramUsername" &&
                                 key[0] !== "discordUsername" &&
                                 key[0] !== "avatar" && (
-                                  <div>
-                                    <div className={s.info__infoItems}>
-                                      <span className={s.info__infoItemName}>
+                                  <div key={i}>
+                                    <div className={s.items + ' ' + s.items_padding}>
+                                      <span className={s.items__name}>
                                         {key[0]}
                                       </span>
-                                      <span className={s.info__infoItemValue}>
+                                      <span className={s.items__value}>
                                         {value[0] ?? "unknown"}
                                       </span>
                                     </div>
-
-                                    {i !== info.length - 5 && (
-                                      <hr className={s.hrUnder} />
-                                    )}
                                   </div>
                                 )}
-                            </div>
+                            </React.Fragment>
                           );
                         })}
 
@@ -385,7 +386,7 @@ export default function Profile(props: IProfileProps) {
                                     src={"/" + instagramIcon.src}
                                     width='50px'
                                     height='50px'
-                                    alt="instagramIcon"
+                                    alt="CatTalk instagramIcon"
                                   />
                                 </a>
                               </Link>
@@ -399,7 +400,7 @@ export default function Profile(props: IProfileProps) {
                                 height='50px'
                                 onMouseEnter={handlePopoverTelegramOpen}
                                 onMouseLeave={handlePopoverTelegramClose}
-                                alt="telegramIcon"
+                                alt="CatTalk telegramIcon"
                                 onClick={() => {
                                   setTelegramCopy(true);
                                   setDiscordCopy(false);
@@ -450,7 +451,7 @@ export default function Profile(props: IProfileProps) {
                                 height='50px'
                                 onMouseEnter={handlePopoverDiscordOpen}
                                 onMouseLeave={handlePopoverDiscordClose}
-                                alt="discordIcon"
+                                alt="CatTalk discordIcon"
                                 onClick={() => {
                                   setDiscordCopy(true);
                                   setTelegramCopy(false);
@@ -493,9 +494,9 @@ export default function Profile(props: IProfileProps) {
                             </div>
                           )}
                         </div>
-                      </div>
+                      </>
                     ) : (
-                      <div>
+                      <div className={s.info__stats}>
                         <div className={s.info__menu}>
                           <Button
                             variant="contained"
@@ -504,14 +505,14 @@ export default function Profile(props: IProfileProps) {
                               setInfo("info");
                             }}
                           >
-                            INFO
+                            {t('info')}
                           </Button>
                           <Button
                             variant="contained"
                             color="secondary"
                             sx={{ width: "125px" }}
                           >
-                            STATISTICS
+                            {t('statistics')}
                           </Button>
 
                           {isAuthed && authData.info[4]?.id !== info[4]?.id && (
@@ -549,10 +550,10 @@ export default function Profile(props: IProfileProps) {
                                           size={30}
                                           sx={{ color: "#fff" }}
                                         />{" "}
-                                        Add friend{" "}
+                                        {t('add_friend')}{" "}
                                       </div>
                                     ) : (
-                                      "Add friend"
+                                      <>{t('add_friend')}</>
                                     )}
                                   </Button>
                                 )}
@@ -585,10 +586,10 @@ export default function Profile(props: IProfileProps) {
                                         size={30}
                                         sx={{ color: "#fff" }}
                                       />
-                                      Request has been sent{" "}
+                                      {t('request')}{" "}
                                     </div>
                                   ) : (
-                                    "Request has been sent"
+                                    <>{t('request')}</>
                                   )}
                                 </Button>
                               )}
@@ -619,10 +620,10 @@ export default function Profile(props: IProfileProps) {
                                         size={30}
                                         sx={{ color: "#fff" }}
                                       />
-                                      Delete friend{" "}
+                                      {t('delete_friend')}{" "}
                                     </div>
                                   ) : (
-                                    "Delete friend"
+                                    <>{t('delete_friend')}</>
                                   )}
                                 </Button>
                               )}
@@ -633,24 +634,19 @@ export default function Profile(props: IProfileProps) {
                           const value = Object.values(e);
                           return (
                             <div key={i}>
-                              <div className={s.info__infoItems}>
-                                <span className={s.info__infoItemName}>
+                              <div className={s.items + ' ' + s.items_padding}>
+                                <span className={s.items__name}>
                                   {statistics[i]}
                                 </span>
-                                <span className={s.info__infoItemValue}>
+                                <span className={s.items__value}>
                                   {value[0]}
                                 </span>
                               </div>
-
-                              {i !== stats.length - 1 && (
-                                <hr className={s.hrUnder} />
-                              )}
                             </div>
                           );
                         })}
                       </div>
                     )}{" "}
-                  </div>
                 </div>
 
                 <div className={s.panel + " " + s.info__friends}>
@@ -663,18 +659,18 @@ export default function Profile(props: IProfileProps) {
                       s.title_fontSize_25px
                     }
                   >
-                    FRIENDS
+                    {t('friends')}
                   </h3>
 
                   <div className={s.info__friendsItems}>
                     {friends.totalFriendsCount !== 0 && !isFriendsAdvanced && (
                       <div>
-                        {friends.confirmedFriends?.map(
-                          (e: IProfileConfirmedFriend, i: number) => {
+                        {friends.confirmedFriends!.map(
+                          (e: IProfileConfirmedFriend | null, i: number) => {
                             return (
                               <div key={i}>
                                 {i <= 2 && (
-                                  <Link href={`/profile/${e.id}`}>
+                                  <Link href={`/profile/${e!.id}`}>
                                     <a target="_blank">
                                       <div
                                         className={
@@ -683,18 +679,18 @@ export default function Profile(props: IProfileProps) {
                                           s.infoMemberItem_margin_20px0
                                         }
                                       >
-                                        {e.avatar ? (
+                                        {e!.avatar ? (
                                           <Image
                                             width="75px"
                                             height="75px"
                                             className={s.infoMemberItem__ava}
-                                            src={e.avatar}
-                                            alt="ava"
+                                            src={e!.avatar}
+                                            alt="CatTalk avatar"
                                           />
                                         ) : (
                                           <Avatar
                                             {...stringAvatar(
-                                              e.name + " " + e.surname
+                                              e!.name + " " + e!.surname
                                             )}
                                             sx={{
                                               bgcolor: "#333C83",
@@ -710,7 +706,7 @@ export default function Profile(props: IProfileProps) {
                                           <span
                                             className={s.infoMemberItem__name}
                                           >
-                                            {e.name}
+                                            {e!.name}
                                           </span>
                                           <br />
                                           <span
@@ -718,28 +714,26 @@ export default function Profile(props: IProfileProps) {
                                               s.infoMemberItem__surname
                                             }
                                           >
-                                            {e.surname}
+                                            {e!.surname}
                                           </span>
                                         </div>
                                       </div>
                                     </a>
                                   </Link>
                                 )}
-                                {i !== friends.confirmedFriends.length - 1 &&
-                                  i <= 1 && <hr className={s.hrUnder} />}
                               </div>
                             );
                           }
                         )}
 
-                        {friends.confirmedFriends?.length > 3 && (
+                        {friends.confirmedFriends?.length! > 3 && (
                           <div
                             className={s.showAndHide}
                             onClick={() => {
                               setFriendsAdvanced(true);
                             }}
                           >
-                            Show {friends.confirmedFriends.length - 3} more
+                            Show {friends.confirmedFriends!.length - 3} more
                           </div>
                         )}
                       </div>
@@ -747,11 +741,11 @@ export default function Profile(props: IProfileProps) {
 
                     {friends.totalFriendsCount !== 0 && isFriendsAdvanced && (
                       <div>
-                        {friends.confirmedFriends.map(
-                          (e: IProfileConfirmedFriend, i: number) => {
+                        {friends.confirmedFriends!.map(
+                          (e: IProfileConfirmedFriend | null, i: number) => {
                             return (
                               <div key={i}>
-                                <Link href={`/profile/${e.id}`}>
+                                <Link href={`/profile/${e!.id}`}>
                                   <a target="_blank">
                                     <div
                                       className={
@@ -760,18 +754,18 @@ export default function Profile(props: IProfileProps) {
                                         s.infoMemberItem_margin_20px0
                                       }
                                     >
-                                      {e.avatar ? (
+                                      {e!.avatar ? (
                                         <Image
                                           width="75px"
                                           height="75px"
                                           className={s.infoMemberItem__ava}
-                                          src={e.avatar}
-                                          alt="ava"
+                                          src={e!.avatar}
+                                          alt="CatTalk avatar"
                                         />
                                       ) : (
                                         <Avatar
                                           {...stringAvatar(
-                                            e.name + " " + e.surname
+                                            e!.name + " " + e!.surname
                                           )}
                                           sx={{
                                             bgcolor: "#333C83",
@@ -787,21 +781,18 @@ export default function Profile(props: IProfileProps) {
                                         <span
                                           className={s.infoMemberItem__name}
                                         >
-                                          {e.name}
+                                          {e!.name}
                                         </span>
                                         <br />
                                         <span
                                           className={s.infoMemberItem__surname}
                                         >
-                                          {e.surname}
+                                          {e!.surname}
                                         </span>
                                       </div>
                                     </div>
                                   </a>
                                 </Link>
-                                {i !== friends.confirmedFriends.length - 1 && (
-                                  <hr className={s.hrUnder} />
-                                )}
                               </div>
                             );
                           }
@@ -828,7 +819,7 @@ export default function Profile(props: IProfileProps) {
                             width: "100%",
                           }}
                         >
-                          (s)he has no friends
+                          {t('no_friends2')}
                         </Alert>
                       </div>
                     )}

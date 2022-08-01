@@ -48,13 +48,36 @@ export default function NavDrawer(props: INavDrawerProps) {
 
   const router = useRouter()
 
-  const navItems: string[] = [
-    "Profile",
-    "Token",
-    "Leaderboard",
-    "News",
-    "Settings",
-  ];
+  if (router.locale === 'en') {
+    var navItems: string[] = [
+      "Profile",
+      "Token",
+      "Leaderboard",
+      "News",
+      "Settings",
+    ];
+  }
+
+  else if (router.locale === 'ru') {
+    var navItems: string[] = [
+      "Профиль",
+      "Токен",
+      "Таблица лидеров",
+      "Новости",
+      "Настройки",
+    ];
+  }
+
+  else if (router.locale === 'ua') {
+    var navItems: string[] = [
+      "Профіль",
+      "Токен",
+      "Таблиця лідерів",
+      "Новини",
+      "Налаштування",
+    ];
+  }
+
   const linkItems: string[] = [
     "/profile",
     "/token",

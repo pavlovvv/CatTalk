@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { API } from "../DataAccessLayer/DAL";
+import { API } from "../other/DataAccessLayer";
 import { AppDispatch } from "./store";
 import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInAnonymously, } from "firebase/auth";
+import { IFriend } from "../typescript/interfaces/data";
 
 export interface ISignUp {
   email: string;
@@ -228,13 +229,13 @@ export const continueWithGoogle = createAsyncThunk<
 );
 
 interface ISetUser {
-    info: object[];
+    info: object[]; //to get more information please follow ../typescript/interfaces/data.ts/IProfileProps
     stats: object[];
     type: string
     friends: {
-      confirmedFriends: object[];
-      pendingFriends: object[];
-      waitingFriends: object[];
+      confirmedFriends: IFriend[];
+      pendingFriends: IFriend[];
+      waitingFriends: IFriend[];
       totalFriendsCount: number;
     };
     limits: object;
@@ -243,14 +244,14 @@ interface ISetUser {
 type stringOrNull = string | null;
 
 interface ISignState {
-  userData: {
+  userData: { //to get more information please follow ../typescript/interfaces/data.ts/IProfileProps
     info: Array<any>;
     stats: object[];
     type: null | string
     friends: {
-      confirmedFriends: object[];
-      pendingFriends: object[];
-      waitingFriends: object[];
+      confirmedFriends: IFriend[];
+      pendingFriends: IFriend[];
+      waitingFriends: IFriend[];
       totalFriendsCount: number;
     };
     limits: {
@@ -342,6 +343,10 @@ const signSlice = createSlice({
       state.uniKey++;
     },
 
+    updUniKey(state) {
+      state.uniKey++;
+    },
+
     setDynamicPage(state, action: PayloadAction<boolean>) {
       state.isDynamicPage = action.payload;
     },
@@ -422,6 +427,7 @@ export const {
   setProfileError,
   setUsers,
   setProfileDone,
+  updUniKey
 } = signSlice.actions;
 
 export default signSlice.reducer;
