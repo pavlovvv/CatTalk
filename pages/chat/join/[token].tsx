@@ -375,7 +375,7 @@ const Chat: React.FC = () => {
     setFileName(files.length > 1 ? files.length + " files" : files[0].name);
 
     axios
-      .post(`https://cattalkapi.herokuapp.com/chat/uploadFile`, formData, {
+      .post(`https://cattalk-api.onrender.com/chat/uploadFile`, formData, {
         withCredentials: true,
         onUploadProgress: (e) => {
           setUploadingError(false);
