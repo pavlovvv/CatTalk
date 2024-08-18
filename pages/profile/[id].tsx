@@ -30,7 +30,7 @@ export async function getServerSideProps({
   locale
 }: IProfileGetServerSideProps) {
   const res = await fetch(
-    `https://cattalkapi.herokuapp.com/users/search/${params.id}`
+    `https://cattalk-api.onrender.com/users/search/${params.id}`
   );
   const user = await res.json();
 

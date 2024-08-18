@@ -349,7 +349,7 @@ export default function Signup() {
         logo_alignment: "left",
         locale: router.locale,
         type: "standard",
-        width: "100",
+        width: 100,
       }
     );
   }, []);

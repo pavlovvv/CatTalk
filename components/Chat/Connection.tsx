@@ -106,7 +106,7 @@ const Connection: React.FC<IConnectionProps> = ({
     };
     socket.current.onclose = (): void => {
       if (!isLeft.current) {
-        fetch("https://cattalkapi.herokuapp.com/chat/leave/", {
+        fetch("https://cattalk-api.onrender.com/chat/leave/", {
           method: "post",
           headers: {
             "Content-Type": "application/json",
